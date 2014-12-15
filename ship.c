@@ -5374,8 +5374,8 @@ void jump_clouds(int a, int e)
 void hurt_wship_shield(int ea, int e, int dam, int owner, int ba, int b)
 {
 
- //if (ea == TEAM_FRIEND)
-  return;
+ /*if (ea == TEAM_FRIEND)
+  return;*/
 
     ship[ea][e].shield -= dam;
 
