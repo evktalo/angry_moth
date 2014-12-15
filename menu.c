@@ -116,6 +116,7 @@ enum
 {
 MENU_LOAD,
 MENU_START,
+MENU_STAGE, // reinstated for now
 MENU_PLAYERS,
 MENU_P1_CONTROL,
 MENU_P2_CONTROL,
@@ -138,6 +139,7 @@ OPT_CAMERA,
 OPT_EXIT
 };
 
+void _increase_stage(void);
 int menu_command(int cmd);
 int any_joystick_input(void);
 
@@ -191,7 +193,7 @@ void startup_menu(void)
  menu_select = MENU_START;
  key_wait = 30;
 // esc_wait = 0;
-// arena.stage = 3;
+ arena.stage = 1;
 
 // int counter;
 
@@ -295,25 +297,16 @@ run_beat();
  }
 
 // textprintf_ex(display[0], small_font, 400, my - 30, MENU_TEXT, -1, "start game");
- textprintf_ex(display[0], small_font, 400, my - 30, MENU_TEXT, -1, "load game");
+textprintf_ex(display[0], small_font, 400, my - 30, MENU_TEXT, -1, "load game");
  textprintf_ex(display[0], small_font, 400, my, MENU_TEXT, -1, "start new game");
-/* textprintf_ex(display[0], small_font, 400, my, MENU_TEXT, -1, "stage");
- textprintf_ex(display[0], small_font, 530, my, MENU_TEXT, -1, "%i", arena.stage);
- textprintf_ex(display[0], small_font, 520, my, MENU_TEXT, -1, "<     >");*/
- textprintf_ex(display[0], small_font, 400, my + 30, MENU_TEXT, -1, "players");
- textprintf_ex(display[0], small_font, 530, my + 30, MENU_TEXT, -1, "%i", arena.players);
+ textprintf_ex(display[0], small_font, 400, my + 30, MENU_TEXT, -1, "stage");
+ textprintf_ex(display[0], small_font, 530, my + 30, MENU_TEXT, -1, "%i", arena.stage);
  textprintf_ex(display[0], small_font, 520, my + 30, MENU_TEXT, -1, "<     >");
- textprintf_ex(display[0], small_font, 400, my + 60, MENU_TEXT, -1, "player 1 control");
+ textprintf_ex(display[0], small_font, 400, my + 60, MENU_TEXT, -1, "players");
+ textprintf_ex(display[0], small_font, 530, my + 60, MENU_TEXT, -1, "%i", arena.players);
+ textprintf_ex(display[0], small_font, 520, my + 60, MENU_TEXT, -1, "<     >");
+ textprintf_ex(display[0], small_font, 400, my + 90, MENU_TEXT, -1, "player 1 control");
  switch(player[0].control)
- {
-  case CONTROL_KEY_A: textprintf_ex(display[0], small_font, 530, my + 60, MENU_TEXT, -1, "keyboard A"); break;
-  case CONTROL_KEY_B: textprintf_ex(display[0], small_font, 530, my + 60, MENU_TEXT, -1, "keyboard B"); break;
-  case CONTROL_JOY_A: textprintf_ex(display[0], small_font, 530, my + 60, MENU_TEXT, -1, "controller A"); break;
-  case CONTROL_JOY_B: textprintf_ex(display[0], small_font, 530, my + 60, MENU_TEXT, -1, "controller B"); break;
- }
- textprintf_ex(display[0], small_font, 520, my + 60, MENU_TEXT, -1, "<                                >");
- textprintf_ex(display[0], small_font, 400, my + 90, MENU_TEXT, -1, "player 2 control");
- switch(player[1].control)
  {
   case CONTROL_KEY_A: textprintf_ex(display[0], small_font, 530, my + 90, MENU_TEXT, -1, "keyboard A"); break;
   case CONTROL_KEY_B: textprintf_ex(display[0], small_font, 530, my + 90, MENU_TEXT, -1, "keyboard B"); break;
@@ -321,10 +314,19 @@ run_beat();
   case CONTROL_JOY_B: textprintf_ex(display[0], small_font, 530, my + 90, MENU_TEXT, -1, "controller B"); break;
  }
  textprintf_ex(display[0], small_font, 520, my + 90, MENU_TEXT, -1, "<                                >");
+ textprintf_ex(display[0], small_font, 400, my + 120, MENU_TEXT, -1, "player 2 control");
+ switch(player[1].control)
+ {
+  case CONTROL_KEY_A: textprintf_ex(display[0], small_font, 530, my + 120, MENU_TEXT, -1, "keyboard A"); break;
+  case CONTROL_KEY_B: textprintf_ex(display[0], small_font, 530, my + 120, MENU_TEXT, -1, "keyboard B"); break;
+  case CONTROL_JOY_A: textprintf_ex(display[0], small_font, 530, my + 120, MENU_TEXT, -1, "controller A"); break;
+  case CONTROL_JOY_B: textprintf_ex(display[0], small_font, 530, my + 120, MENU_TEXT, -1, "controller B"); break;
+ }
+ textprintf_ex(display[0], small_font, 520, my + 120, MENU_TEXT, -1, "<                                >");
 // textprintf_ex(display[0] [2], small_font, 400, 260, MENU_TEXT, -1, "STAGE - %i", arena.starting_level);
- textprintf_ex(display[0], small_font, 400, my + 120, MENU_TEXT, -1, "set controls");
- textprintf_ex(display[0], small_font, 400, my + 150, MENU_TEXT, -1, "options");
- textprintf_ex(display[0], small_font, 400, my + 180, MENU_TEXT, -1, "exit");
+ textprintf_ex(display[0], small_font, 400, my + 150, MENU_TEXT, -1, "set controls");
+ textprintf_ex(display[0], small_font, 400, my + 180, MENU_TEXT, -1, "options");
+ textprintf_ex(display[0], small_font, 400, my + 210, MENU_TEXT, -1, "exit");
 
 // textprintf_ex(display[0], small_font, 40, 10, MENU_TEXT, -1, "%i", joy[0].stick[options.joy_stick].axis[0].pos);
 // textprintf_ex(display[0], small_font, 40, 30, MENU_TEXT, -1, "%i", joy[0].stick[options.joy_stick].axis[1].pos);
@@ -404,8 +406,14 @@ run_beat();
   }
   if (menu_command(MC_LEFT))
   {
-//   if (menu_select == 2)
-//    arena.starting_level = 1;
+    if (menu_select == MENU_STAGE)
+    {
+      if (arena.stage == 1)
+          arena.stage = 6;
+      else
+          arena.stage = arena.stage - 1;
+      menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
+   }
    if (menu_select == MENU_PLAYERS)
    {
     if (arena.players == 1)
@@ -438,8 +446,8 @@ run_beat();
   }
   if (menu_command(MC_RIGHT))
   {
-//   if (menu_select == 2)
-//    arena.starting_level = 2;
+    if (menu_select == MENU_STAGE)
+      _increase_stage();
    if (menu_select == MENU_PLAYERS)
    {
     if (arena.players == 1)
@@ -480,7 +488,8 @@ run_beat();
     menu_soundwf(WAV_SELECT1, FREQ_SELECT1);
     exit(0);
    }
-
+   if (menu_select == MENU_STAGE)
+       _increase_stage();
    if (menu_select == MENU_PLAYERS)
    {
     if (arena.players == 1)
@@ -539,7 +548,7 @@ run_beat();
     ticked = 0;
     key_wait = 30;
     menu_soundwf(WAV_SELECT1, FREQ_SELECT1);
-    arena.stage = 4;
+//    arena.stage = 6;
 
     start_new_game(); // in game.c - calls run_game
 
@@ -583,6 +592,15 @@ run_beat();
  };
 
 
+}
+
+void _increase_stage(void)
+{
+  if (arena.stage < 6)
+    arena.stage = arena.stage + 1;
+  else
+    arena.stage = 1;
+  menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
 }
 
 #define MENU_SENSE 100
