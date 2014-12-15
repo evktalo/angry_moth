@@ -64,6 +64,16 @@ int base_colour(int y);
 
 void colour_table(const char *which_call);
 
+// this is externed in various places
+int comm_col [COMM_COLS] [COMM_COL_MAX+1] =
+{
+ {COL_BOX0, COL_BOX1, COL_BOX2, COL_BOX3, COL_BOX4}, // CWLTH
+ {COL_BOX1, COL_BOX2, COL_BOX3, COL_BOX4, COL_WHITE}, // TO_AM
+ {COL_EBOX1, COL_EBOX1, COL_EBOX2, COL_EBOX3, COL_EBOX4}, // FED
+ {COL_BOX0, COL_BOX1, COL_CBOX2, COL_BOX3, COL_BOX4}, // IMP
+ {COL_EBOX1, COL_EBOX1, COL_EBOX2, COL_EBOX3, COL_EBOX4} // other?
+
+};
 
 
 
@@ -128,6 +138,24 @@ int basic_cols [19] [3] =
 
 int basic_cols [19] [3] =
 {
+    /*
+ {4, 6, 20},
+ {7, 9, 24},
+ {11, 13, 27},
+ {15, 16, 32},
+ {19, 20, 35},
+ {25, 26, 40},
+ {32, 32, 44},
+
+ {22, 5, 8},
+ {25, 9, 11},
+ {28, 13, 15},
+ {32, 29, 22},
+ {36, 25, 26},
+ {40, 30, 31},
+ {42, 36, 37},
+*/
+
  {8, 11, 20},
  {10, 13, 24},
  {16, 18, 27},
@@ -244,13 +272,11 @@ int damage_cols [16] [3] =
        if (base [j] < 6)
         base[j] = 6;
       }
-
+/*
       setcol(TRANS_RED1 + i-1, base [0] + 15, base [1] + 1, base [2] / 2);
       setcol(TRANS_RED2 + i-1, base [0] + 31, base [1] + 5, base [2] / 2);
       setcol(TRANS_RED3 + i-1, base [0] / 3 + 42, base [1] / 3 + 25, base [2] / 4);
 
-//      setcol(TRANS_GREEN2 + i-1, base [0] + 35, base [1] + 8, base [2] + 11);
-//      setcol(TRANS_GREEN3 + i-1, base [0] / 3 + 42, base [1] / 3 + 20, base [2] / 3);
       setcol(TRANS_GREEN2 + i-1, base [0] + 35, base [1] + 12, base [2] + 16);
       setcol(TRANS_GREEN3 + i-1, base [0] / 4 + 53, base [1] / 4 + 38, base [2] / 3 + 24);
       setcol(TRANS_GREEN4 + i-1, base [0] / 5 + 60, base [1] / 5 + 53, base [2] / 5 + 53);
@@ -261,6 +287,25 @@ int damage_cols [16] [3] =
       setcol(TRANS_BLUE2 + i-1, base [0] / 2 + 18, base [1] / 2 + 18, base [2] / 2 + 30);
       setcol(TRANS_BLUE3 + i-1, base [0] / 4 + 36, base [1] / 4 + 36, base [2] / 4 + 50);
       setcol(TRANS_BLUE4 + i-1, base [0] / 5 + 51, base [1] / 5 + 51, base [2] / 5 + 65);
+*/
+
+      setcol(TRANS_RED1 + i-1, base [0] + 12, base [1] + 1, base [2] - 3);
+      setcol(TRANS_RED2 + i-1, base [0] + 27, base [1] + 4, base [2] - 9);
+      setcol(TRANS_RED3 + i-1, base [0] / 3 + 42, base [1] / 3 + 25, base [2] / 4);
+      setcol(TRANS_YELLOW4 + i-1, base [0] / 4 + 45, base [1] / 4 + 39, base [2] / 5 + 15);
+
+      setcol(TRANS_GREEN2 + i-1, base [0] + 12, base [1] / 2 + 5, base [2] + 22);
+      setcol(TRANS_GREEN3 + i-1, base [0] / 4 + 43, base [1] / 4 + 15, base [2] / 4 + 43);
+      setcol(TRANS_GREEN4 + i-1, base [0] / 5 + 55, base [1] / 5 + 25, base [2] / 5 + 65);
+//      setcol(TRANS_GREEN2 + i-1, base [0] + 12, base [1] / 2 + 13, base [2] + 22);
+//      setcol(TRANS_GREEN3 + i-1, base [0] / 4 + 43, base [1] / 4 + 32, base [2] / 4 + 43);
+//      setcol(TRANS_GREEN4 + i-1, base [0] / 5 + 55, base [1] / 5 + 41, base [2] / 5 + 65);
+
+      setcol(TRANS_BLUE1 + i-1, base [0] - 1, base [1] - 1, base [2] + 12);
+      setcol(TRANS_BLUE2 + i-1, base [0] / 2 + 13, base [1] / 2 + 13, base [2] + 22);
+      setcol(TRANS_BLUE3 + i-1, base [0] / 4 + 36, base [1] / 4 + 36, base [2] / 4 + 50);
+      setcol(TRANS_BLUE4 + i-1, base [0] / 5 + 51, base [1] / 5 + 51, base [2] / 5 + 65);
+
 
 
     }
@@ -310,6 +355,7 @@ save_bitmap("spal.bmp", bmp, palet);
  setcol(COL_EBOX3, 52, 36, 36);
  setcol(COL_EBOX4, 60, 44, 44);
 
+ setcol(COL_CBOX2, 38, 28, 40);
 
 
    vsync();
@@ -383,6 +429,16 @@ int blend_function(int trans, int base, RGB *rgbl)
   {
    return 255;
   }
+/*
+  if (trans == COL_CBOX2) // this colour is a special case in the scanner functions in display.c - it's used as the outer colour for Commonwealth ships' radar blips.
+  {
+      if (base == COL_SCANNER_BACKGROUND)
+       return COL_CBOX2;
+      return base;
+  }
+
+//  if (base == COL_CBOX2) // as above
+//   return trans;*/
 
   if (base == 0)
    return 0;

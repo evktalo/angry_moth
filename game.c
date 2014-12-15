@@ -22,9 +22,9 @@
 
 #include "sound.h"
 
-void begin_game(void);
+void run_game(void);
 
-void new_game(void);
+void new_mission(void);
 void run_player(int p);
 
 void init_stars(int p);
@@ -34,6 +34,8 @@ extern volatile int framecounter;
 extern int slacktime;
 
 unsigned char counter;
+int game_loop(void);
+int next_mission(void);
 void init_player_new_level(int p);
 void init_player_spawn(int p);
 void player_respawn(int p);
@@ -41,6 +43,7 @@ void run_stars(int p);
 void set_star(int p, int i);
 char run_pause(void);
 //extern BITMAP *interlude_screen;
+int check_player_jump_safe(int p, int e);
 
 #ifdef SHOW_GRAPHS
 extern int graph_slack [200];
@@ -52,11 +55,85 @@ extern volatile int frames_per_second;
 
 #define STAR_DIST (600<<10)
 
-void new_game(void)
+
+enum
+{
+MRESULT_QUIT,
+MRESULT_FINISHED,
+MRESULT_GAME_OVER
+};
+
+void start_new_game(void)
+{
+    int i;
+
+    for (i = 0; i < NO_FF; i ++)
+    {
+        game.fighter_available [i] = 0;
+    }
+
+    game.fighter_available [FF_SANDFLY] = 1;
+//    game.fighter_available [FF_RAM] = 1;
+//    game.fighter_available [FF_LACEWING] = 1;
+//    game.fighter_available [FF_MONARCH] = 1;
+//    game.fighter_available [FF_IBEX] = 1;
+    game.fighter_available [FF_AUROCHS] = 1;
+
+    run_game();
+
+}
+
+
+// This is the function that is called when you start or load a game.
+// It basically runs everything, from the briefing to the game loop etc.
+void run_game(void)
 {
 
-arena.counter = 0;
-//arena.stage = 2; - this is set in menu.c for now
+ int mission_result;
+
+ do
+ {
+
+  if (mission_briefing() == 0)
+   return; // must have quit
+
+  new_mission();
+  mission_result = game_loop();
+
+  switch(mission_result)
+  {
+   case MRESULT_QUIT: return; // we need a quit_report function to allow easy retrying
+   case MRESULT_GAME_OVER: return; // we need a fail_report function to allow easy retrying
+   case MRESULT_FINISHED:
+    battle_report();
+    if (next_mission() == 0)
+     return; // finished game!
+    break;
+
+  }
+
+ }
+  while (TRUE);
+
+}
+
+int next_mission(void)
+{
+ switch(arena.stage)
+ {
+  case 1: arena.stage = 2; return 1;
+  case 2: return 0; // finished game!
+
+ }
+
+ return 0;
+}
+
+void new_mission(void)
+{
+
+ arena.counter = 0;
+
  arena.only_player = 0;
  player[1].alive = 0;
  if (arena.players == 2)
@@ -71,13 +148,7 @@ arena.counter = 0;
   && options.fix_camera_angle == 1)
   arena.camera_fix = 1;
 
- int i;
-
- for (i = 0; i < U_TYPES; i ++)
- {
-  player[0].upgrade [i] = 0;
-  player[1].upgrade [i] = 0;
- }
+// int i;
 
  player[0].ships = 2;
  player[0].starting_ships = player[0].ships + 1;
@@ -88,23 +159,35 @@ arena.counter = 0;
  init_clouds();
  init_bullets();
  init_voices();
-// init_beats();
  init_ships();
-// init_palette(hs[0].stage);
-// init_stars(0);
 
  init_level();
-
+ new_level_music();
 
  player[0].x = ship [TEAM_FRIEND] [0].x + 60000;
  player[0].y = ship [TEAM_FRIEND] [0].y + 60000;
  player[0].angle = ship [TEAM_FRIEND] [0].angle;
 
- player[0].target_auto = 0;
+ player[0].target_auto = 1;
 
- setup_player_wing(0, SHIP_FIGHTER_FRIEND, 0);
- setup_player_wing(0, SHIP_FIGHTER_FRIEND, 1);
+ setup_player_wing(0, 0, player[0].escort_type [player[0].wing_type [0]], 0);
+ setup_player_wing(0, 0, player[0].escort_type [player[0].wing_type [0]], 1);
+ if (player[0].wings == 2)
+ {
+  setup_player_wing(0, 1, player[0].escort_type [player[0].wing_type [1]], 2);
+  setup_player_wing(0, 1, player[0].escort_type [player[0].wing_type [1]], 3);
+ }
+// setup_player_wing(0, 0, SHIP_FIGHTER_FRIEND, 1);
 
+// setup_player_wing(0, 1, SHIP_FSTRIKE, 2);
+// setup_player_wing(0, 1, SHIP_FSTRIKE, 3);
+/*
+// the last number in these calls is formation position. Should be consecutive(?) with no duplicates
+ setup_player_wing(0, 0, SHIP_FIGHTER_FRIEND, 0);
+ setup_player_wing(0, 0, SHIP_FIGHTER_FRIEND, 1);
+ setup_player_wing(0, 1, SHIP_FSTRIKE, 2);
+ setup_player_wing(0, 1, SHIP_FSTRIKE, 3);
+*/
  if (arena.players == 2)
  {
   init_player_new_level(1);
@@ -116,10 +199,20 @@ arena.counter = 0;
  player[1].x = ship [TEAM_FRIEND] [0].x - 60000;
  player[1].y = ship [TEAM_FRIEND] [0].y + 60000;
  player[1].angle = ship [TEAM_FRIEND] [0].angle;
- player[1].target_auto = 0;
+ player[1].target_auto = 1;
 
-  setup_player_wing(1, SHIP_FIGHTER_FRIEND, 0);
-  setup_player_wing(1, SHIP_FIGHTER_FRIEND, 1);
+//  setup_player_wing(1, 0, SHIP_FIGHTER_FRIEND, 0);
+//  setup_player_wing(1, 0, SHIP_FIGHTER_FRIEND, 1);
+
+// Note that references here to player[0] are correct - player 0 chooses escort types.
+ setup_player_wing(1, 0, player[0].escort_type [player[1].wing_type [0]], 0);
+ setup_player_wing(1, 0, player[0].escort_type [player[1].wing_type [0]], 1);
+ if (player[1].wings == 2)
+ {
+  setup_player_wing(1, 1, player[0].escort_type [player[1].wing_type [1]], 2);
+  setup_player_wing(1, 1, player[0].escort_type [player[1].wing_type [1]], 3);
+ }
+
 
  }
 
@@ -128,9 +221,32 @@ arena.counter = 0;
 
  arena.game_over = 0;
  arena.end_stage = 0;
+ arena.send_messages = 1; // can be set to zero in level.c
+
+ arena.debug_invulnerable = 0;
 
 }
 
+/*
+void draw_wc(int count, int w)
+{
+
+   extern FONT* small_font;
+
+     textprintf_ex(screen, small_font, 111, 111, COL_WHITE, 1, "wc %i: %i", count, w);
+
+     do
+     {
+         rest(1);
+     } while(key[KEY_O] == 0);
+
+     do
+     {
+         rest(1);
+     } while(key[KEY_O] != 0);
+
+}
+*/
 
 char run_pause(void)
 {
@@ -145,7 +261,7 @@ char run_pause(void)
   display_pause(pc);
 
 // if (key [KEY_EQUALS])
-//  ticked = 1;
+  //ticked = 1;
 
    while(ticked == 0)
    {
@@ -170,29 +286,15 @@ char run_pause(void)
 }
 
 
-void game_loop(void)
+int game_loop(void)
 {
-
-// clear_to_color(interlude_screen, COL_1);
-
-//       upgrade_menu();
-
- int playing = 1;
 
  counter = 0;
 
-// if (choose_menu() == 0)
-//  return;
-
- new_game(); // need a better place to put this
-
-// upgrade_menu();
+ ticked = 0;
 
  do
  {
-
-// get_input();
- //run_player();
 
  arena.counter ++;
  arena.counter &= 255;
@@ -202,10 +304,12 @@ void game_loop(void)
   arena.time ++;
   arena.subtime = 0;
  }
-/*
+
  if (key [KEY_EQUALS]
   && arena.counter % 32 != 0)
-  ticked = 1;*/
+  ticked = 1;
+
+ run_music();
 
   if (ticked == 0)
   {
@@ -230,7 +334,7 @@ void game_loop(void)
   {
 //      exit(0);
       if (run_pause() == 1)
-       playing = 0;
+       return MRESULT_QUIT;
   }
 
  if (arena.game_over > 0)
@@ -239,7 +343,7 @@ void game_loop(void)
   if (arena.game_over <= 0)
   {
    arena.game_over = 1;
-   break;
+   return MRESULT_GAME_OVER;
   }
  }
   else
@@ -250,7 +354,7 @@ void game_loop(void)
      if (arena.mission_over <= 0)
      {
       arena.mission_over = 1;
-      break;
+      return MRESULT_FINISHED;
      }
     }
     if (arena.all_wships_lost > 0)
@@ -259,10 +363,23 @@ void game_loop(void)
      if (arena.all_wships_lost <= 0)
      {
       arena.all_wships_lost = 1;
-      break;
+      return MRESULT_GAME_OVER;
      }
     }
-
+    if (arena.jump_countdown > 0)
+    {
+     arena.jump_countdown--;
+// this counter reaching 0 doesn't do anything except change the warning message - the actual jump is handled by scripts
+    }
+    if (arena.missed_jump > 0)
+    {
+     arena.missed_jump --;
+     if (arena.missed_jump <= 0)
+     {
+      arena.missed_jump = 1;
+      return MRESULT_GAME_OVER;
+     }
+    }
 
 /*  if (arena.end_stage > 0)
   {
@@ -292,6 +409,8 @@ void game_loop(void)
 
   run_level();
   run_ships();
+  if (arena.jumped_out)
+   return MRESULT_FINISHED;
   run_bullets();
   run_clouds();
 //  play_tracks();
@@ -312,11 +431,9 @@ void game_loop(void)
 
 
 
- } while(playing == 1);
+ } while(TRUE);
 
-
- if (arena.mission_over == 1)
-  battle_report();
+ return MRESULT_QUIT; // should never happen
 
 }
 
@@ -328,7 +445,7 @@ void run_player(int p)
 
  if (player[p].alive == 0)
  {
-  if (player[p].respawning > 0 && arena.game_over == 0 && arena.all_wships_lost == 0)
+  if (player[p].respawning > 0 && arena.game_over == 0 && arena.all_wships_lost == 0 && arena.jump_countdown == -1)
   {
    player[p].respawning --;
    PP.x += PP.x_speed;
@@ -340,6 +457,9 @@ void run_player(int p)
   return;
  }
 
+ if (arena.jump_countdown > -1)
+  check_player_jump_safe(p, -1);
+
  player[p].turning = 0;
 
  if (player[p].recycle > 0)
@@ -350,7 +470,7 @@ void run_player(int p)
   player[p].mflash [1] --;
  if (player[p].over_recycle > 0)
   player[p].over_recycle --;
-
+/*
  if (player[p].drive [0] > 0)
   player[p].drive [0] --;
  if (player[p].drive [1] > 0)
@@ -364,11 +484,11 @@ void run_player(int p)
   player[p].flap [0] --;
  if (player[p].flap [1] > 0)
   player[p].flap [1] --;
-
+*/
  if (PP.target_new > 0)
   PP.target_new --;
 
- player[p].shield += 4; // change just below as well
+ player[p].shield += PP.shield_recharge;
 
  if (player[p].shield > player[p].max_shield)
   PP.shield = PP.max_shield;
@@ -389,12 +509,17 @@ void run_player(int p)
  if (PP.shield_flash > 0)
   PP.shield_flash --;
 
+ if (PP.wing_fire1 > 0)
+  PP.wing_fire1--;
+ if (PP.wing_fire2 > 0)
+  PP.wing_fire2--;
+
  get_input(p);
 
  player[p].x += player[p].x_speed;
  player[p].y += player[p].y_speed;
 
-      int dragged = 1005;
+      int dragged = 1023 - eclass[PP.type].drag;//1005;
 /*      if (player[p].upgrade [U_AGILITY] == 1)
        dragged = 1009;
       if (player[p].upgrade [U_AGILITY] == 2)
@@ -429,6 +554,64 @@ void run_player(int p)
   PP.target_sight_visible = 0;
 
 }
+
+// these values also used in wship_jumps_out in ship.c
+#define JUMP_PICKUP_RANGE 200000
+#define JUMP_PICKUP_SAFE 100000
+
+// if e is -1, checks whether the player will be picked up by any ship and sets PP.jump_safe appropriately
+// if e is a ship, checks whether the player is picked up by that ship (this is used by wship_jump)
+int check_player_jump_safe(int p, int e)
+{
+
+ int a = TEAM_FRIEND;
+ int dist;
+
+ if (e == -1)
+ {
+  PP.jump_safe = JUMP_NOT_SAFE;
+
+  for (e = 0; e < NO_SHIPS; e ++)
+  {
+   if (EE.type == SHIP_NONE
+    || eclass[EE.type].ship_class != ECLASS_WSHIP)
+     continue;
+
+   if (abs(EE.y - PP.y) > JUMP_PICKUP_RANGE || abs(EE.x - PP.x) > JUMP_PICKUP_RANGE)
+    continue;
+
+   dist = hypot(EE.y - PP.y, EE.x - PP.x);
+
+   if (dist < JUMP_PICKUP_RANGE)
+    PP.jump_safe = JUMP_RISK; // JUMP_RISK is actually safe, but you could be right on the edge and fall out at the last moment
+
+   if (dist < JUMP_PICKUP_SAFE)
+   {
+    PP.jump_safe = JUMP_SAFE;
+    return 0; // return value doesn't matter here
+   }
+
+  }
+ }
+
+// now we're checking for a particular ship:
+
+   if (EE.type == SHIP_NONE
+    || eclass[EE.type].ship_class != ECLASS_WSHIP)
+     return 0;
+
+   if (abs(EE.y - PP.y) > JUMP_PICKUP_RANGE || abs(EE.x - PP.x) > JUMP_PICKUP_RANGE)
+    return 0;
+
+   dist = hypot(EE.y - PP.y, EE.x - PP.x);
+
+   if (dist < JUMP_PICKUP_RANGE)
+    return 1; // just check for JUMP_RISK as RISK distance is actually safe
+
+   return 0; // not picked up
+
+}
+
 
 
 void run_stars(int p)
@@ -589,6 +772,8 @@ void run_stars(int p)
 void init_player_new_level(int p)
 {
 
+//    PP.type = SHIP_FSTRIKE;
+
     int i;
 
     PP.alive = 1;
@@ -611,14 +796,20 @@ void init_player_new_level(int p)
     PP.start_y = PP.y;
 
     PP.priority_target = 2;
-    PP.wing_orders = COMMAND_COVER;
+    PP.wing_orders [0] = COMMAND_COVER;
+    PP.wing_orders [1] = COMMAND_COVER;
 
-    for (i = 0; i < WING_SIZE; i ++)
+    int w;
+
+    for (w = 0; w < WINGS; w ++)
     {
-     PP.wing [i] = -1;
+     for (i = 0; i < WING_SIZE; i ++)
+     {
+      PP.wing [w] [i] = -1;
+     }
+    PP.wing_size [w] = 0;
     }
 
-    PP.wing_size = 0;
 
 }
 
@@ -660,6 +851,8 @@ void init_player_spawn(int p)
     player[p].charge = 0;
     player[p].rocket_angle = 0;
     PP.command_key = 0;
+    PP.wing_command = -1;
+    PP.commanding = 0;
 
     player[p].camera_x = 400;
     player[p].camera_y = 460;
@@ -705,14 +898,18 @@ void init_player_spawn(int p)
     PP.accelerating = 0;
     PP.commanding = 0;
     PP.just_commanded = 0;
+    PP.wing_fire1 = 0;
+    PP.wing_fire2 = 0;
 
     player[p].alive = 1;
     player[p].respawning = 0;
 
-    PP.max_hp = 3000;
+    PP.max_hp = eclass[PP.type].hp [0];
     PP.hp = PP.max_hp;
-    PP.max_shield = 2000;
+    PP.max_shield = eclass[PP.type].max_shield;
     PP.shield = PP.max_shield;
+// see also set_player_ship_type in briefing.c
+
     PP.shield_up = 1;
     PP.shield_flash = 0;
     PP.shield_threshold = PP.shield / 4;
@@ -794,6 +991,9 @@ void player_respawn(int p)
       arena.game_over = 200;
      if (arena.mission_over > 0)
       arena.mission_over = 0;
+     if (arena.jump_countdown > -1)
+      arena.jump_countdown = -1;
+
      return;
     }
   }
@@ -808,6 +1008,8 @@ void player_respawn(int p)
     arena.game_over = 200;
    if (arena.mission_over > 0)
     arena.mission_over = 0;
+   if (arena.jump_countdown > -1)
+    arena.jump_countdown = -1;
    return;
   }
     else
@@ -833,8 +1035,8 @@ void player_respawn(int p)
     && EE.spawn == i)
    {
     angle = grand(ANGLE_1);
-    PP.x = EE.x + xpart(angle, 200000);
-    PP.y = EE.y + ypart(angle, 200000);
+    PP.x = EE.x + xpart(angle, 100000);
+    PP.y = EE.y + ypart(angle, 100000);
     quick_cloud(CLOUD_SMALL_SHOCK, PP.x, PP.y, 0, 0, SMALL_SHOCK_TIME, 2, 0);
     return;
    }

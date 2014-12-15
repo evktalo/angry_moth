@@ -24,8 +24,13 @@ int detect_bullet_collision(int a, int b, struct bulletstruct* pb);
 void run_ptorp(int a, int b);
 void run_rocket(int a, int b);
 void run_rocket2(int a, int b);
+void run_frock(int a, int b);
 void run_aws_missile(int a, int b);
 void run_af_missile(int a, int b);
+//void run_lw_missile(int a, int b);
+void run_hrocket(int a, int b);
+void run_rain(int a, int b);
+
 /*void bullet_torque(int b, int p);
 void run_bullet_seeker(int b);
 void run_bullet_rocket(int b);
@@ -93,6 +98,7 @@ int create_bullet(int type, int a)
 // bullet[a][b].direction = PP.angle;
  bullet[a][b].size = 1000;
  bullet[a][b].owner = -1;
+ BL.status = 0;
 // bullet[a][b].new_bullet = 1;
  return b;
 
@@ -126,13 +132,15 @@ void run_bullets(void)
             {
              angle = grand(ANGLE_1);
              dist = grand(4000);
+             quick_fire(BL.x + xpart(angle, dist), BL.y + ypart(angle, dist), BL.x2, BL.y2, 30 + grand(10), BL.colour);
+             /*
              c = simple_cloud(CLOUD_DOUBLE_BALL, BL.x + xpart(angle, dist), BL.y + ypart(angle, dist), BL.colour, 30 + grand(10));
              if (c != -1)
              {
               cloud[c].status = 1 + grand(3);
               cloud[c].x_speed = BL.x2;
               cloud[c].y_speed = BL.y2;
-             }
+             }*/
             }
             bullet[a][b].x += bullet[a][b].x_speed;
             bullet[a][b].y += bullet[a][b].y_speed;
@@ -158,6 +166,9 @@ void run_bullets(void)
           case BULLET_PTORP1:
            run_ptorp(a, b);
            break;
+          case BULLET_FROCK:
+           run_frock(a, b);
+           break;
           case BULLET_AWS_MISSILE:
           case BULLET_HOMING:
            run_aws_missile(a, b);
@@ -165,10 +176,21 @@ void run_bullets(void)
           case BULLET_ROCKET:
            run_rocket(a, b);
            break;
+          case BULLET_RAIN:
+           run_rain(a, b);
+           break;
+          case BULLET_HROCKET:
+           run_hrocket(a, b);
+           break;
           case BULLET_ROCKET2:
            run_rocket2(a, b);
            break;
           case BULLET_AF_MISSILE:
+           run_af_missile(a, b);
+           break;
+          case BULLET_LW_MISSILE:
+          case BULLET_ADV_LW_MISSILE:
+          case BULLET_HVY_LW_MISSILE:
            run_af_missile(a, b);
            break;
           case BULLET_EBEAM1:
@@ -480,7 +502,7 @@ int detect_bullet_collision(int ba, int b, struct bulletstruct* pb)
   {
    if (PP.alive == 0)
     continue;
-   size = 8000;
+   size = eclass[PP.type].size;
    if (pb->x + pb->size > PP.x - size
     && pb->x - pb->size < PP.x + size
     && pb->y + pb->size > PP.y - size
@@ -719,6 +741,10 @@ int detect_beam_collision(int ba, int b, struct bulletstruct* pb)
 
 int hurt_player(int p, int dam, int owner, int ba, int b, int beam, int bx, int by)
 {
+
+ if (arena.debug_invulnerable)
+  return 0;
+
 // note that bx and by are not exactly the same as the bullet's actual x and y
 // return 0;
  if (PP.shield > 0 && PP.shield_up)
@@ -916,6 +942,7 @@ void player_explodes(int p)
      CC.x2 = PP.x_speed;
      CC.y2 = PP.y_speed;
      cloud[c].drag = 940;
+     CC.x3 = 5;
     }
     angle += ANGLE_8 + grand(ANGLE_3);
  }
@@ -925,14 +952,17 @@ void player_explodes(int p)
 
  for (i = 0; i < 9; i ++)
  {
-        c = quick_cloud(CLOUD_FADEBALL,
+  quick_fire(x + xpart(angle, dist),
+             y + ypart(angle, dist),
+             0, 0, 35 + grand(10), 0);
+/*        c = quick_cloud(CLOUD_FADEBALL,
              x + xpart(angle, dist),
              y + ypart(angle, dist),
              0, 0, 35 + grand(10), 0, 0);
         if (c != -1)
         {
          CC.status = 10 + grand(8);
-        }
+        }*/
 
  angle = grand(ANGLE_1);
  dist = 20000 + grand(20000);
@@ -1071,12 +1101,13 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
   {
    if (hit_hull)
    {
-    c = simple_cloud(CLOUD_DOUBLE_BALL, x, y, BL.colour, 40 + grand(10));
+    quick_fire(x, y, target_x_speed, target_y_speed, 20 + grand(10), BL.colour);
+/*    c = simple_cloud(CLOUD_FADEBALL, x, y, BL.colour, 20 + grand(10));
     if (c != -1)
     {
      cloud[c].x_speed = target_x_speed;
      cloud[c].y_speed = target_y_speed;
-    }
+    }*/
    }
    angle = flashback_angle(target_x, target_y, eb->x, eb->y, eb->x_speed, eb->y_speed);
    angle += grand(ANGLE_32) - grand(ANGLE_32);
@@ -1084,13 +1115,14 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
    {
     x += xpart(angle, 4000) + xpart(grand(ANGLE_1), 2000);
     y += ypart(angle, 4000) + ypart(grand(ANGLE_1), 2000);
-    c = simple_cloud(CLOUD_FADEBALL, x, y, eb->colour, 10 + grand(10) + i);
+    quick_fire(x, y, target_x_speed + xpart(angle, i * 300), target_y_speed + ypart(angle, i * 300), 6 + grand(8) + i, eb->colour);
+/*    c = simple_cloud(CLOUD_FADEBALL, x, y, eb->colour, 6 + grand(8) + i);
     if (c != -1)
     {
      CC.x_speed = target_x_speed + xpart(angle, i * 300);
      CC.y_speed = target_y_speed + ypart(angle, i * 300);
      CC.status = 7 + i;
-    }
+    }*/
    }
 
   }
@@ -1098,13 +1130,14 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
     {
      if (hit_a < 0) // hit nothing
      {
-      c = simple_cloud(CLOUD_FADEBALL, x, y, eb->colour, 13);
+      quick_fire(x, y, 0, 0, 13, eb->colour);
+/*      c = simple_cloud(CLOUD_FADEBALL, x, y, eb->colour, 13);
       if (c != -1)
       {
        CC.x_speed = 0;//eb->x_speed;
        CC.y_speed = 0;//eb->y_speed;
        CC.status = 8;
-      }
+      }*/
      }
     }
    break;
@@ -1116,12 +1149,13 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
   {
    if (hit_hull)
    {
-    c = simple_cloud(CLOUD_DOUBLE_BALL, x, y, BL.colour, 50 + grand(20));
+    quick_fire(x, y, target_x_speed, target_y_speed, 50 + grand(20), BL.colour);
+/*    c = simple_cloud(CLOUD_DOUBLE_BALL, x, y, BL.colour, 50 + grand(20));
     if (c != -1)
     {
      cloud[c].x_speed = target_x_speed;
      cloud[c].y_speed = target_y_speed;
-    }
+    }*/
    }
    angle = flashback_angle(target_x, target_y, eb->x, eb->y, eb->x_speed, eb->y_speed);
    angle += grand(ANGLE_32) - grand(ANGLE_32);
@@ -1129,13 +1163,15 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
    {
     x += xpart(angle, 5000) + xpart(grand(ANGLE_1), 2000);
     y += ypart(angle, 5000) + ypart(grand(ANGLE_1), 2000);
+    quick_fire(x, y, target_x_speed + xpart(angle, i * 500), target_y_speed + ypart(angle, i * 500), 20 + grand(10) + i, eb->colour);
+/*
     c = simple_cloud(CLOUD_FADEBALL, x, y, eb->colour, 20 + grand(10) + i);
     if (c != -1)
     {
      CC.x_speed = target_x_speed + xpart(angle, i * 500);
      CC.y_speed = target_y_speed + ypart(angle, i * 500);
      CC.status = 7 + i;
-    }
+    }*/
    }
 
   }
@@ -1248,19 +1284,19 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
    break;
 
   case BULLET_AF_MISSILE:
+  case BULLET_LW_MISSILE:
+  case BULLET_ADV_LW_MISSILE:
+  case BULLET_HVY_LW_MISSILE:
   case BULLET_HOMING:
   case BULLET_ROCKET:
   case BULLET_ROCKET2:
+  case BULLET_RAIN:
   if (hit_a >= 0)
   {
    if (hit_hull)
    {
-    c = simple_cloud(CLOUD_DOUBLE_BALL, x, y, BL.colour, 40 + grand(10));
-    if (c != -1)
-    {
-     cloud[c].x_speed = target_x_speed;
-     cloud[c].y_speed = target_y_speed;
-    }
+    quick_fire(x, y, target_x_speed, target_y_speed, 40 + grand(10), BL.colour);
+
    }
    angle = flashback_angle(target_x, target_y, eb->x, eb->y, eb->x_speed, eb->y_speed);
    angle += grand(ANGLE_32) - grand(ANGLE_32);
@@ -1268,27 +1304,44 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
    {
     x += xpart(angle, 4000) + xpart(grand(ANGLE_1), 2000);
     y += ypart(angle, 4000) + ypart(grand(ANGLE_1), 2000);
-    c = simple_cloud(CLOUD_FADEBALL, x, y, eb->colour, 14 + grand(14) + i);
-    if (c != -1)
-    {
-     CC.x_speed = target_x_speed + xpart(angle, i * 340);
-     CC.y_speed = target_y_speed + ypart(angle, i * 340);
-     CC.status = 7 + i;
-    }
+    quick_fire(x, y, target_x_speed + xpart(angle, i * 340), target_y_speed + ypart(angle, i * 340), 14 + grand(14) + i, eb->colour);
+
    }
 
   }
     else
     {
-     c = simple_cloud(CLOUD_FADEBALL, x, y, eb->colour, 25);
-     if (c != -1)
-     {
-      CC.x_speed = 0;//eb->x_speed;
-      CC.y_speed = 0;//eb->y_speed;
-      CC.status = 8;
-     }
+     quick_fire(x, y, 0, 0, 25, eb->colour);
+
     }
    play_effectwfvxy_xs_ys(WAV_BBANG, SPRIORITY_LOW, 1400, 80, BL.x, BL.y, BL.x_speed, BL.y_speed);
+   break;
+
+
+
+  case BULLET_HROCKET:
+  if (hit_a >= 0)
+  {
+   if (hit_hull)
+   {
+    quick_fire(x, y, target_x_speed, target_y_speed, 50 + grand(10), BL.colour);
+   }
+   angle = flashback_angle(target_x, target_y, eb->x, eb->y, eb->x_speed, eb->y_speed);
+   angle += grand(ANGLE_32) - grand(ANGLE_32);
+   for (i = 0; i < 7; i ++)
+   {
+    x += xpart(angle, 4000) + xpart(grand(ANGLE_1), 2000);
+    y += ypart(angle, 4000) + ypart(grand(ANGLE_1), 2000);
+    quick_fire(x, y, target_x_speed + xpart(angle, i * 340), target_y_speed + ypart(angle, i * 340), 17 + grand(17) + i, eb->colour);
+
+   }
+
+  }
+    else
+    {
+     quick_fire(x, y, 0, 0, 30, eb->colour);
+    }
+   play_effectwfvxy_xs_ys(WAV_BBANG, SPRIORITY_LOW, 1300, 90, BL.x, BL.y, BL.x_speed, BL.y_speed);
    break;
 
 
@@ -1319,23 +1372,25 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
   case BULLET_ESHOT2:
   if (hit_a >= 0)
   {
-    c = simple_cloud(CLOUD_FADEBALL, x, y, eb->colour, 25);
+   quick_fire(x, y, target_x_speed, target_y_speed, 25, eb->colour);
+/*    c = simple_cloud(CLOUD_FADEBALL, x, y, eb->colour, 25);
     if (c != -1)
     {
      cloud[c].x_speed = target_x_speed;
      cloud[c].y_speed = target_y_speed;
      CC.status = 6;
-    }
+    }*/
   }
     else
     {
-     c = simple_cloud(CLOUD_FADEBALL, x, y, eb->colour, 15);
+   quick_fire(x, y, target_x_speed, target_y_speed, 15, eb->colour);
+/*     c = simple_cloud(CLOUD_FADEBALL, x, y, eb->colour, 15);
      if (c != -1)
      {
       CC.x_speed = 0;//eb->x_speed;
       CC.y_speed = 0;//eb->y_speed;
       CC.status = 6;
-     }
+     }*/
     }
    break;
 
@@ -1379,8 +1434,8 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
   case BULLET_BIGSHOT:
   case BULLET_EBIGSHOT:
   case BULLET_OLDSHOT:
+  case BULLET_FROCK:
 //  c = simple_cloud(CLOUD_BALL, x, y, eb->colour, 20);
-
 
   if (hit_a >= 0)
   {
@@ -1397,12 +1452,13 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
 
     if (!hit_hull)
     {
-     c = simple_cloud(CLOUD_BALL_COL3, x, y, eb->colour, 20 + grand(20));
+     quick_fire(x, y, 0, 0, eb->colour, 20 + grand(20));
+/*     c = simple_cloud(CLOUD_BALL_COL3, x, y, eb->colour, 20 + grand(20));
      if (c != -1)
      {
       CC.x_speed = 0;//eb->x_speed;
       CC.y_speed = 0;//eb->y_speed;
-     }
+     }*/
 
     }
      else
@@ -1416,6 +1472,7 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
        CC.x2 = target_x_speed;
        CC.y2 = target_y_speed;
        CC.drag = 940;
+       CC.x3 = 6;
       }
 //     play_effectwfvxy_xs_ys(WAV_HIT_HULL, SPRIORITY_LOW, 500, 100, eb->x, eb->y, eb->x_speed, eb->y_speed);
      }
@@ -1456,6 +1513,7 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
      CC.x2 = 0;
      CC.y2 = 0;
      CC.drag = 940;
+     CC.x3 = 7;
     }
 //     play_effectwfvxy_xs_ys(WAV_HIT_HULL, SPRIORITY_LOW, 600, 50, eb->x, eb->y, eb->x_speed, eb->y_speed);
 
@@ -1479,10 +1537,62 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
    play_effectwfvxy_xs_ys(WAV_BBANG, SPRIORITY_LOW, 900, 100, BL.x, BL.y, BL.x_speed, BL.y_speed);
    break;
 
+  case BULLET_FSHOT:
+  if (hit_a >= 0)
+  {
+//    quick_cloud(CLOUD_SMALL_SHOCK, x, y, 0, 0, SMALL_SHOCK_TIME, eb->colour, 0);
+
+    if (!hit_hull)
+    {
+     c = simple_cloud(CLOUD_BALL_COL3, x, y, eb->colour, 15 + grand(10));
+     if (c != -1)
+     {
+      CC.x_speed = 0;//eb->x_speed;
+      CC.y_speed = 0;//eb->y_speed;
+     }
+
+    }
+     else
+     {
+      c = simple_cloud(CLOUD_SYNCHFLARE, x, y, eb->colour, 13);
+      if (c != -1)
+      {
+       angle = flashback_angle(target_x, target_y, eb->x, eb->y, eb->x_speed, eb->y_speed);
+       CC.x_speed = target_x_speed + xpart(angle, 7000);
+       CC.y_speed = target_y_speed + ypart(angle, 7000);
+       CC.x2 = target_x_speed;
+       CC.y2 = target_y_speed;
+       CC.drag = 940;
+       CC.x3 = 8;
+      }
+     }
+
+
+  }
+    else
+    {
+
+//   quick_cloud(CLOUD_SMALL_SHOCK, x, y, 0, 0, SMALL_SHOCK_TIME, eb->colour, 0);
+
+    c = simple_cloud(CLOUD_SYNCHFLARE, x, y, eb->colour, 13);
+    if (c != -1)
+    {
+
+     CC.x_speed = 0;//target_x_speed;
+     CC.y_speed = 0;//target_y_speed;
+     CC.x2 = 0;
+     CC.y2 = 0;
+     CC.drag = 940;
+     CC.x3 = 9;
+    }
+    }
+   play_effectwfvxy_xs_ys(WAV_BBANG, SPRIORITY_LOW, 700, 80, BL.x, BL.y, BL.x_speed, BL.y_speed);
+   break;
+
   case BULLET_PTORP1:
 //  c = simple_cloud(CLOUD_BALL, x, y, eb->colour, 20);
   size = 0;
-  if (!hit_hull)
+  if (hit_hull)
    size = 7;
   if (hit_a >= 0)
   {
@@ -1499,6 +1609,7 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
       CC.x2 = target_x_speed;
       CC.y2 = target_y_speed;
       CC.drag = 940;
+      CC.x3 = 10;
      }
     }
      else
@@ -1512,6 +1623,7 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
        CC.x2 = target_x_speed;
        CC.y2 = target_y_speed;
        CC.drag = 940;
+       CC.x3 = 11;
       }
 
      }
@@ -1533,6 +1645,7 @@ void bullet_explodes(int a, int b, int hit_a, int hit_e, int hit_hull)
      CC.x2 = 0;
      CC.y2 = 0;
      CC.drag = 940;
+     CC.x3 = 12;
     }
 
     }
@@ -1642,22 +1755,25 @@ void run_ptorp(int a, int b)
     int cloudtime = 12;
     int accel = 30;
 
-    if (BL.status > 0)
+    if (BL.time <= 40)
     {
-     BL.status --;
-     if (BL.status == 0)
+     if (BL.time == 40)
      {
       BL.damage = BL.status2;
       BL.force <<= 2;
       play_effectwfvxy_xs_ys(WAV_WHOOSH, SPRIORITY_LOW, 700, 220, BL.x, BL.y, BL.x_speed, BL.y_speed);
      }
-     cloudtime = 6;
-     accel = 5;
+    quick_fire(BL.x - xpart(BL.angle, 4000), BL.y - ypart(BL.angle, 4000), BL.x_speed - xpart(BL.angle, 3200), BL.y_speed - ypart(BL.angle, 3200), 5 + grand(5), 0);
+    BL.x_speed += xpart(BL.angle, 10);
+    BL.y_speed += ypart(BL.angle, 10);
     }
+     else
+     {
+      quick_fire(BL.x - xpart(BL.angle, 4000), BL.y - ypart(BL.angle, 4000), BL.x_speed - xpart(BL.angle, 3200), BL.y_speed - ypart(BL.angle, 3200), 9 + grand(9), 0);
+      BL.x_speed += xpart(BL.angle, 40);
+      BL.y_speed += ypart(BL.angle, 40);
+     }
 
-
-    BL.x_speed += xpart(BL.angle, 40);
-    BL.y_speed += ypart(BL.angle, 40);
     BL.x += BL.x_speed;
     BL.y += BL.y_speed;
 
@@ -1674,6 +1790,8 @@ void run_ptorp(int a, int b)
 //    drag_bullet(b, 950);
 
 
+
+/*
     int c = create_cloud(CLOUD_SEEKER_TRAIL);
     if (c != -1)
     {
@@ -1698,7 +1816,7 @@ void run_ptorp(int a, int b)
      BL.y2 = CC.y + cloud[c].y_speed;
 
     }
-
+*/
 
 
 
@@ -1718,6 +1836,54 @@ void run_ptorp(int a, int b)
 
 }
 
+
+void run_frock(int a, int b)
+{
+
+    int cloudtime = 12;
+    int accel = 30;
+
+    BL.x_speed += xpart(BL.angle, 50);
+    BL.y_speed += ypart(BL.angle, 50);
+    BL.x += BL.x_speed;
+    BL.y += BL.y_speed;
+
+    if (grand(12) == 0)
+    {
+     int angle = grand(ANGLE_1);
+     int accel = 1 + grand(800);
+     BL.x_speed += xpart(angle, accel);
+     BL.y_speed += ypart(angle, accel);
+    }
+/*
+    int c = create_cloud(CLOUD_SEEKER_TRAIL2);
+    if (c != -1)
+    {
+     cloud[c].x_speed = BL.x3;
+     cloud[c].y_speed = BL.y3;
+     cloud[c].x = BL.x - xpart(BL.angle, 5000) - CC.x_speed;
+     cloud[c].y = BL.y - ypart(BL.angle, 5000) - CC.y_speed;
+
+     cloud[c].timeout = cloudtime;//bullet[a][b].status;// + bullet[a][b].level;
+     cloud[c].fangle = atan2(CC.y - BL.y2, CC.x - BL.x2);
+     cloud[c].status = (int) hypot(CC.y - BL.y2, CC.x - BL.x2) >> 10;
+     CC.colour = 0;
+
+     BL.x2 = CC.x + cloud[c].x_speed;
+     BL.y2 = CC.y + cloud[c].y_speed;
+
+    }*/
+    quick_fire(BL.x - xpart(BL.angle, 4000), BL.y - ypart(BL.angle, 4000), BL.x_speed - xpart(BL.angle, 3200), BL.y_speed - ypart(BL.angle, 3200), 7 + grand(7), 0);
+
+    if (BL.timeout <= 0)
+    {
+     bullet_explodes(a, b, -1, -1, 0);
+     destroy_bullet(a, b);
+    }
+
+}
+
+
 void run_rocket(int a, int b)
 {
 
@@ -1726,11 +1892,22 @@ void run_rocket(int a, int b)
 
 //    int cloudtime = 6;
 //    int accel = 30;
-    int drag = 990;
+    int drag = 1018;
 
+  if (BL.status == 0)
+  {
+    BL.x_speed += xpart(BL.angle, 300);
+    BL.y_speed += ypart(BL.angle, 300);
+  }
+   else
+    BL.status --;
 
-    BL.x_speed += xpart(BL.angle, 400);
-    BL.y_speed += ypart(BL.angle, 400);
+  if (BL.status == 1)
+  {
+      BL.damage *= 6;
+      BL.force *= 6;
+  }
+
     BL.x += BL.x_speed;
     BL.y += BL.y_speed;
 /*
@@ -1776,7 +1953,7 @@ void run_rocket(int a, int b)
 
     drag_bullet(a, b, drag);
 
-    if (grand(8) == 0)
+    if (BL.status == 0 && grand(8) == 0)
     {
      int angle = grand(ANGLE_1);
      int accel = 1 + grand(800);
@@ -1793,6 +1970,9 @@ void run_rocket(int a, int b)
      BL.status4 = 1 + grand(40);
     }*/
 
+    quick_fire(BL.x - xpart(BL.angle, 4000) - (BL.x_speed), BL.y - ypart(BL.angle, 4000) - (BL.y_speed), BL.x_speed - xpart(BL.angle, 3200), BL.y_speed - ypart(BL.angle, 3200), 6 + grand(6), 0);
+
+/*
        int c = quick_cloud(CLOUD_LINKLINE,
                            0,
                            0,
@@ -1822,6 +2002,126 @@ void run_rocket(int a, int b)
         }
         BL.status3 = c; // still works if c == -1
 
+*/
+
+    if (BL.timeout <= 0)
+    {
+     bullet_explodes(a, b, -1, -1, 0);
+     destroy_bullet(a, b);
+    }
+
+}
+
+
+void run_hrocket(int a, int b)
+{
+
+    int drag = 1018;
+
+  if (BL.status == 0)
+  {
+    BL.x_speed += xpart(BL.angle, 200);
+    BL.y_speed += ypart(BL.angle, 200);
+  }
+   else
+    BL.status --;
+
+  if (BL.status == 1)
+  {
+      BL.damage *= 6;
+      BL.force *= 6;
+  }
+
+    BL.x += BL.x_speed;
+    BL.y += BL.y_speed;
+
+
+    drag_bullet(a, b, drag);
+
+    if (BL.status == 0 && grand(16) == 0)
+    {
+     int angle = grand(ANGLE_1);
+     int accel = 1 + grand(400);
+     BL.x_speed += xpart(angle, accel);
+     BL.y_speed += ypart(angle, accel);
+    }
+
+
+//    quick_fire(BL.x - xpart(BL.angle, 4000), BL.y - ypart(BL.angle, 4000), BL.x_speed - xpart(BL.angle, 3200), BL.y_speed - ypart(BL.angle, 3200), 8 + grand(8), 0);
+    quick_fire(BL.x - xpart(BL.angle, 4000) - (BL.x_speed), BL.y - ypart(BL.angle, 4000) - (BL.y_speed), BL.x_speed - xpart(BL.angle, 3200), BL.y_speed - ypart(BL.angle, 3200), 7 + grand(7), 0);
+
+
+/*
+       int c = quick_cloud(CLOUD_LINKLINE,
+                           0,
+                           0,
+                           BL.x_speed - xpart(BL.angle, 5000), BL.y_speed - ypart(BL.angle, 5000), 6, 0, 0);
+        if (c != -1)
+        {
+          // must come after speed is set:
+          CC.x = BL.x - xpart(BL.angle, 5000) - CC.x_speed;
+          CC.y = BL.y - ypart(BL.angle, 5000) - CC.y_speed;
+
+
+         if (BL.status3 != -1)
+         {
+          CC.x2 = cloud[BL.status3].x;
+          CC.y2 = cloud[BL.status3].y;
+          CC.x3 = cloud[BL.status3].x_speed;
+          CC.y3 = cloud[BL.status3].y_speed;
+         }
+          else
+          {
+           // must be first cloud for this bullet
+           CC.x2 = CC.x + xpart(BL.angle, 3000);
+           CC.y2 = CC.y + ypart(BL.angle, 3000);
+           CC.x3 = CC.x_speed;
+           CC.y3 = CC.y_speed;
+          }
+        }
+        BL.status3 = c; // still works if c == -1
+
+*/
+
+    if (BL.timeout <= 0)
+    {
+     bullet_explodes(a, b, -1, -1, 0);
+     destroy_bullet(a, b);
+    }
+
+}
+
+
+void run_rain(int a, int b)
+{
+
+
+    int drag = 1018;
+
+  if (BL.status == 0)
+  {
+    BL.x_speed += xpart(BL.angle, 450);
+    BL.y_speed += ypart(BL.angle, 450);
+  }
+   else
+    BL.status --;
+
+    BL.x += BL.x_speed;
+    BL.y += BL.y_speed;
+
+
+    drag_bullet(a, b, drag);
+
+    if (BL.status == 0 && grand(8) == 0)
+    {
+     int angle = grand(ANGLE_1);
+     int accel = 1 + grand(800);
+     BL.x_speed += xpart(angle, accel);
+     BL.y_speed += ypart(angle, accel);
+    }
+
+
+    quick_fire(BL.x - xpart(BL.angle, 4000) - (BL.x_speed), BL.y - ypart(BL.angle, 4000) - (BL.y_speed), BL.x_speed - xpart(BL.angle, 3200), BL.y_speed - ypart(BL.angle, 3200), 6 + grand(6), 0);
 
 
     if (BL.timeout <= 0)
@@ -1909,11 +2209,14 @@ void run_aws_missile(int a, int b)
        BL.x_speed += xpart(BL.angle, 500);
        BL.y_speed += ypart(BL.angle, 500);
        drag_bullet(a, b, 965);
+       quick_fire(BL.x - xpart(BL.angle, 4000), BL.y - ypart(BL.angle, 4000), BL.x_speed - xpart(BL.angle, 3200), BL.y_speed - ypart(BL.angle, 3200), 8 + grand(8), 0);
+//       quick_fire(BL.x - xpart(BL.angle, 4000) - (BL.x_speed), BL.y - ypart(BL.angle, 4000) - (BL.y_speed), BL.x_speed - xpart(BL.angle, 3200), BL.y_speed - ypart(BL.angle, 3200), 8 + grand(8), 0);
       }
        else
        {
         BL.x_speed += xpart(BL.angle, 10);
         BL.y_speed += ypart(BL.angle, 10);
+        quick_fire(BL.x - xpart(BL.angle, 4000), BL.y - ypart(BL.angle, 4000), BL.x_speed - xpart(BL.angle, 3200), BL.y_speed - ypart(BL.angle, 3200), 6 + grand(6), 0);
        }
 
        if (BL.time == 50)
@@ -1985,36 +2288,8 @@ void run_aws_missile(int a, int b)
 //    drag_bullet(b, 950);
 //    drag_bullet(b, 950);
 
-       int c = quick_cloud(CLOUD_LINKLINE,
-                           0,
-                           0,
-                           BL.x_speed - xpart(BL.angle, 5000), BL.y_speed - ypart(BL.angle, 5000), 5 + (BL.time>50)*5, 0, 0);
-        if (c != -1)
-        {
-          // must come after speed is set:
-          CC.x = BL.x - xpart(BL.angle, 5000) - CC.x_speed;
-          CC.y = BL.y - ypart(BL.angle, 5000) - CC.y_speed;
 
 
-         if (BL.status != -1)
-         {
-          CC.x2 = cloud[BL.status].x;
-          CC.y2 = cloud[BL.status].y;
-          CC.x3 = cloud[BL.status].x_speed;
-          CC.y3 = cloud[BL.status].y_speed;
-         }
-          else
-          {
-           // must be first cloud for this bullet
-           CC.x2 = CC.x + xpart(BL.angle, 3000);
-           CC.y2 = CC.y + ypart(BL.angle, 3000);
-           CC.x3 = CC.x_speed;
-           CC.y3 = CC.y_speed;
-          }
-        }
-        BL.status = c; // still works if c == -1
-
-//    BL.timeout --;
 
     if (grand(4) == 0)
     {
@@ -2033,7 +2308,126 @@ void run_aws_missile(int a, int b)
 }
 
 
+/*
+status : acceleration
+status2 : turn
+status3 : drag
+status4 : BL.time value after which it starts tracking target (can be zero)
+status5 : cloud size
+colour : colour of exhaust
 
+TO DO: make sure these are all set!!!
+
+*/
+void run_af_missile(int a, int b)
+{
+
+  if (BL.time < BL.status4)
+  {
+
+    BL.x += BL.x_speed;
+    BL.y += BL.y_speed;
+
+    quick_fire(BL.x - xpart(BL.angle, 4000) - (BL.x_speed), BL.y - ypart(BL.angle, 4000) - (BL.y_speed), BL.x_speed - xpart(BL.angle, 2000), BL.y_speed - ypart(BL.angle, 2000), (BL.status5 >> 1) + grand(BL.status5 >> 1), BL.colour);
+
+    return;
+  }
+
+    int target_x, target_y, dist, speed, target_angle, dist2;
+
+    if (BL.target_e != TARGET_NONE)
+    {
+
+       BL.x_speed += xpart(BL.angle, BL.status);
+       BL.y_speed += ypart(BL.angle, BL.status);
+       drag_bullet(a, b, 965);
+
+       BL.angle += BL.turning;
+       BL.angle &= ANGLE_MASK;
+
+        if (BL.target_e == TARGET_P1)
+        {
+         target_x = player[0].x;
+         target_y = player[0].y;
+        }
+         else
+         {
+           if (BL.target_e == TARGET_P2)
+           {
+            target_x = player[1].x;
+            target_y = player[1].y;
+           }
+            else
+            {
+             target_x = ship[a^1][BL.target_e].x;// + (ship[a^1][BL.target_e].x_speed * dist2);// - BL.x_speed * dist;
+             target_y = ship[a^1][BL.target_e].y;// + (ship[a^1][BL.target_e].y_speed * dist2);// - BL.y_speed * dist;
+            }
+         }
+
+       dist = hypot(BL.y - ship[a^1][BL.target_e].y, BL.x - ship[a^1][BL.target_e].x);
+
+       if (dist > 40000)
+       {
+        speed = hypot(BL.y_speed, BL.x_speed);
+        dist2 = 0;
+        if (speed != 0)
+         dist2 = dist / speed;
+
+
+
+        target_angle = radians_to_angle(atan2(target_y - BL.y, target_x - BL.x));
+
+        if (angle_difference(target_angle, BL.angle) <= BL.status2)
+        {
+//         BL.turning = 0;
+         BL.angle = target_angle;
+        }
+         else
+         {
+          BL.turning = delta_turn_towards_angle(BL.angle, target_angle, BL.status2);
+         }
+       }
+        else
+        {
+
+         BL.turning = delta_turn_towards_xy(BL.x, BL.y, target_x, target_y, BL.angle, BL.status2);
+        }
+
+
+    }
+     else
+     {
+       BL.x_speed += xpart(BL.angle, BL.status>>1);
+       BL.y_speed += ypart(BL.angle, BL.status>>1);
+       drag_bullet(a, b, BL.status3);
+     }
+
+    BL.x += BL.x_speed;
+    BL.y += BL.y_speed;
+
+
+    quick_fire(BL.x - xpart(BL.angle, 4000) - (BL.x_speed), BL.y - ypart(BL.angle, 4000) - (BL.y_speed), BL.x_speed - xpart(BL.angle, 3200), BL.y_speed - ypart(BL.angle, 3200), BL.status5 + grand(BL.status5), BL.colour);
+
+    if (grand(4) == 0)
+    {
+     int angle = grand(ANGLE_1);
+     int accel = 1 + grand(BL.status << 2);
+     BL.x_speed += xpart(angle, accel);
+     BL.y_speed += ypart(angle, accel);
+     BL.angle += grand(40) - grand(40);
+     BL.angle &= ANGLE_MASK;
+    }
+
+    if (BL.timeout <= 0)
+    {
+     bullet_explodes(a, b, -1, -1, 0);
+     destroy_bullet(a, b);
+    }
+
+}
+
+
+/*
 void run_af_missile(int a, int b)
 {
 
@@ -2142,8 +2536,7 @@ void run_af_missile(int a, int b)
     }
 
 }
-
-
+*/
 /*
 void run_aws_missile(int a, int b)
 {
@@ -2848,3 +3241,513 @@ int check_collision_mask(struct bulletstruct* pb, struct shipstruct* ee, int ba,
 }
 
 */
+
+// returns recycle
+int fighter_fire(int a, int e, int p, int wpn, int lock, int status)
+{
+ int x, y, x_speed, y_speed, angle, stype, owner, side, dist, angle2;
+ int i, b, c;
+ int recycle = 1;
+
+ if (e == -1)
+ {
+  x = PP.x;
+  y = PP.y;
+  x_speed = PP.x_speed;
+  y_speed = PP.y_speed;
+  angle = PP.angle;
+  stype = PP.type;
+  if (p == 0)
+    owner = -1;
+  if (p == 1)
+    owner = -2;
+ }
+  else
+  {
+   x = EE.x;
+   y = EE.y;
+   x_speed = EE.x_speed;
+   y_speed = EE.y_speed;
+   angle = EE.angle;
+   stype = EE.type;
+   owner = e;
+  }
+
+ switch(wpn)
+ {
+  case WPN_AUTOCANNON:
+  switch(stype)
+  {
+   default:
+   case SHIP_FIGHTER:
+    dist = 4000;
+    side = 3000;
+    recycle = 9;
+    break;
+/*   case SHIP_FSTRIKE:
+    dist = 6000;
+    side = 5000;
+    recycle = 15;
+    break;
+   case SHIP_LACEWING:
+    dist = 11000;
+    side = 3000;
+    recycle = 9;
+    break;*/
+   case SHIP_IBEX:
+    dist = 6000;
+    side = 5000;
+    recycle = 9;
+    break;
+   case SHIP_AUROCHS:
+    dist = 6000;
+    side = 7000;
+    recycle = 9;
+    break;
+  }
+  for (i = 0; i < 2; i ++)
+  {
+
+   b = create_bullet(BULLET_SHOT, a);
+
+   if (b != -1)
+   {
+    BL.x = x + xpart(angle, dist);
+    BL.y = y + ypart(angle, dist);
+    if (i == 0)
+    {
+     BL.x += xpart(angle - ANGLE_4, side);
+     BL.y += ypart(angle - ANGLE_4, side);
+    }
+     else
+     {
+      BL.x += xpart(angle + ANGLE_4, side);
+      BL.y += ypart(angle + ANGLE_4, side);
+     }
+    BL.x_speed = x_speed + xpart(angle, 12500);
+    BL.y_speed = y_speed + ypart(angle, 12500);
+    BL.timeout = 24;
+
+    BL.colour = 0;
+    BL.angle = angle;
+    BL.size = 5000;
+    BL.damage = 300;
+    BL.force = 100;
+    BL.status = 3;
+    BL.status2 = 0;
+    BL.owner = owner;
+
+
+    quick_fire(BL.x, BL.y, x_speed, y_speed, 15, 0);
+/*    c = simple_cloud(CLOUD_BALL_COL2, BL.x, BL.y, 0, 15);
+    if (c != -1)
+    {
+      cloud[c].x_speed = x_speed;
+      cloud[c].y_speed = y_speed;
+    }*/
+
+
+  }
+ }
+  if (b != -1)
+  {
+   if (e == -1)
+    play_effectwfv(WAV_FIRE, 1500, 200);
+     else
+      play_effectwfvxy_xs_ys(WAV_FIRE, SPRIORITY_LOW, 1500, 200, BL.x, BL.y, BL.x_speed, BL.y_speed);
+  }
+
+  break; // end WPN_AUTOCANNON
+  case WPN_WROCKET:
+
+ for (i = 0; i < 2; i ++)
+ {
+
+  b = create_bullet(BULLET_ROCKET, a);
+  if (i == 1)
+   angle2 = angle - ANGLE_4;
+    else
+     angle2 = angle + ANGLE_4;
+
+  if (b != -1)
+  {
+         BL.x = x + xpart(angle2, 8000);
+         BL.y = y + ypart(angle2, 8000);
+         BL.x_speed = x_speed + xpart(angle2, 200);
+         BL.y_speed = y_speed + ypart(angle2, 200);
+         BL.x2 = BL.x;
+         BL.y2 = BL.y;
+         BL.x3 = x_speed;
+         BL.y3 = y_speed;
+         BL.timeout = 90+grand(20);
+         BL.colour = 0;
+         BL.angle = angle;
+         BL.size = 5000;
+         BL.damage = 700; // is *6 after priming
+         BL.force = 100; // is *6 after priming
+         BL.turning = 0;
+         BL.status = 30;
+         BL.status2 = 0;
+         BL.status3 = -1;
+         BL.owner = owner;
+
+    quick_fire(BL.x, BL.y, x_speed, y_speed, 15, 0);
+/*
+    c = simple_cloud(CLOUD_BALL_COL2, BL.x, BL.y, 0, 10);
+    if (c != -1)
+    {
+      cloud[c].x_speed = x_speed;
+      cloud[c].y_speed = y_speed;
+    }*/
+
+   }
+  }
+
+  if (b != -1)
+  {
+   if (e == -1)
+    play_effectwfv(WAV_WHOOSH, 700, 110);
+     else
+      play_effectwfvxy_xs_ys(WAV_WHOOSH, SPRIORITY_LOW, 700, 100, BL.x, BL.y, BL.x_speed, BL.y_speed);
+  }
+// recycle value not relevant here.
+  break; // end WPN_WROCKET
+
+  case WPN_HROCKET:
+
+ for (i = 0; i < 2; i ++)
+ {
+
+  b = create_bullet(BULLET_HROCKET, a);
+  if (i == 1)
+   angle2 = angle - ANGLE_4;
+    else
+     angle2 = angle + ANGLE_4;
+
+  if (b != -1)
+  {
+         BL.x = x + xpart(angle2, 8000);
+         BL.y = y + ypart(angle2, 8000);
+         BL.x_speed = x_speed + xpart(angle2, 150);
+         BL.y_speed = y_speed + ypart(angle2, 150);
+         BL.x2 = BL.x;
+         BL.y2 = BL.y;
+         BL.x3 = x_speed;
+         BL.y3 = y_speed;
+         BL.timeout = 90+grand(20);
+         BL.colour = 0;
+         BL.angle = angle;
+         BL.size = 5000;
+         BL.damage = 1200; // is *6 after priming
+         BL.force = 300; // is *6 after priming
+         BL.turning = 0;
+         BL.status = 30;
+         BL.status2 = 0;
+         BL.status3 = -1;
+         BL.owner = owner;
+
+    quick_fire(BL.x, BL.y, x_speed, y_speed, 15, 0);
+/*
+    c = simple_cloud(CLOUD_BALL_COL2, BL.x, BL.y, 0, 10);
+    if (c != -1)
+    {
+      cloud[c].x_speed = x_speed;
+      cloud[c].y_speed = y_speed;
+    }*/
+
+   }
+  }
+
+  if (b != -1)
+  {
+   if (e == -1)
+    play_effectwfv(WAV_WHOOSH, 600, 130);
+     else
+      play_effectwfvxy_xs_ys(WAV_WHOOSH, SPRIORITY_LOW, 600, 120, BL.x, BL.y, BL.x_speed, BL.y_speed);
+  }
+// recycle value not relevant here.
+  break; // end WPN_HROCKET
+
+  case WPN_LW_MISSILE:
+
+        b = create_bullet(BULLET_AF_MISSILE, a);
+
+        if (b != -1)
+        {
+         BL.x = x + xpart(angle, 8000);
+         BL.y = y + ypart(angle, 8000);
+         BL.x_speed = x_speed + xpart(angle, 1000);
+         BL.y_speed = y_speed + ypart(angle, 1000);
+         BL.timeout = 80; //250;
+         BL.colour = 0;
+         BL.angle = angle;
+         BL.size = 8000;
+         BL.damage = 4000;
+         BL.force = 600;
+         BL.status = 600; // acceleration
+         BL.status2 = 15; // turning speed
+         BL.status3 = 1000; // drag
+         BL.status4 = 0; // time to start tracking target
+         BL.status5 = 6; // cloud size
+         BL.turning = 0;
+         BL.target_e = TARGET_NONE;
+
+
+         if (lock >= 20)
+         {
+          BL.target_e = status;
+          if (lock >= 40)
+           BL.status2 = 30; // if we've locked on well enough, the turning speed is higher
+         }
+         BL.owner = owner;
+
+         quick_fire(BL.x, BL.y, x_speed, y_speed, 25, 0);
+
+          if (e == -1)
+           play_effectwfv(WAV_WHOOSH2, 1200, 90);
+            else
+             play_effectwfvxy_xs_ys(WAV_WHOOSH2, SPRIORITY_LOW, 1200, 90, BL.x, BL.y, BL.x_speed, BL.y_speed);
+
+        }
+
+        recycle = 200;
+
+        break;
+
+  case WPN_ADV_LW_MISSILE:
+
+        b = create_bullet(BULLET_AF_MISSILE, a);
+
+        if (b != -1)
+        {
+         BL.x = x + xpart(angle, 8000);
+         BL.y = y + ypart(angle, 8000);
+         BL.x_speed = x_speed + xpart(angle, 1000);
+         BL.y_speed = y_speed + ypart(angle, 1000);
+         BL.timeout = 80; //250;
+         BL.colour = 0;
+         BL.angle = angle;
+         BL.size = 8000;
+         BL.damage = 4000;
+         BL.force = 600;
+         BL.turning = 0;
+         BL.status = 650; // acceleration
+         BL.status2 = 30; // turning speed
+         BL.status3 = 1000; // drag
+         BL.status4 = 0; // time to start tracking target
+         BL.status5 = 7; // cloud size
+         BL.target_e = TARGET_NONE;
+         if (lock >= 20)
+         {
+          BL.target_e = status;
+          if (lock >= 40)
+           BL.status2 = 60; // if we've locked on well enough, the turning speed is higher
+         }
+         BL.owner = owner;
+
+         quick_fire(BL.x, BL.y, x_speed, y_speed, 25, 0);
+
+          if (e == -1)
+           play_effectwfv(WAV_WHOOSH2, 1200, 90);
+            else
+             play_effectwfvxy_xs_ys(WAV_WHOOSH2, SPRIORITY_LOW, 1200, 90, BL.x, BL.y, BL.x_speed, BL.y_speed);
+
+        }
+
+        recycle = 150;
+
+        break;
+
+  case WPN_HVY_LW_MISSILE:
+
+        b = create_bullet(BULLET_AF_MISSILE, a);
+
+        if (b != -1)
+        {
+         BL.x = x - xpart(angle, 6000);
+         BL.y = y - ypart(angle, 6000);
+         BL.x_speed = x_speed - xpart(angle, 500);
+         BL.y_speed = y_speed - ypart(angle, 500);
+         BL.timeout = 140; // if this is changed, must change in run_lw_missile (just for the hvy_lw_missile) for ignition delay.
+         BL.colour = 0;
+         BL.angle = angle;
+         BL.size = 10000;
+         BL.damage = 8000;
+         BL.force = 1200;
+         BL.status = 550; // acceleration
+         BL.status2 = 10; // turning speed
+         BL.status3 = 1000; // drag
+         BL.status4 = 0; // time to start tracking target
+         BL.status5 = 7; // cloud size
+         BL.turning = 0;
+         BL.target_e = TARGET_NONE;
+         if (lock >= 20)
+         {
+          BL.target_e = status;
+          if (lock >= 40)
+           BL.status2 = 20; // if we've locked on well enough, the turning speed is higher
+         }
+         BL.owner = owner;
+
+         quick_fire(BL.x, BL.y, x_speed, y_speed, 25, 0);
+
+          if (e == -1)
+           play_effectwfv(WAV_WHOOSH2, 1200, 90);
+            else
+             play_effectwfvxy_xs_ys(WAV_WHOOSH2, SPRIORITY_LOW, 1200, 90, BL.x, BL.y, BL.x_speed, BL.y_speed);
+
+        }
+
+        recycle = 200;
+
+        break;
+
+       case WPN_RAIN:
+
+        b = create_bullet(BULLET_RAIN, a);
+
+        if (b != -1)
+        {
+         BL.x = x - xpart(angle, 4000);
+         BL.y = y - ypart(angle, 4000);
+         BL.x_speed = x_speed - xpart(angle, 200);
+         BL.y_speed = y_speed - ypart(angle, 200);
+         BL.timeout = 60+grand(10);
+         BL.colour = 0;
+         BL.angle = angle;
+         BL.size = 8000;
+         BL.damage = 1600;
+         BL.force = 500;
+         BL.turning = 0;
+         BL.status = 10;
+         BL.status2 = 0;
+         BL.status3 = -1;
+         BL.owner = owner;
+
+
+
+         quick_fire(BL.x, BL.y, x_speed, y_speed, 20, 0);
+
+          if (e == -1)
+           play_effectwfv(WAV_WHOOSH2, 1500, 80);
+            else
+             play_effectwfvxy_xs_ys(WAV_WHOOSH2, SPRIORITY_LOW, 1500, 80, BL.x, BL.y, BL.x_speed, BL.y_speed);
+
+        }
+   break;
+
+  case WPN_AWS_MISSILE:
+
+        b = create_bullet(BULLET_AWS_MISSILE, a);
+
+        if (b != -1)
+        {
+         BL.x = x + xpart(angle, 8000);
+         BL.y = y + ypart(angle, 8000);
+         BL.x_speed = x_speed + xpart(angle, 100);
+         BL.y_speed = y_speed + ypart(angle, 100);
+         BL.timeout = 250;
+         BL.colour = 0;
+         BL.angle = angle;
+         BL.size = 8000;
+         BL.damage = 1000; // increased to 5000 after priming
+         BL.force = 900;
+//         BL.status = -1; // link to first cloud
+         BL.status2 = 2 + grand(5);
+         BL.turning = 0;
+         BL.target_e = TARGET_NONE;
+         BL.status2 = 10;
+         if (lock >= 1000)
+         {
+          BL.target_e = status;
+          if (lock >= 2000)
+           BL.status2 = 20;
+         }
+          BL.owner = owner;
+
+
+
+          if (e == -1)
+           play_effectwfv(WAV_WHOOSH2, 900, 100);
+            else
+             play_effectwfvxy_xs_ys(WAV_WHOOSH2, SPRIORITY_LOW, 900, 100, BL.x, BL.y, BL.x_speed, BL.y_speed);
+        }
+
+      recycle = 50; // used for both player and non-player AWS missiles
+
+      break;
+
+     case WPN_TORP:
+       b = create_bullet(BULLET_PTORP1, a);
+
+  if (b != -1)
+  {
+   BL.x = x + xpart(angle, 8000);
+   BL.y = y + ypart(angle, 8000);
+   BL.x_speed = x_speed + xpart(angle, 300);
+   BL.y_speed = y_speed + ypart(angle, 300);
+   BL.x2 = BL.x;
+   BL.y2 = BL.y;
+   BL.x3 = x_speed;
+   BL.y3 = y_speed;
+   BL.timeout = 120;
+   BL.colour = 0;
+   BL.angle = angle;
+   BL.size = 8000;
+   BL.damage = 3000; // damage while priming
+   BL.force = 300; // is quadrupled when priming finished
+   BL.status2 = 18000; // damage is set to this when torp is primed
+   BL.owner = owner;
+
+          if (e == -1)
+           play_effectwfv(WAV_WHOOSH2, 700, 100);
+            else
+             play_effectwfvxy_xs_ys(WAV_WHOOSH2, SPRIORITY_LOW, 700, 100, BL.x, BL.y, BL.x_speed, BL.y_speed);
+   recycle = 160;
+  }
+  break;
+ case WPN_E_AF_MISSILE:
+
+        b = create_bullet(BULLET_AF_MISSILE, a);
+
+        if (b != -1)
+        {
+         BL.x = x - xpart(angle, 6000);
+         BL.y = y - ypart(angle, 6000);
+         BL.x_speed = x_speed - xpart(angle, 500);
+         BL.y_speed = y_speed - ypart(angle, 500);
+         BL.timeout = 160;
+         BL.colour = 2;
+         BL.angle = angle;
+         BL.size = 10000;
+         BL.damage = 2000;
+         BL.force = 1200;
+         BL.status = 450; // acceleration
+         BL.status2 = 18; // turning speed
+         BL.status3 = 1010; // drag
+         BL.status4 = 30; // time to start tracking target
+         BL.status5 = 8; // cloud size
+         BL.turning = 0;
+//         BL.target_e = TARGET_NONE;
+         BL.target_e = status;
+         BL.owner = owner;
+
+         quick_fire(BL.x, BL.y, x_speed, y_speed, 25, 2);
+
+          if (e == -1)
+           play_effectwfv(WAV_WHOOSH2, 1200, 90);
+            else
+             play_effectwfvxy_xs_ys(WAV_WHOOSH2, SPRIORITY_LOW, 1200, 90, BL.x, BL.y, BL.x_speed, BL.y_speed);
+
+        }
+
+        recycle = 200;
+
+  break;
+
+ } // end switch
+
+ return recycle; // note: may not be used for all weapons! Probably just autocannons.
+
+}
+

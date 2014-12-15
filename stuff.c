@@ -301,3 +301,19 @@ char coin(void)
 {
  return rand() & 1;
 }
+
+int incr(int val, int min, int max)
+{
+    val ++;
+    if (val > max)
+     return min;
+    return val;
+}
+
+int decr(int val, int min, int max)
+{
+    val --;
+    if (val < min)
+     return max;
+    return val;
+}

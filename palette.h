@@ -80,6 +80,7 @@ COL_STAR5
 #define TRANS_BLUE1 39
 #define TRANS_RED2 58
 #define TRANS_GREEN2 77
+//#define TRANS_GREEN2 96
 #define TRANS_BLUE2 96
 #define TRANS_RED3 115
 #define TRANS_GREEN3 134
@@ -148,8 +149,28 @@ COL_BOX4,
 COL_EBOX1,
 COL_EBOX2,
 COL_EBOX3,
-COL_EBOX4 // 253
+COL_EBOX4, // 253
+COL_CBOX2
 };
+
+enum
+{
+COMM_COL_CWLTH,
+COMM_COL_TO_AM,
+COMM_COL_FED,
+COMM_COL_IMP,
+COMM_COL_OTHER,
+COMM_COLS
+};
+
+#define COMM_COL_FSF COMM_COL_FED
+
+#define COMM_COL_MAX 4
+#define COMM_COL_MIN 1
+
+// this is used in palette.c (to set up scanner transparencies for Cwlth ships) and display.c
+#define COL_SCANNER_BACKGROUND COL_STAR1
+
 
 // don't think these do anything at the moment:
 #define TRANS_REVERSE 225

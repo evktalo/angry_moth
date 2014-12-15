@@ -5,6 +5,9 @@ MSG_FROM_NONE,
 MSG_FROM_COMMAND_1, // must be 1
 MSG_FROM_COMMAND_2, // must be 2
 MSG_FROM_COMMAND_3, // must be 3
+MSG_FROM_E_COMMAND_1, // must be 4
+MSG_FROM_E_COMMAND_2, // must be 5
+MSG_FROM_E_COMMAND_3, // must be 6
 };
 
 enum

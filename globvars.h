@@ -6,6 +6,8 @@ extern struct playerstruct player [2];
 
 extern struct arenastruct arena;
 
+extern struct gamestruct game;
+
 extern unsigned char counter;
 
 extern struct cloudstruct cloud [NO_CLOUDS];

@@ -15,6 +15,7 @@
 #include "sound.h"
 #include "menu.h"
 #include "input.h"
+#include "debug.h"
 
 // timer interupt functions and variables:
 void framecount(void);
@@ -33,6 +34,7 @@ void begin_game(void);
 
 struct playerstruct player [2];
 struct arenastruct arena;
+struct gamestruct game;
 struct starstruct star [2] [NO_STARS];
 struct cloudstruct cloud [NO_CLOUDS];
 struct bulletstruct bullet [NO_TEAMS] [NO_BULLETS];
@@ -104,7 +106,7 @@ int allint =  allegro_init();
 
 	 char ConfigPath[2048];
 
-	 sprintf(ConfigPath, "%s/.Hspider", HPath);
+	 sprintf(ConfigPath, "%s/.AMoth", HPath);
 	 set_config_file(ConfigPath);
 
    }
@@ -179,6 +181,7 @@ void init_at_startup(void)
 
  prepare_display();
  init_sound();
+ init_music();
 /*
  PP.ckey [CKEY_UP] = KEY_UP;
  PP.ckey [CKEY_DOWN] = KEY_DOWN;
@@ -239,6 +242,7 @@ void init_at_startup(void)
  options.ckey [1] [CKEY_FIRE4] = get_config_int("Misc", "key2_fire4", KEY_I);
  options.ckey [1] [CKEY_COMMAND] = get_config_int("Misc", "key2_command", KEY_O);
 
+ fill_sdetails(); // in menu.c - fills in information about savefiles
 
 /*
  PP.ckey [CKEY_UP] = get_config_int("Misc", "key_up", KEY_UP);
@@ -274,13 +278,13 @@ void init_at_startup(void)
  options.ambience_volume = get_config_int("Misc", "ambience_volume", 100);
  options.run_vsync = get_config_int("Misc", "run_vsync", 0);
  options.fix_camera_angle = get_config_int("Misc", "fix_camera_angle", 0);
- options.joystick_dual = get_config_int("Misc", "joystick_dual", 1);
+// options.joystick_dual = get_config_int("Misc", "joystick_dual", 1);
 
 // set_config_int("Misc", "Tourist", 3);
 // set_config_int("Misc", "joy_stick", 0);
 
 // if (options.init_joystick)
-// if (options.joystick == 1) // set in init_joystick
+ if (options.joystick_available [0]) // set in init_joystick
  {
   options.joy_button [0] [0] = get_config_int("Misc", "joy1_button_1", 0);
   if (options.joy_button [0] [0] > joy[0].num_buttons)
@@ -291,42 +295,104 @@ void init_at_startup(void)
   options.joy_button [0] [2] = get_config_int("Misc", "joy1_button_3", 2);
   if (options.joy_button [0] [2] > joy[0].num_buttons)
    options.joy_button [0] [2] = joy[0].num_buttons - 1;
-  options.joy_button [0] [3] = get_config_int("Misc", "joy1_button_4", 4);
+  options.joy_button [0] [3] = get_config_int("Misc", "joy1_button_4", 3);
   if (options.joy_button [0] [3] > joy[0].num_buttons)
    options.joy_button [0] [3] = joy[0].num_buttons - 1;
-  options.joy_button [0] [4] = get_config_int("Misc", "joy1_button_5", 5);
+  options.joy_button [0] [4] = get_config_int("Misc", "joy1_button_5", 4);
   if (options.joy_button [0] [4] > joy[0].num_buttons)
    options.joy_button [0] [4] = joy[0].num_buttons - 1;
-  options.joy_button [0] [5] = get_config_int("Misc", "joy1_button_6", 6);
+  options.joy_button [0] [5] = get_config_int("Misc", "joy1_button_6", 5);
   if (options.joy_button [0] [5] > joy[0].num_buttons)
    options.joy_button [0] [5] = joy[0].num_buttons - 1;
+  options.joy_button [0] [6] = get_config_int("Misc", "joy1_button_7", 6);
+  if (options.joy_button [0] [6] > joy[0].num_buttons)
+   options.joy_button [0] [6] = joy[0].num_buttons - 1;
 
-  options.joy_button [1] [0] = get_config_int("Misc", "joy2_button_1", 0);
-  if (options.joy_button [1] [0] > joy[0].num_buttons)
-   options.joy_button [1] [0] = joy[0].num_buttons - 1;
-  options.joy_button [1] [1] = get_config_int("Misc", "joy2_button_2", 1);
-  if (options.joy_button [1] [1] > joy[0].num_buttons)
-   options.joy_button [1] [1] = joy[0].num_buttons - 1;
-  options.joy_button [1] [2] = get_config_int("Misc", "joy2_button_3", 2);
-  if (options.joy_button [1] [2] > joy[0].num_buttons)
-   options.joy_button [1] [2] = joy[0].num_buttons - 1;
-  options.joy_button [1] [3] = get_config_int("Misc", "joy2_button_4", 4);
-  if (options.joy_button [1] [3] > joy[0].num_buttons)
-   options.joy_button [1] [3] = joy[0].num_buttons - 1;
-  options.joy_button [1] [4] = get_config_int("Misc", "joy2_button_5", 5);
-  if (options.joy_button [1] [4] > joy[0].num_buttons)
-   options.joy_button [1] [4] = joy[0].num_buttons - 1;
-  options.joy_button [1] [5] = get_config_int("Misc", "joy2_button_6", 6);
-  if (options.joy_button [1] [5] > joy[0].num_buttons)
-   options.joy_button [1] [5] = joy[0].num_buttons - 1;
+  options.joy_stick [0] [0] = get_config_int("Misc", "joy1_stick_1", 0);
+  if (options.joy_stick [0] [0] > joy[0].num_sticks)
+   options.joy_stick [0] [0] = -1;
+  options.joy_stick [0] [1] = get_config_int("Misc", "joy1_stick_2", 0);
+  if (options.joy_stick [0] [1] > joy[0].num_sticks)
+   options.joy_stick [0] [1] = -1;
+  options.joy_stick [0] [2] = get_config_int("Misc", "joy1_stick_3", 1);
+  if (options.joy_stick [0] [2] > joy[0].num_sticks)
+   options.joy_stick [0] [2] = -1;
+
+  options.joy_axis [0] [0] = get_config_int("Misc", "joy1_axis_1", 1);
+  if (options.joy_stick [0] [0] == -1
+   || options.joy_axis [0] [0] > joy[0].stick[options.joy_stick [0] [0]].num_axis)
+   options.joy_axis [0] [0] = -1;
+  options.joy_axis [0] [1] = get_config_int("Misc", "joy1_axis_2", 0);
+  if (options.joy_stick [0] [1] == -1
+   || options.joy_axis [0] [1] > joy[0].stick[options.joy_stick [0] [1]].num_axis)
+   options.joy_axis [0] [1] = -1;
+  options.joy_axis [0] [2] = get_config_int("Misc", "joy1_axis_3", 0);
+  if (options.joy_stick [0] [2] == -1
+   || options.joy_axis [0] [2] > joy[0].stick[options.joy_stick [0] [2]].num_axis)
+   options.joy_axis [0] [2] = -1;
  }
+
+ if (options.joystick_available [1]) // set in init_joystick
+ {
+  options.joy_button [1] [0] = get_config_int("Misc", "joy2_button_1", 0);
+  if (options.joy_button [1] [0] > joy[1].num_buttons)
+   options.joy_button [1] [0] = joy[1].num_buttons - 1;
+  options.joy_button [1] [1] = get_config_int("Misc", "joy2_button_2", 1);
+  if (options.joy_button [1] [1] > joy[1].num_buttons)
+   options.joy_button [1] [1] = joy[1].num_buttons - 1;
+  options.joy_button [1] [2] = get_config_int("Misc", "joy2_button_3", 2);
+  if (options.joy_button [1] [2] > joy[1].num_buttons)
+   options.joy_button [1] [2] = joy[1].num_buttons - 1;
+  options.joy_button [1] [3] = get_config_int("Misc", "joy2_button_4", 3);
+  if (options.joy_button [1] [3] > joy[1].num_buttons)
+   options.joy_button [1] [3] = joy[1].num_buttons - 1;
+  options.joy_button [1] [4] = get_config_int("Misc", "joy2_button_5", 4);
+  if (options.joy_button [1] [4] > joy[1].num_buttons)
+   options.joy_button [1] [4] = joy[1].num_buttons - 1;
+  options.joy_button [1] [5] = get_config_int("Misc", "joy2_button_6", 5);
+  if (options.joy_button [1] [5] > joy[1].num_buttons)
+   options.joy_button [1] [5] = joy[1].num_buttons - 1;
+  options.joy_button [1] [6] = get_config_int("Misc", "joy2_button_7", 6);
+  if (options.joy_button [1] [6] > joy[1].num_buttons)
+   options.joy_button [1] [6] = joy[1].num_buttons - 1;
+
+
+  options.joy_stick [1] [0] = get_config_int("Misc", "joy2_stick_1", 0);
+  if (options.joy_stick [1] [0] > joy[1].num_sticks)
+   options.joy_stick [1] [0] = -1;
+  options.joy_stick [1] [1] = get_config_int("Misc", "joy2_stick_2", 0);
+  if (options.joy_stick [1] [1] > joy[1].num_sticks)
+   options.joy_stick [1] [1] = -1;
+  options.joy_stick [1] [2] = get_config_int("Misc", "joy2_stick_3", 1);
+  if (options.joy_stick [1] [2] > joy[1].num_sticks)
+   options.joy_stick [1] [2] = -1;
+
+  options.joy_axis [1] [0] = get_config_int("Misc", "joy2_axis_1", 0);
+  if (options.joy_stick [1] [0] == -1
+   || options.joy_axis [1] [0] > joy[0].stick[options.joy_stick [1] [0]].num_axis)
+   options.joy_axis [1] [0] = -1;
+  options.joy_axis [1] [1] = get_config_int("Misc", "joy2_axis_2", 1);
+  if (options.joy_stick [1] [1] == -1
+   || options.joy_axis [1] [1] > joy[0].stick[options.joy_stick [1] [1]].num_axis)
+   options.joy_axis [1] [1] = -1;
+  options.joy_axis [1] [2] = get_config_int("Misc", "joy2_axis_3", 0);
+  if (options.joy_stick [1] [2] == -1
+   || options.joy_axis [1] [2] > joy[0].stick[options.joy_stick [1] [2]].num_axis)
+   options.joy_axis [1] [2] = -1;
+  }
+// }
 
  ticked = 0;
 
  arena.players = 1;
-// NOTE: it's assumed in a few places that if there's just one player, it's player[0].
 
-
+ init_logfile(); // in debug.c
+/*
+ log_num(100);
+ log_str("Hello!", 1);
+ log_num(200);
+ log_num(50);
+ log_num(1);*/
 }
 
 

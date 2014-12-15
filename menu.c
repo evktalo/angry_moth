@@ -12,6 +12,7 @@
 #include "briefing.h"
 #include "display.h"
 #include "sound.h"
+#include "savefile.h"
 
 #include "stuff.h"
 
@@ -59,6 +60,8 @@ void congrat_wait(int waiting);
 
 void scancode_to_keyname(int scanc, char sstr [30]);
 
+void menu_soundwf(int wv, int f);
+
 extern volatile unsigned char ticked;
 
 extern BITMAP *display [3];
@@ -66,6 +69,7 @@ extern BITMAP *display [3];
 int menu_select;
 int key_wait;
 int thing;
+//int esc_wait; // prevents escape key being registered on two successive menus
 
 int menu_counter;
 int counter2;
@@ -102,12 +106,16 @@ void draw_choose_screen(void);
 void draw_choose_hello(int hello);
 int choose_menu(void);
 
+void draw_jbox(int x, int y, int js);
+
+int load_game_menu(void);
+
 //extern RLE_SPRITE *RLE_player [PLAYER_RLES];
 
 enum
 {
+MENU_LOAD,
 MENU_START,
-MENU_STAGE,
 MENU_PLAYERS,
 MENU_P1_CONTROL,
 MENU_P2_CONTROL,
@@ -126,7 +134,7 @@ OPT_MUSIC_VOLUME,
 OPT_MODE,
 OPT_VSYNC,
 OPT_CAMERA,
-OPT_STICK,
+//OPT_STICK,
 OPT_EXIT
 };
 
@@ -180,9 +188,10 @@ void startup_menu(void)
  reset_menu_palette();
 
 
- menu_select = 0;
+ menu_select = MENU_START;
  key_wait = 30;
- arena.stage = 1;
+// esc_wait = 0;
+// arena.stage = 3;
 
 // int counter;
 
@@ -215,8 +224,8 @@ void startup_menu(void)
  while (TRUE)
  {
 
- if (key [KEY_ESC])
-  exit(0);
+ if (key_wait == 0 && key [KEY_ESC])
+   exit(0);
 
 #ifdef TEST_MUSIC
 run_beat();
@@ -285,10 +294,12 @@ run_beat();
   END_TRANS
  }
 
- textprintf_ex(display[0], small_font, 400, my - 30, MENU_TEXT, -1, "start game");
- textprintf_ex(display[0], small_font, 400, my, MENU_TEXT, -1, "stage");
+// textprintf_ex(display[0], small_font, 400, my - 30, MENU_TEXT, -1, "start game");
+ textprintf_ex(display[0], small_font, 400, my - 30, MENU_TEXT, -1, "load game");
+ textprintf_ex(display[0], small_font, 400, my, MENU_TEXT, -1, "start new game");
+/* textprintf_ex(display[0], small_font, 400, my, MENU_TEXT, -1, "stage");
  textprintf_ex(display[0], small_font, 530, my, MENU_TEXT, -1, "%i", arena.stage);
- textprintf_ex(display[0], small_font, 520, my, MENU_TEXT, -1, "<     >");
+ textprintf_ex(display[0], small_font, 520, my, MENU_TEXT, -1, "<     >");*/
  textprintf_ex(display[0], small_font, 400, my + 30, MENU_TEXT, -1, "players");
  textprintf_ex(display[0], small_font, 530, my + 30, MENU_TEXT, -1, "%i", arena.players);
  textprintf_ex(display[0], small_font, 520, my + 30, MENU_TEXT, -1, "<     >");
@@ -380,7 +391,7 @@ run_beat();
    if (menu_select < 0)
     menu_select = MENU_EXIT;
    key_wait = 7;
-   play_basicwfv(WAV_SELECT0, FREQ_SELECT, VOL_SELECT);
+   menu_soundwf(WAV_SELECT0, FREQ_SELECT);
 
   }
   if (menu_command(MC_DOWN))
@@ -389,27 +400,19 @@ run_beat();
    if (menu_select > MENU_EXIT)
     menu_select = 0;
    key_wait = 7;
-   play_basicwfv(WAV_SELECT0, FREQ_SELECT, VOL_SELECT);
+   menu_soundwf(WAV_SELECT0, FREQ_SELECT);
   }
   if (menu_command(MC_LEFT))
   {
 //   if (menu_select == 2)
 //    arena.starting_level = 1;
-   if (menu_select == MENU_STAGE)
-   {
-    if (arena.stage == 1)
-     arena.stage = 2;
-      else
-       arena.stage = 1;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
-   }
    if (menu_select == MENU_PLAYERS)
    {
     if (arena.players == 1)
      arena.players = 2;
       else
        arena.players = 1;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
    }
    if (menu_select == MENU_P1_CONTROL
     || menu_select == MENU_P2_CONTROL)
@@ -429,7 +432,7 @@ run_beat();
       && !options.joystick_available [0])
        PP.control = CONTROL_KEY_B;
     } //while (player[p].control == player[p^1].control);
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
    }
    key_wait = 7;
   }
@@ -437,21 +440,13 @@ run_beat();
   {
 //   if (menu_select == 2)
 //    arena.starting_level = 2;
-   if (menu_select == MENU_STAGE)
-   {
-    if (arena.stage == 1)
-     arena.stage = 2;
-      else
-       arena.stage = 1;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
-   }
    if (menu_select == MENU_PLAYERS)
    {
     if (arena.players == 1)
      arena.players = 2;
       else
        arena.players = 1;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
    }
    if (menu_select == MENU_P1_CONTROL
     || menu_select == MENU_P2_CONTROL)
@@ -473,7 +468,7 @@ run_beat();
     }// while (player[p].control == player[p^1].control);
    }
    key_wait = 7;
-   play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+   menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
   }
 
 //  if (key [KEY_ESC])
@@ -482,25 +477,17 @@ run_beat();
   {
    if (menu_select == MENU_EXIT)
    {
-    play_basicwfv(WAV_SELECT1, FREQ_SELECT1, VOL_SELECT1);
+    menu_soundwf(WAV_SELECT1, FREQ_SELECT1);
     exit(0);
    }
 
-   if (menu_select == MENU_STAGE)
-   {
-    if (arena.stage == 1)
-     arena.stage = 2;
-      else
-       arena.stage = 1;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
-   }
    if (menu_select == MENU_PLAYERS)
    {
     if (arena.players == 1)
      arena.players = 2;
       else
        arena.players = 1;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
    }
    if (menu_select == MENU_P1_CONTROL
     || menu_select == MENU_P2_CONTROL)
@@ -520,7 +507,8 @@ run_beat();
       && !options.joystick_available [1])
        PP.control = CONTROL_KEY_A;
     } //while (player[p].control == player[p^1].control);
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
+    key_wait = 7;
    }
 
    if (menu_select == MENU_KEYS)
@@ -528,13 +516,13 @@ run_beat();
     key_wait = 10;
     define_keys();
     key_wait = 10;
-    play_basicwfv(WAV_SELECT1, FREQ_SELECT1, VOL_SELECT1);
+    menu_soundwf(WAV_SELECT1, FREQ_SELECT1);
    }
 
    if (menu_select == MENU_OPTIONS)
    {
     key_wait = 10;
-    play_basicwfv(WAV_SELECT1, FREQ_SELECT1, VOL_SELECT1);
+    menu_soundwf(WAV_SELECT1, FREQ_SELECT1);
     set_options();
     key_wait = 10;
    }
@@ -548,42 +536,29 @@ run_beat();
 
    if (menu_select == MENU_START)
    {
-//    arena.level = 1;//arena.starting_level;
     ticked = 0;
     key_wait = 30;
-    play_basicwfv(WAV_SELECT1, FREQ_SELECT1, VOL_SELECT1);
-//    if (ship_select() == 1)
-    {
-      vsync();
-      if (arena.stage == 2)
-       arena.stage = 3;
-      if (mission_briefing())
-      {
-       vsync();
-       clear_bitmap(screen);
-       game_loop();
-       if (arena.stage == 3)
-        arena.stage = 2;
-      }
-       else
-       {
-//        vsync();
-//        clear_bitmap(screen);
-        if (arena.stage == 3)
-         arena.stage = 2;
-       }
+    menu_soundwf(WAV_SELECT1, FREQ_SELECT1);
+    arena.stage = 4;
 
-//      if (arena.level == 4)
-//       congratulations();
-      init_menu_background();
-      key_wait = 100;
-      ticked = 0;
-     }
-//    }
-//     else key_wait = 20;
+    start_new_game(); // in game.c - calls run_game
+
+    init_menu_background();
+    key_wait = 100;
+    ticked = 0;
    }
-    else
-     key_wait = 20;
+
+   if (menu_select == MENU_LOAD)
+   {
+    ticked = 0;
+    key_wait = 30;
+    menu_soundwf(WAV_SELECT1, FREQ_SELECT1);
+    load_game_menu(); // this can call run_game
+   }
+
+//    else
+//     key_wait = 20;
+
   }
  }
   else
@@ -649,7 +624,7 @@ int menu_command(int cmd)
     return 1;
    return 0;
   case MC_SELECT:
-   if (key [KEY_SPACE] || key [KEY_ENTER] || key [KEY_ENTER_PAD] || key [KEY_Z] || key [options.ckey [0] [CKEY_FIRE1]])
+   if (key [KEY_SPACE] || key [KEY_ENTER] || key [KEY_ENTER_PAD] || key [KEY_Z])// || key [options.ckey [0] [CKEY_FIRE1]])
     return 1;
    if (options.joystick_available [0] && joy[0].button[options.joy_button [0] [0]].b)
     return 1;
@@ -775,37 +750,81 @@ void define_keys(void)
  set_config_int("Misc", "key2_fire4", options.ckey [1] [CKEY_FIRE4]);
  set_config_int("Misc", "key2_command", options.ckey [1] [CKEY_COMMAND]);
 
- set_config_int("Misc", "joy1_button_1", options.joy_button [0] [0]);
- set_config_int("Misc", "joy1_button_2", options.joy_button [0] [1]);
- set_config_int("Misc", "joy1_button_3", options.joy_button [0] [2]);
- set_config_int("Misc", "joy1_button_4", options.joy_button [0] [3]);
- set_config_int("Misc", "joy1_button_5", options.joy_button [0] [4]);
- set_config_int("Misc", "joy1_button_6", options.joy_button [0] [5]);
- set_config_int("Misc", "joy1_button_7", options.joy_button [0] [6]);
+ if (options.joystick_available [0])
+ {
 
- set_config_int("Misc", "joy2_button_1", options.joy_button [1] [0]);
- set_config_int("Misc", "joy2_button_2", options.joy_button [1] [1]);
- set_config_int("Misc", "joy2_button_3", options.joy_button [1] [2]);
- set_config_int("Misc", "joy2_button_4", options.joy_button [1] [3]);
- set_config_int("Misc", "joy2_button_5", options.joy_button [1] [4]);
- set_config_int("Misc", "joy2_button_6", options.joy_button [1] [5]);
- set_config_int("Misc", "joy2_button_7", options.joy_button [1] [6]);
+  set_config_int("Misc", "joy1_button_1", options.joy_button [0] [0]);
+  set_config_int("Misc", "joy1_button_2", options.joy_button [0] [1]);
+  set_config_int("Misc", "joy1_button_3", options.joy_button [0] [2]);
+  set_config_int("Misc", "joy1_button_4", options.joy_button [0] [3]);
+  set_config_int("Misc", "joy1_button_5", options.joy_button [0] [4]);
+  set_config_int("Misc", "joy1_button_6", options.joy_button [0] [5]);
+  set_config_int("Misc", "joy1_button_7", options.joy_button [0] [6]);
 
+  set_config_int("Misc", "joy1_stick_1", options.joy_stick [0] [0]);
+  set_config_int("Misc", "joy1_stick_2", options.joy_stick [0] [1]);
+  set_config_int("Misc", "joy1_stick_3", options.joy_stick [0] [2]);
+  set_config_int("Misc", "joy1_axis_1", options.joy_axis [0] [0]);
+  set_config_int("Misc", "joy1_axis_2", options.joy_axis [0] [1]);
+  set_config_int("Misc", "joy1_axis_3", options.joy_axis [0] [2]);
+ }
+
+ if (options.joystick_available [0])
+ {
+  set_config_int("Misc", "joy2_button_1", options.joy_button [1] [0]);
+  set_config_int("Misc", "joy2_button_2", options.joy_button [1] [1]);
+  set_config_int("Misc", "joy2_button_3", options.joy_button [1] [2]);
+  set_config_int("Misc", "joy2_button_4", options.joy_button [1] [3]);
+  set_config_int("Misc", "joy2_button_5", options.joy_button [1] [4]);
+  set_config_int("Misc", "joy2_button_6", options.joy_button [1] [5]);
+  set_config_int("Misc", "joy2_button_7", options.joy_button [1] [6]);
+
+  set_config_int("Misc", "joy2_stick_1", options.joy_stick [1] [0]);
+  set_config_int("Misc", "joy2_stick_2", options.joy_stick [1] [1]);
+  set_config_int("Misc", "joy2_stick_3", options.joy_stick [1] [2]);
+  set_config_int("Misc", "joy2_axis_1", options.joy_axis [1] [0]);
+  set_config_int("Misc", "joy2_axis_2", options.joy_axis [1] [1]);
+  set_config_int("Misc", "joy2_axis_3", options.joy_axis [1] [2]);
+ }
 
 }
 
 #define CONTROL_X -40
 #define CONTROL_Y 50
-#define CONTROL_ROW 30
+#define CONTROL_ROW 17
 #define CONTROL_COL 180
+
+
+enum
+{
+MJBUTTON_FIRE1,
+MJBUTTON_FIRE2,
+MJBUTTON_FIRE3,
+MJBUTTON_FIRE4,
+MJBUTTON_LEFT2,
+MJBUTTON_RIGHT2,
+MJBUTTON_COMMAND,
+MJSTICK_1,
+MJAXIS_1,
+MJSTICK_2,
+MJAXIS_2,
+MJSTICK_3,
+MJAXIS_3,
+MJBUTTONS
+// any additions to this list need to be added manually
+//  to the get_config_int and set_config_int bits in main and menu.
+};
+
+#define BOX_UP 1
+#define BOX_DOWN 14
 
 void show_controls_display(void)
 {
  int i, j, x, y, col;
  char sstr [30];
 
- rectfill(display[0], 10, CONTROL_Y, 790, 600 - CONTROL_Y, COL_BOX1);
- rect(display[0], 10, CONTROL_Y, 790, 600 - CONTROL_Y, COL_BOX2);
+ rectfill(display[0], 10, CONTROL_Y, 790, 550, COL_BOX1);
+ rect(display[0], 10, CONTROL_Y, 790, 550, COL_BOX2);
 
  textprintf_centre_ex(display[0], small_font, 400, CONTROL_Y + 20, MENU_TEXT, -1, "set controls");
  textprintf_centre_ex(display[0], small_font, CONTROL_X + CONTROL_COL, CONTROL_Y + 50, COL_BOX4, -1, "keyboard A");
@@ -827,13 +846,13 @@ void show_controls_display(void)
     col = COL_BOX2;
     if (cselect_selecting)
      col = COL_EBOX2;
-    rectfill(display[0], x - 90, y - 5, x + 70, y + 20, col);
+    rectfill(display[0], x - 90, y - BOX_UP, x + 70, y + BOX_DOWN, col);
    }
     else
     {
      col = COL_EBOX1;
      if (check_duplicate_key(i, j))
-      rectfill(display[0], x - 90, y - 5, x + 70, y + 20, col);
+      rectfill(display[0], x - 90, y - BOX_UP, x + 70, y + BOX_DOWN, col);
     }
 
    switch(j)
@@ -907,7 +926,7 @@ void show_controls_display(void)
       continue;
   }
 
-  for (j = 0; j < JBUTTONS; j ++)
+  for (j = 0; j < MJBUTTONS; j ++)
   {
 
    x = CONTROL_X + CONTROL_COL*(i+1);
@@ -919,40 +938,65 @@ void show_controls_display(void)
     col = COL_BOX2;
     if (cselect_selecting)
      col = COL_EBOX2;
-    rectfill(display[0], x - 90, y - 5, x + 70, y + 20, col);
+    rectfill(display[0], x - 90, y - BOX_UP, x + 70, y + BOX_DOWN, col);
    }
     else
     {
      col = COL_EBOX1;
      if (check_duplicate_button(i, j))
-      rectfill(display[0], x - 90, y - 5, x + 70, y + 20, col);
+      rectfill(display[0], x - 90, y - BOX_UP, x + 70, y + BOX_DOWN, col);
     }
 
    switch(j)
    {
-    case JBUTTON_LEFT2:
+    case MJBUTTON_LEFT2:
       textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
        "slide left -"); break;
-    case JBUTTON_RIGHT2:
+    case MJBUTTON_RIGHT2:
       textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
        "slide right -"); break;
-    case JBUTTON_FIRE1:
+    case MJBUTTON_FIRE1:
       textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
        "cannon -"); break;
-    case JBUTTON_FIRE2:
+    case MJBUTTON_FIRE2:
       textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
        "weapon 1 -"); break;
-    case JBUTTON_FIRE3:
+    case MJBUTTON_FIRE3:
       textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
        "weapon 2 -"); break;
-    case JBUTTON_FIRE4:
+    case MJBUTTON_FIRE4:
       textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
        "target -"); break;
-    case JBUTTON_COMMAND:
+    case MJBUTTON_COMMAND:
       textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
        "command -"); break;
+    case MJSTICK_1:
+      y += 2;
+      textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
+       "Accel stick -"); break;
+    case MJAXIS_1:
+      textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
+       "Accel axis -"); break;
+    case MJSTICK_2:
+      y += 2;
+      textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
+       "Turn stick -"); break;
+    case MJAXIS_2:
+      textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
+       "Turn axis -"); break;
+    case MJSTICK_3:
+      y += 2;
+      textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
+       "Slide stick -"); break;
+    case MJAXIS_3:
+      textprintf_right_ex(display[0], small_font, x, y, COL_BOX3, -1,
+       "Slide axis -"); break;
    }
 
+   int s = -1;
+
+  if (j < MJSTICK_1)
+  {
    if (cselect_selecting
     && cselect_col == i
     && cselect_row == j)
@@ -961,13 +1005,59 @@ void show_controls_display(void)
      textprintf_ex(display[0], small_font, x + 2, y, COL_BOX3, -1, "press button");
    }
     else
-     textprintf_ex(display[0], small_font, x + 2, y, COL_BOX4, -1, "%i", options.joy_button [i - 2] [j] + 1);
-
-
+    {
+      textprintf_ex(display[0], small_font, x + 2, y, COL_BOX4, -1, "%i", options.joy_button [i - 2] [j] + 1);
+    }
   }
 
-  y += 50;
+#define XSPACE1 2
 
+     if (j >= MJSTICK_1)
+       {
+        if (cselect_selecting
+         && cselect_col == i
+         && cselect_row == j)
+          textprintf_ex(display[0], small_font, x + 5, y, COL_WHITE, -1, "<                  >");
+
+        switch(j)
+        {
+         case MJSTICK_1: s = 0;
+         case MJSTICK_2: if (s == -1) s = 1;
+         case MJSTICK_3: if (s == -1) s = 2;
+         if (options.joy_stick [i - 2] [s] == -1)
+          textprintf_ex(display[0], small_font, x + XSPACE1, y, COL_EBOX4, -1, "not used");
+           else
+            textprintf_ex(display[0], small_font, x + XSPACE1, y, COL_BOX4, -1, "%i", options.joy_stick [i - 2] [s] + 1); break;
+         case MJAXIS_1: s = 0;
+         case MJAXIS_2: if (s == -1) s = 1;
+         case MJAXIS_3: if (s == -1) s = 2;
+         if (options.joy_stick [i - 2] [s] == -1)
+         {
+          textprintf_ex(display[0], small_font, x + XSPACE1, y, COL_EBOX4, -1, "not used");
+          break;
+         }
+          switch(options.joy_axis [i - 2] [s])
+          {
+           case -1: textprintf_ex(display[0], small_font, x + XSPACE1, y, COL_EBOX4, -1, "not used"); break;
+           case 0: textprintf_ex(display[0], small_font, x + XSPACE1, y, COL_BOX4, -1, "X axis"); break;
+           case 1: textprintf_ex(display[0], small_font, x + XSPACE1, y, COL_BOX4, -1, "Y axis"); break;
+           case 2: textprintf_ex(display[0], small_font, x + XSPACE1, y, COL_BOX4, -1, "Z axis"); break;
+           default: textprintf_ex(display[0], small_font, x + XSPACE1, y, COL_EBOX4, -1, "unknown"); break;
+          }
+          break;
+
+        }
+       }
+    }
+
+//  }
+
+  y += 20;
+
+//  if (cselect_col == i)
+   draw_jbox(x - 40, y, i-2);
+
+/*
   if (joy[i-2].num_sticks > 1 && options.joystick_dual)
   {
       textprintf_centre_ex(display[0], small_font, x, y, COL_EBOX2, -1,
@@ -986,18 +1076,18 @@ void show_controls_display(void)
        "(although probably not)");
 
   }
-
+*/
  }
 
 
-   y = CONTROL_Y + 140 + CKEY_END*CONTROL_ROW;
+   y = CONTROL_Y + 280 + CKEY_END*CONTROL_ROW;
 
    if (cselect_row == cselect_final_row())
    {
     col = COL_F3 + TRANS_BLUE2;
     if (cselect_selecting)
      col = COL_F4 + TRANS_RED4;
-    rectfill(display[0], 120, y - 5, 680, y + 20, col);
+    rectfill(display[0], 120, y - BOX_UP, 680, y + BOX_DOWN, col);
    }
 
       textprintf_centre_ex(display[0], small_font, 400, y, MENU_TEXT, -1, "exit");
@@ -1009,6 +1099,62 @@ void show_controls_display(void)
  blit(display[0], screen, 0, 0, 0, 0, 800, 600);
 
 }
+
+void draw_jbox(int x, int y, int js)
+{
+
+ int x2 = x + 5;
+// char axis_name [15] = "Error";
+
+ rectfill(display[0], x-15, y, x + 150, y + 140, COL_BOX2);
+ rect(display[0], x-15, y, x + 150, y + 140, COL_BOX4);
+
+ int y2 = y + 10;
+ int i, j;
+
+ textprintf_ex(display[0], small_font, x2 + 20, y2, COL_BOX0, -1, "Controller %i", js + 1);
+ y2 += 12;
+ for (i = 0; i < joy[js].num_sticks; i ++)
+ {
+  y2 += 5;
+  textprintf_ex(display[0], small_font, x2, y2, COL_BOX4, -1, "Stick %i", i + 1);
+  y2 += 12;
+  for (j = 0; j < joy[js].stick[i].num_axis; j ++)
+  {
+   switch(j)
+   {
+    case 0: textprintf_ex(display[0], small_font, x2 + 20, y2, COL_BOX4, -1, "X-axis: %i", joy[js].stick[i].axis[j].pos); break;
+    case 1: textprintf_ex(display[0], small_font, x2 + 20, y2, COL_BOX4, -1, "Y-axis: %i", joy[js].stick[i].axis[j].pos); break;
+    case 2: textprintf_ex(display[0], small_font, x2 + 20, y2, COL_BOX4, -1, "Z-axis: %i", joy[js].stick[i].axis[j].pos); break;
+    default: textprintf_ex(display[0], small_font, x2 + 20, y2, COL_BOX4, -1, "?-axis: %i", joy[js].stick[i].axis[j].pos); break;
+   }
+   y2 += 12;
+  }
+ }
+
+/* y2 += 5;
+ int pressed = 0;
+
+ textprintf_ex(display[0], small_font, x2, y2, COL_BOX4, -1, "Buttons:");
+
+ x2 += text_length(small_font, "Buttons:    ");
+
+ for (i = 0; i < joy[js].num_buttons; i ++)
+ {
+     if (joy[js].button [i].b)
+     {
+       textprintf_ex(display[0], small_font, x2, y2, COL_BOX4, -1, "%i", i);
+       x2 += 10;
+       pressed ++;
+     }
+  if (pressed > 6)
+   break;
+ }
+
+*/
+
+}
+
 
 char check_duplicate_key(int i, int j)
 {
@@ -1031,6 +1177,38 @@ char check_duplicate_key(int i, int j)
 char check_duplicate_button(int i, int j)
 {
  int k;
+
+ switch(j)
+ {
+  case MJSTICK_1:
+  case MJAXIS_1:
+   if (options.joy_stick [i - CONTROL_JOY_A] [0] != -1
+    && ((options.joy_stick [i - CONTROL_JOY_A] [0] == options.joy_stick [i - CONTROL_JOY_A] [1]
+        && options.joy_axis [i - CONTROL_JOY_A] [0] == options.joy_axis [i - CONTROL_JOY_A] [1])
+    || (options.joy_stick [i - CONTROL_JOY_A] [0] == options.joy_stick [i - CONTROL_JOY_A] [2]
+        && options.joy_axis [i - CONTROL_JOY_A] [0] == options.joy_axis [i - CONTROL_JOY_A] [2])))
+         return 1;
+    return 0;
+  case MJSTICK_2:
+  case MJAXIS_2:
+   if (options.joy_stick [i - CONTROL_JOY_A] [1] != -1
+    && ((options.joy_stick [i - CONTROL_JOY_A] [1] == options.joy_stick [i - CONTROL_JOY_A] [0]
+        && options.joy_axis [i - CONTROL_JOY_A] [1] == options.joy_axis [i - CONTROL_JOY_A] [0])
+    || (options.joy_stick [i - CONTROL_JOY_A] [1] == options.joy_stick [i - CONTROL_JOY_A] [2]
+        && options.joy_axis [i - CONTROL_JOY_A] [1] == options.joy_axis [i - CONTROL_JOY_A] [2])))
+         return 1;
+    return 0;
+  case MJSTICK_3:
+  case MJAXIS_3:
+   if (options.joy_stick [i - CONTROL_JOY_A] [2] != -1
+    && ((options.joy_stick [i - CONTROL_JOY_A] [2] == options.joy_stick [i - CONTROL_JOY_A] [0]
+        && options.joy_axis [i - CONTROL_JOY_A] [2] == options.joy_axis [i - CONTROL_JOY_A] [0])
+    || (options.joy_stick [i - CONTROL_JOY_A] [2] == options.joy_stick [i - CONTROL_JOY_A] [1]
+        && options.joy_axis [i - CONTROL_JOY_A] [2] == options.joy_axis [i - CONTROL_JOY_A] [1])))
+         return 1;
+    return 0;
+
+ }
 
  for (k = 0; k < JBUTTONS; k ++)
  {
@@ -1073,6 +1251,7 @@ int run_controls_setting(void)
    if (inputted == KEY_ESC)
    {
     key_wait = 30;
+//    esc_wait = 1;
     cselect_selecting = 0;
     return 0;
    }
@@ -1091,16 +1270,82 @@ int run_controls_setting(void)
    js = 0;
    if (cselect_col == CONTROL_JOY_B)
     js = 1;
-   for (i = 0; i < joy[js].num_buttons; i ++)
+   if (cselect_row < MJSTICK_1)
    {
-    if (joy[js].button [i].b)
+    for (i = 0; i < joy[js].num_buttons; i ++)
     {
-     options.joy_button [js] [cselect_row] = i;
-     key_wait = 50;
-     cselect_selecting = 0;
-     return 0;
+     if (joy[js].button [i].b)
+     {
+      options.joy_button [js] [cselect_row] = i;
+      key_wait = 50;
+      cselect_selecting = 0;
+      return 0;
+     }
     }
    }
+    else
+    {
+     int sa = -1;
+     switch(cselect_row)
+     {
+      case MJSTICK_1: sa = 0;
+      case MJSTICK_2: if (sa == -1) sa = 1;
+      case MJSTICK_3: if (sa == -1) sa = 2;
+       if (menu_command(MC_SELECT))
+       {
+        cselect_selecting = 0;
+        key_wait = 50;
+        return 0;
+       }
+       if (menu_command(MC_LEFT))
+       {
+        options.joy_stick [js] [sa] --;
+        if (options.joy_stick [js] [sa] < -1)
+         options.joy_stick [js] [sa] = joy[js].num_sticks - 1;
+        key_wait = 30;
+        return 0;
+       }
+       if (menu_command(MC_RIGHT))
+       {
+        options.joy_stick [js] [sa] ++;
+        if (options.joy_stick [js] [sa] >= joy[js].num_sticks)
+         options.joy_stick [js] [sa] = -1;
+        key_wait = 30;
+        return 0;
+       }
+       break;
+      case MJAXIS_1: sa = 0;
+      case MJAXIS_2: if (sa == -1) sa = 1;
+      case MJAXIS_3: if (sa == -1) sa = 2;
+       if (menu_command(MC_SELECT))
+       {
+        cselect_selecting = 0;
+        key_wait = 50;
+        return 0;
+       }
+       if (options.joy_stick [js] [sa] == -1)
+        break;
+       if (menu_command(MC_LEFT))
+       {
+        options.joy_axis [js] [sa] --;
+        if (options.joy_axis [js] [sa] < 0)
+         options.joy_axis [js] [sa] = joy[js].stick[options.joy_stick [js] [sa]].num_axis - 1;
+        key_wait = 30;
+        return 0;
+       }
+       if (menu_command(MC_RIGHT))
+       {
+        options.joy_axis [js] [sa] ++;
+        if (options.joy_axis [js] [sa] >= joy[js].stick[options.joy_stick [js] [sa]].num_axis)
+         options.joy_axis [js] [sa] = 0;
+        key_wait = 30;
+        return 0;
+       }
+       break;
+     }
+
+
+    }
    if (key [KEY_ESC])
    {
     key_wait = 30;
@@ -1118,7 +1363,7 @@ int run_controls_setting(void)
    if (cselect_row < 0)
     cselect_row = cselect_final_row();
    key_wait = 7;
-   play_basicwfv(WAV_SELECT0, FREQ_SELECT, VOL_SELECT);
+   menu_soundwf(WAV_SELECT0, FREQ_SELECT);
   }
   if (menu_command(MC_DOWN))
   {
@@ -1126,7 +1371,7 @@ int run_controls_setting(void)
    if (cselect_row > cselect_final_row())
     cselect_row = 0;
    key_wait = 7;
-   play_basicwfv(WAV_SELECT0, FREQ_SELECT, VOL_SELECT);
+   menu_soundwf(WAV_SELECT0, FREQ_SELECT);
   }
   if (menu_command(MC_LEFT)
    && cselect_row != cselect_final_row())
@@ -1145,7 +1390,7 @@ int run_controls_setting(void)
    if (cselect_row > cselect_final_row())
     cselect_row = cselect_final_row() - 1;
    key_wait = 7;
-   play_basicwfv(WAV_SELECT0, FREQ_SELECT, VOL_SELECT);
+   menu_soundwf(WAV_SELECT0, FREQ_SELECT);
   }
   if (menu_command(MC_RIGHT)
    && cselect_row != cselect_final_row())
@@ -1160,7 +1405,7 @@ int run_controls_setting(void)
    if (cselect_row > cselect_final_row())
     cselect_row = cselect_final_row() - 1;
    key_wait = 7;
-   play_basicwfv(WAV_SELECT0, FREQ_SELECT, VOL_SELECT);
+   menu_soundwf(WAV_SELECT0, FREQ_SELECT);
   }
   if (menu_command(MC_SELECT))
   {
@@ -1187,7 +1432,7 @@ int cselect_final_row(void)
   || cselect_col == CONTROL_KEY_B)
    return CKEY_END;
 
- return JBUTTONS;
+ return MJBUTTONS;
 
 }
 
@@ -1311,12 +1556,12 @@ void set_options(void)
   textprintf_ex(display[0], small_font, CENTRE_X, y, MENU_TEXT, -1, "camera angle - follow");
    else
     textprintf_ex(display[0], small_font, CENTRE_X, y, MENU_TEXT, -1, "camera angle - fixed");
- y += 20;
+/* y += 20;
 
  if (options.joystick_dual == 0)
   textprintf_ex(display[0], small_font, CENTRE_X, y, MENU_TEXT, -1, "detect dual sticks - off");
    else
-    textprintf_ex(display[0], small_font, CENTRE_X, y, MENU_TEXT, -1, "detect dual sticks - on");
+    textprintf_ex(display[0], small_font, CENTRE_X, y, MENU_TEXT, -1, "detect dual sticks - on");*/
  y += 20;
 
 /*
@@ -1372,7 +1617,7 @@ void set_options(void)
 //   if (option_select == OPT_JOY4 && options.joystick == 0)
 //    option_select = OPT_VSYNC;
    key_wait = 7;
-   play_basicwfv(WAV_SELECT0, FREQ_SELECT, VOL_SELECT);
+   menu_soundwf(WAV_SELECT0, FREQ_SELECT);
   }
   if (menu_command(MC_DOWN))
   {
@@ -1382,7 +1627,7 @@ void set_options(void)
 //   if (option_select == OPT_JOY1 && options.joystick == 0)
 //    option_select = OPT_EXIT;
    key_wait = 7;
-   play_basicwfv(WAV_SELECT0, FREQ_SELECT, VOL_SELECT);
+   menu_soundwf(WAV_SELECT0, FREQ_SELECT);
   }
 
   if (menu_command(MC_LEFT))
@@ -1392,14 +1637,14 @@ void set_options(void)
     options.sfx_volume -= 10;
     if (options.sfx_volume < 0)
      options.sfx_volume = 0;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
    }
    if (option_select == OPT_MUSIC_VOLUME)
    {
     options.ambience_volume -= 10;
     if (options.ambience_volume < 0)
      options.ambience_volume = 0;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
    }
 /*
    if (option_select == OPT_JOY1)
@@ -1458,14 +1703,14 @@ void set_options(void)
     options.sfx_volume += 10;
     if (options.sfx_volume > 100)
      options.sfx_volume = 100;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
    }
    if (option_select == OPT_MUSIC_VOLUME)
    {
     options.ambience_volume += 10;
     if (options.ambience_volume > 100)
      options.ambience_volume = 100;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
    }
 /*
    if (option_select == OPT_JOY1)
@@ -1524,7 +1769,7 @@ void set_options(void)
   {
    if (option_select == OPT_EXIT)
    {
-    play_basicwfv(WAV_SELECT1, FREQ_SELECT1, VOL_SELECT1);
+    menu_soundwf(WAV_SELECT1, FREQ_SELECT1);
     break;
    }
   }
@@ -1535,26 +1780,26 @@ void set_options(void)
    {
     options.windowed ^= 1;
     key_wait = 7;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
    }
    if (option_select == OPT_VSYNC)
    {
     options.run_vsync ^= 1;
     key_wait = 7;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
    }
    if (option_select == OPT_CAMERA)
    {
     options.fix_camera_angle ^= 1;
     key_wait = 7;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
    }
-   if (option_select == OPT_STICK)
+/*   if (option_select == OPT_STICK)
    {
     options.joystick_dual ^= 1;
     key_wait = 7;
-    play_basicwfv(WAV_SELECT0, FREQ_SELECT1, VOL_SELECT);
-   }
+    menu_soundwf(WAV_SELECT0, FREQ_SELECT1);
+   }*/
   }
 
 
@@ -1606,12 +1851,22 @@ void set_options(void)
  set_config_int("Misc", "vsync", options.run_vsync);
  set_config_int("Misc", "Windowed", options.windowed);
  set_config_int("Misc", "fix_camera_angle", options.fix_camera_angle);
- set_config_int("Misc", "joystick_dual", options.joystick_dual);
+// set_config_int("Misc", "joystick_dual", options.joystick_dual);
 
 
 }
 
+void menu_soundwf(int wv, int f)
+{
 
+    int v = VOL_SELECT;
+
+    v *= options.sfx_volume;
+    v /= 100;
+
+    play_basicwfv(wv, f, v);
+
+}
 
 
 int acceptable_char(int scode)
@@ -2111,3 +2366,206 @@ void joystick_display(void)
 
 
 }
+
+enum
+{
+SAVE_GAME,
+LOAD_GAME
+};
+
+enum
+{
+SDETAIL_STAGE,
+SDETAILS
+};
+
+#define SAVE_X 200
+#define SAVE_TEXT_X (SAVE_X + 50)
+#define SAVE_Y 150
+#define SAVE_W 400
+#define SAVE_H 330
+#define SAVE_X2 (SAVE_X+SAVE_W)
+#define SAVE_Y2 (SAVE_Y+SAVE_H)
+
+int savefile_select;
+
+int save_detail [5] [SDETAILS];
+
+void savefile_display(int sl);
+
+
+int load_game_menu(void)
+{
+
+ savefile_select = 0;
+
+ do
+ {
+
+  key_wait --;
+
+  if (key [KEY_ESC])
+  {
+   key_wait = 30;
+   return 0;
+  }
+
+  if (key_wait <= 0)
+  {
+
+  if (menu_command(MC_SELECT))
+  {
+      key_wait = 7;
+      if (savefile_select == 5)
+      {
+          menu_soundwf(WAV_SELECT0, FREQ_SELECT);
+          return 0;
+      }
+      if (save_detail [savefile_select] [SDETAIL_STAGE] != -1)
+      {
+       if (load_game(savefile_select) == 0)
+        return 0;
+       ticked = 0;
+       key_wait = 30;
+       menu_soundwf(WAV_SELECT1, FREQ_SELECT1);
+
+       run_game(); // in game.c
+// the other way run_game can be called is when MENU_START is selected
+
+       init_menu_background();
+       key_wait = 100;
+       ticked = 0;
+       return 1;
+      }
+  }
+  if (menu_command(MC_UP))
+  {
+   savefile_select = decr(savefile_select, 0, 5);
+   menu_soundwf(WAV_SELECT0, FREQ_SELECT);
+   key_wait = 7;
+  }
+  if (menu_command(MC_DOWN))
+  {
+   savefile_select = incr(savefile_select, 0, 5);
+   menu_soundwf(WAV_SELECT0, FREQ_SELECT);
+   key_wait = 7;
+  }
+  }
+
+  do
+  {
+      rest(1);
+  } while (ticked == 0);
+  ticked = 0;
+
+   savefile_display(LOAD_GAME);
+
+ } while(TRUE);
+
+ return 0;
+
+}
+
+// this function is used by both load and save routines
+void savefile_display(int sl)
+{
+
+
+ rectfill(display[0], SAVE_X, SAVE_Y, SAVE_X2, SAVE_Y2, COL_BOX1);
+ rect(display[0], SAVE_X, SAVE_Y, SAVE_X2, SAVE_Y2, COL_BOX3);
+
+ rectfill(display[0], SAVE_X, SAVE_Y + 10, SAVE_X2, SAVE_Y + 30, COL_BOX3);
+
+ if (sl == SAVE_GAME)
+  textprintf_centre_ex(display[0], small_font, SAVE_X + (SAVE_W/2), SAVE_Y + 14, COL_WHITE, -1, "Save Game");
+   else
+    textprintf_centre_ex(display[0], small_font, SAVE_X + (SAVE_W/2), SAVE_Y + 14, COL_WHITE, -1, "Load Game");
+
+
+ int y = SAVE_Y + 40;
+ int i;
+
+ y += 5;
+
+ for (i = 0; i < 5; i ++)
+ {
+
+  if (i == savefile_select)
+  {
+    rectfill(display[0], SAVE_X, y - 4, SAVE_X2, y +39, COL_BOX2);
+  }
+
+  textprintf_ex(display[0], small_font, SAVE_TEXT_X, y, COL_BOX3, -1, "Save file %i", i+1);
+  y += 15;
+  if (save_detail [i] [SDETAIL_STAGE] == -1)
+   textprintf_ex(display[0], small_font, SAVE_TEXT_X + 30, y, COL_BOX4, -1, "Empty");
+    else
+     textprintf_ex(display[0], small_font, SAVE_TEXT_X + 30, y, COL_BOX4, -1, "Stage %i", save_detail [i] [SDETAIL_STAGE]);
+  y += 30;
+
+
+ }
+
+ y += 15;
+
+ if (savefile_select == 5)
+  rectfill(display[0], SAVE_X, y - 3, SAVE_X2, y + 17, COL_BOX2);
+
+ textprintf_ex(display[0], small_font, SAVE_TEXT_X, y, MENU_TEXT, -1, "exit");
+
+ vsync();
+ blit(display[0], screen, 0, 0, 0, 0, 800, 600);
+
+}
+
+
+// called from main.c during startup
+void fill_sdetails(void)
+{
+
+ int i;
+ char sname [20];
+
+ for (i = 0; i < 5; i++)
+ {
+  switch(i)
+  {
+      case 0: strcpy(sname, "Save1"); break;
+      case 1: strcpy(sname, "Save2"); break;
+      case 2: strcpy(sname, "Save3"); break;
+      case 3: strcpy(sname, "Save4"); break;
+      case 4: strcpy(sname, "Save5"); break;
+  }
+
+  save_detail [i] [SDETAIL_STAGE] = get_config_int(sname, "Stage", -1);
+
+ }
+
+
+}
+
+// call this when saving a game
+void update_sdetails(int f)
+{
+
+
+ char sname [20];
+
+  switch(f)
+  {
+      case 0: strcpy(sname, "Save1"); break;
+      case 1: strcpy(sname, "Save2"); break;
+      case 2: strcpy(sname, "Save3"); break;
+      case 3: strcpy(sname, "Save4"); break;
+      case 4: strcpy(sname, "Save5"); break;
+  }
+
+  save_detail [f] [SDETAIL_STAGE] = arena.stage;
+
+  set_config_int(sname, "Stage", save_detail [f] [SDETAIL_STAGE]);
+
+
+}
+
+
+

@@ -11,9 +11,15 @@ void indicator(int sample, int t, int v, int p);
 void run_voices(void);
 void init_voices(void);
 
-void init_beats(void);
-void build_tracks(void);
-void play_tracks(void);
+//void init_beats(void);
+//void build_tracks(void);
+//void play_tracks(void);
+
+void init_music(void);
+void new_level_music(void);
+void run_music(void);
+
+void test_run_music(void);
 
 #define SPRIORITY_LOW 0
 #define SPRIORITY_HIGH 1
@@ -46,6 +52,11 @@ WAV_HEAVY,
 WAV_HIT_HULL,
 WAV_SINBLIP,
 WAV_SINBLIP2,
+
+WAV_BASS,
+WAV_SAW,
+WAV_LINE,
+WAV_WARM,
 
 BEAT_NOISEA,
 BEAT_NOISEB,

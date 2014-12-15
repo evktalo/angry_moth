@@ -126,7 +126,10 @@ void get_current_word(struct msgstruct tmsg, int m)
  } while(tmsg.text [m] != ' '
   && tmsg.text [m] != '$');
 
-  if (tmsg.text [m] == '$')
+// if (m < 0)
+//  m = 0;
+
+  if (m < 0 || tmsg.text [m] == '$')
    m ++;
 //      && bmsg [msg] [m] != ']');
 

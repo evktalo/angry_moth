@@ -23,3 +23,6 @@ char coin(void);
 
 inline int fxpart(float angle, int length);
 inline int fypart(float angle, int length);
+
+int incr(int val, int min, int max);
+int decr(int val, int min, int max);

@@ -11,6 +11,9 @@
 #include "display.h"
 #include "briefing.h"
 
+#include "sound.h"
+// sound.h is only for music test function
+
 //#define TESTING_LEVEL_CALL
 
 #ifdef TESTING_LEVEL_CALL
@@ -39,7 +42,10 @@ RLE_SPRITE *extract_flip_rle_sprite(BITMAP *source, int x_source, int y_source, 
 BITMAP *extract_flip_bitmap(BITMAP *source, int x_source, int y_source, int x, int y, int flip_type);
 void save_turret_bitmap(void);
 void read_turret_bitmap(BITMAP *bmp);
+void get_starmap(void);
 void load_progress(void);
+
+void init_wship_sprite_process(void);
 
 extern struct BMP_STRUCT wship_sprite [WSHIP_SPRITES] [WSHIP_ROTATIONS];
 extern struct BMP_STRUCT turret_sprite [TURRET_SPRITES] [TURRET_ROTATIONS];
@@ -83,6 +89,10 @@ extern int graph_slack_pos;
 extern int graph_fps [200];
 extern int graph_fps_pos;
 #endif
+
+BITMAP* wship_bmp_e;
+BITMAP* wship_bmp_f;
+BITMAP* wship_bmp_base;
 
 enum
 {
@@ -158,12 +168,27 @@ void prepare_display(void)
 level_test();
 #endif
 
+//#define TESTING_MUSIC
 
+#ifdef TESTING_MUSIC
+init_sound();
+test_run_music();
+#endif
+
+get_starmap();
 
 make_sprites();
+init_wship_sprite_process();
+
+// log_str("Record 3: ", 0);
+// log_num(damage_sprite[DSPRITE_WSHIP_OLD2_2] [0]->w);
+
+
 prepare_circles();
 
 
+// log_str("Record 4: ", 0);
+// log_num(damage_sprite[DSPRITE_WSHIP_OLD2_2] [0]->w);
 
 
 
@@ -241,6 +266,7 @@ int i,j;
 
 // the number at the end is the index for the control colour for the turret.
 // So ships with one engine probably start at 2, 2 engines 3 etc.
+/*
  calculate_wship_rotations(RP_OLD2_ENGINE_1, wship_sprite [WSHIP_SPRITE_OLD2], 1);
  calculate_wship_rotations(RP_OLD2_TURRET_1, wship_sprite [WSHIP_SPRITE_OLD2], 2);
  calculate_wship_rotations(RP_OLD2_TURRET_2, wship_sprite [WSHIP_SPRITE_OLD2], 3);
@@ -273,13 +299,23 @@ int i,j;
  calculate_wship_rotations(RP_SCOUTCAR_ENGINE_1, wship_sprite [WSHIP_SPRITE_SCOUTCAR], 1);
  calculate_wship_rotations(RP_SCOUTCAR_TURRET_1, wship_sprite [WSHIP_SPRITE_SCOUTCAR], 2);
 
+ calculate_wship_rotations(RP_FREIGHT_ENGINE_1, wship_sprite [WSHIP_SPRITE_FREIGHT], 1);
+ calculate_wship_rotations(RP_FREIGHT_ENGINE_2, wship_sprite [WSHIP_SPRITE_FREIGHT], 2);
+ calculate_wship_rotations(RP_FREIGHT_ENGINE_3, wship_sprite [WSHIP_SPRITE_FREIGHT], 3);
+ calculate_wship_rotations(RP_FREIGHT_TURRET_1, wship_sprite [WSHIP_SPRITE_FREIGHT], 4);
+
  calculate_wship_rotations(RP_EBASE_TURRET_1, wship_sprite [WSHIP_SPRITE_EBASE], 1);
  calculate_wship_rotations(RP_EBASE_TURRET_2, wship_sprite [WSHIP_SPRITE_EBASE], 2);
  calculate_wship_rotations(RP_EBASE_TURRET_3, wship_sprite [WSHIP_SPRITE_EBASE], 3);
  calculate_wship_rotations(RP_EBASE_TURRET_4, wship_sprite [WSHIP_SPRITE_EBASE], 4);
  calculate_wship_rotations(RP_EBASE_TURRET_5, wship_sprite [WSHIP_SPRITE_EBASE], 5);
-
+*/
  load_progress();
+
+
+// log_str("Record 5: ", 0);
+// log_num(damage_sprite[DSPRITE_WSHIP_OLD2_2] [0]->w);
+
 
 }
 
@@ -411,19 +447,19 @@ void prepare_circles(void)
 
    rad = i;
    circlefill(temp_bitmap, i + 1, i + 1, rad, beam_colours [j] [0]);
-   rad --;//*= 0.90;
+   rad *= 0.90;
    if (rad > 0)
     circlefill(temp_bitmap, i + 1, i + 1, rad, beam_colours [j] [1]);
 
    RLE_ccircle_2cols [j] [i] = get_rle_sprite(temp_bitmap);
 
-   rad --;//*= 0.90;
+   rad *= 0.90;
    if (rad > 0)
     circlefill(temp_bitmap, i + 1, i + 1, rad, beam_colours [j] [2]);
 
    RLE_ccircle_3cols [j] [i] = get_rle_sprite(temp_bitmap);
 
-   rad --;//*= 0.90;
+   rad *= 0.90;
    if (rad > 0)
     circlefill(temp_bitmap, i + 1, i + 1, rad, beam_colours [j] [3]);
 
@@ -433,25 +469,26 @@ void prepare_circles(void)
   destroy_bitmap(temp_bitmap);
  }
 
+
  load_progress();
 
  for (i = 0; i < RLE_SCIRCLES; i ++)
  {
   temp_bitmap = new_bitmap((i + 1) * 2, (i + 1) * 2, "prepare scircles");
   clear_bitmap(temp_bitmap);
-  for (j = 0; j < 4; j ++)
+  for (j = 0; j < 3; j ++)
   {
 
    rad = i;
    circlefill(temp_bitmap, i + 1, i + 1, rad, beam_colours [1] [0]);
    if (j > 0)
    {
-   rad --;//*= 0.90;
+   rad *= 0.90;
    if (rad > 0)
     circlefill(temp_bitmap, i + 1, i + 1, rad, beam_colours [1] [1]);
    if (j > 1)
    {
-   rad --;//*= 0.90;
+   rad *= 0.90;
    if (rad > 0)
     circlefill(temp_bitmap, i + 1, i + 1, rad, beam_colours [1] [2]);
    if (j > 2)
@@ -481,10 +518,11 @@ void prepare_circles(void)
    destroy_bitmap(temp_bitmap);
  }
 
+
  load_progress();
+/*
 
  int rad2;
-/*
  for (i = 0; i < 30; i ++)
  {
   rad = i + 15; // see below
@@ -536,6 +574,8 @@ void prepare_circles(void)
 
 */
 
+
+/*
  for (i = 0; i < 15; i ++)
  {
   rad = (i*3) + 15; // see below
@@ -602,14 +642,7 @@ void prepare_circles(void)
    rad2 = rad;
 
    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [0]);
-/*   if (i < 42)
-   {
-    rad2 --;
-    if (i < 32)
-     rad2 --;
-    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [2]);
-   }
-*/
+
 
    if (i < 18)
    {
@@ -708,6 +741,199 @@ void prepare_circles(void)
 
 
   }
+*/
+
+ int rad2;
+
+ for (i = 0; i < 30; i ++)
+ {
+  rad = i + 15; // see below
+  temp_bitmap = new_bitmap((rad + 1) * 2, (rad + 1) * 2, "prepare small_shock");
+  clear_bitmap(temp_bitmap);
+  for (j = 0; j < 3; j ++)
+  {
+   rad = i + 15; // see above
+   rad2 = rad;
+
+   circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [0]);
+   if (i < 22)
+   {
+    rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [2]);
+   }
+   if (i < 22 && 0)
+   {
+    rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [4]);
+   }
+   if (i < 22)
+   {
+    rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [3]);
+   }
+   if (i < 24)
+   {
+    rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [2]);
+   }
+   if (i < 26)
+   {
+    rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [1]);
+   }
+   if (i < 28)
+   {
+    rad2 -= 2;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [0]);
+   }
+
+   rad2 -= 2;
+
+   if (rad2 > -1)
+   circlefill(temp_bitmap, rad + 1, rad + 1, rad2, 0);
+
+   RLE_small_shock [j] [i] = get_rle_sprite(temp_bitmap);
+  }
+
+  destroy_bitmap(temp_bitmap);
+ }
+
+ load_progress();
+
+
+ for (i = 0; i < 50; i ++)
+ {
+  rad = i + 25; // see below
+  temp_bitmap = new_bitmap((rad + 1) * 2, (rad + 1) * 2, "prepare large_shock");
+  clear_bitmap(temp_bitmap);
+  for (j = 0; j < 3; j ++)
+  {
+   rad = i + 25; // see above
+   rad2 = rad;
+
+   circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [0]);
+   if (i < 42)
+   {
+    rad2 --;
+    if (i < 32)
+     rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [2]);
+   }
+   if (i < 42 && 0)
+   {
+    rad2 --;
+    if (i < 34)
+     rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [4]);
+   }
+   if (i < 42)
+   {
+    rad2 --;
+    if (i < 36)
+     rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [3]);
+   }
+   if (i < 44)
+   {
+    rad2 --;
+    if (i < 38)
+     rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [2]);
+   }
+   if (i < 46)
+   {
+    rad2 --;
+    if (i < 40)
+     rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [1]);
+   }
+   if (i < 48)
+   {
+    rad2 -= 2;
+    if (i < 42)
+     rad2 -= 2;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [0]);
+   }
+
+   rad2 -= 2;
+    if (i < 44)
+     rad2 -= 2;
+
+   if (rad2 > -1)
+   circlefill(temp_bitmap, rad + 1, rad + 1, rad2, 0);
+
+   RLE_large_shock [j] [i] = get_rle_sprite(temp_bitmap);
+  }
+
+  destroy_bitmap(temp_bitmap);
+ }
+
+ load_progress();
+
+ for (i = 0; i < 50; i ++)
+ {
+  rad = i + 50; // see below
+  temp_bitmap = new_bitmap((rad + 1) * 2, (rad + 1) * 2, "prepare huge_shock");
+  clear_bitmap(temp_bitmap);
+  for (j = 0; j < 3; j ++)
+  {
+   rad = i + 50; // see above
+   rad2 = rad;
+
+   circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [0]);
+   if (i < 42)
+   {
+    rad2 --;
+    if (i < 32)
+     rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [2]);
+   }
+   if (i < 42 && 0)
+   {
+    rad2 --;
+    if (i < 34)
+     rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [4]);
+   }
+   if (i < 42)
+   {
+    rad2 --;
+    if (i < 36)
+     rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [3]);
+   }
+   if (i < 44)
+   {
+    rad2 --;
+    if (i < 38)
+     rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [2]);
+   }
+   if (i < 46)
+   {
+    rad2 --;
+    if (i < 40)
+     rad2 --;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [1]);
+   }
+   if (i < 48)
+   {
+    rad2 -= 2;
+    if (i < 42)
+     rad2 -= 2;
+    circlefill(temp_bitmap, rad + 1, rad + 1, rad2, beam_colours [j] [0]);
+   }
+
+   rad2 -= 2;
+    if (i < 44)
+     rad2 -= 2;
+
+   if (rad2 > -1)
+   circlefill(temp_bitmap, rad + 1, rad + 1, rad2, 0);
+
+   RLE_huge_shock [j] [i] = get_rle_sprite(temp_bitmap);
+  }
+
 
   destroy_bitmap(temp_bitmap);
  }
@@ -1349,6 +1575,7 @@ void make_sprites(void)
 {
 
  BITMAP *base_bmp = load_up_bitmap("gfx//test.bmp");
+ wship_bmp_f = base_bmp;
 
  int i, x, y, width, j;
 
@@ -1366,39 +1593,65 @@ void make_sprites(void)
 
 base_colour = COL_F1;
 
- make_wship_sprite(base_bmp, WSHIP_SPRITE_OLD2, WSHIP_OLD2, 1, 1, 263, 218, 310, 36, 36, SHIP_OLD2);
+// make_wship_sprite(base_bmp, WSHIP_SPRITE_OLD2, WSHIP_OLD2, 1, 1, 263, 218, 310, 36, 36, SHIP_OLD2);
 
 // for each wship, collision_mask must come after make_wship_sprite
- make_wship_collision_mask(base_bmp, WSHIP_SPRITE_OLD2, 301, 78, 69, 86, SHIP_OLD2);
+// make_wship_collision_mask(base_bmp, WSHIP_SPRITE_OLD2, 301, 78, 69, 86, SHIP_OLD2);
 // if a different value is used for offset (currently 35), must change the offset (35/3) in m_w_c_m!!
+
+/*
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD2_1, 320, 1, 23, 20, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD2_2, 318, 22, 27, 20, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD2_3, 347, 1, 9, 22, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD2_4, 307, 42, 49, 12, 3);
+*/
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD2_1, 451, 1266, 39, 23, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD2_2, 451, 1290, 39, 25, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD2_3, 492, 1273, 15, 32, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD2_4, 441, 1316, 59, 17, 3);
+
+// log_str("Record 1: ", 0);
+// log_num(damage_sprite[DSPRITE_WSHIP_OLD2_2] [0]->w);
+
+
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_DROM_1, 471, 1201, 38, 22, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_DROM_2, 471, 1175, 38, 25, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_DROM_3, 456, 1181, 12, 32, -1);
+
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_LINER_1, 470, 1244, 20, 20, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_LINER_2, 470, 1224, 20, 19, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_LINER_3, 456, 1225, 12, 17, -1);
 
  load_progress();
 
- make_wship_sprite(base_bmp, WSHIP_SPRITE_OLD3, WSHIP_OLD3, 1, 222, 297, 291, 350, 36, 1, SHIP_OLD3);
+// make_wship_sprite(base_bmp, WSHIP_SPRITE_OLD3, WSHIP_OLD3, 1, 222, 297, 291, 350, 36, 1, SHIP_OLD3);
 // for each wship, collision_mask must come after make_wship_sprite
- make_wship_collision_mask(base_bmp, WSHIP_SPRITE_OLD3, 311, 176, 73, 113, SHIP_OLD3);
+// make_wship_collision_mask(base_bmp, WSHIP_SPRITE_OLD3, 311, 176, 73, 113, SHIP_OLD3);
 // if a different value is used for offset (currently 35), must change the offset (35/3) in m_w_c_m!!
+
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD3_1, 410, 1338, 41, 21, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD3_2, 410, 1360, 41, 26, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD3_3, 415, 1387, 31, 18, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD3_4, 387, 1331, 15, 33, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD3_5, 398, 1406, 65, 29, 3);
+/*
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD3_1, 410, 180, 23, 16, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD3_2, 407, 197, 29, 15, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD3_3, 407, 213, 29, 17, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD3_4, 387, 181, 15, 33, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_OLD3_5, 437, 183, 53, 33, 3);
-
+*/
  load_progress();
 
- make_wship_sprite(base_bmp, WSHIP_SPRITE_FRIEND3, WSHIP_FRIEND3, 12, 524, 297, 300, 390, 36, 36, SHIP_FRIEND3);
+// make_wship_sprite(base_bmp, WSHIP_SPRITE_FRIEND3, WSHIP_FRIEND3, 12, 524, 297, 300, 390, 36, 36, SHIP_FRIEND3);
 // for each wship, collision_mask must come after make_wship_sprite
- make_wship_collision_mask(base_bmp, WSHIP_SPRITE_FRIEND3, 310, 510, 116, 116, SHIP_FRIEND3);
+// make_wship_collision_mask(base_bmp, WSHIP_SPRITE_FRIEND3, 310, 444, 116, 116, SHIP_FRIEND3);
 // if a different value is used for offset (currently 35), must change the offset (35/3) in m_w_c_m!!
- make_damage_sprite(base_bmp, DSPRITE_WSHIP_FRIEND3_1, 338, 632, 74, 35, -1);
- make_damage_sprite(base_bmp, DSPRITE_WSHIP_FRIEND3_2, 326, 667, 98, 37, -1);
- make_damage_sprite(base_bmp, DSPRITE_WSHIP_FRIEND3_3, 341, 715, 68, 36, -1);
- make_damage_sprite(base_bmp, DSPRITE_WSHIP_FRIEND3_4, 427, 647, 54, 67, -1);
-  make_damage_sprite(base_bmp, DSPRITE_WSHIP_FRIEND3_5, 427, 647, 54, 67, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_FRIEND3_1, 331, 566, 49, 24, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_FRIEND3_2, 324, 591, 63, 23, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_FRIEND3_3, 334, 615, 43, 25, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_FRIEND3_4, 391, 570, 21, 44, -1);
+  make_damage_sprite(base_bmp, DSPRITE_WSHIP_FRIEND3_5, 326, 641, 59, 15, 3);
 
  load_progress();
 
@@ -1425,6 +1678,11 @@ base_colour = COL_F2; // use 2 value for trans sprites
  make_turret_sprite(base_bmp, TURRET_SPRITE_HEAVY_3, 418, 1002, 49, 69, 80, 12, 6);
  make_turret_sprite(base_bmp, TURRET_SPRITE_HEAVY_4, 318, 1072, 49, 69, 80, 12, 6);
  make_turret_sprite(base_bmp, TURRET_SPRITE_HEAVY_5, 368, 1072, 49, 69, 80, 12, 6);
+
+ make_turret_sprite(base_bmp, TURRET_SPRITE_CGUN_1, 1, 936, 49, 49, 65, 6, 6);
+ make_turret_sprite(base_bmp, TURRET_SPRITE_CGUN_2, 51, 936, 49, 49, 65, 6, 6);
+ make_turret_sprite(base_bmp, TURRET_SPRITE_CGUN_3, 101, 936, 49, 49, 65, 6, 6);
+ make_turret_sprite(base_bmp, TURRET_SPRITE_CLAUNCHER_1, 1, 988, 61, 61, 85, 9, 6);
 
 // make_turret_sprite(base_bmp, TURRET_SPRITE_HEAVY_1, 325, 939, 41, 58, 70, 12, 6);
 // make_turret_sprite(base_bmp, TURRET_SPRITE_HEAVY_2, 367, 939, 41, 58, 70, 12, 6);
@@ -1480,7 +1738,7 @@ base_colour = COL_E2; // make sure to use 2 value for any transparent enemy spri
     read_turret_bitmap(turret_bitmap);
   }
 
- destroy_bitmap(base_bmp);
+// destroy_bitmap(base_bmp); still used as wship_bmp_f
 
  load_progress();
 
@@ -1488,6 +1746,8 @@ base_colour = COL_E1;
 
 
  base_bmp = load_up_bitmap("gfx//ewship.bmp");
+ wship_bmp_e = base_bmp;
+
 
  for (i = 0; i < BMPS_VALUES; i ++)
  {
@@ -1499,9 +1759,9 @@ base_colour = COL_E1;
  rectfill(base_bmp, 0, 0, base_bmp->w, base_bmp->h, TRANS_CONTROL);
  END_TRANS
 
- make_wship_sprite(base_bmp, WSHIP_SPRITE_SCOUT2, WSHIP_SCOUT2, 1, 1, 177, 216, 280, 60, 36, SHIP_SCOUT2);
+// make_wship_sprite(base_bmp, WSHIP_SPRITE_SCOUT2, WSHIP_SCOUT2, 1, 1, 177, 216, 280, 60, 36, SHIP_SCOUT2);
 // for each wship, collision_mask must come after make_wship_sprite
- make_wship_collision_mask(base_bmp, WSHIP_SPRITE_SCOUT2, 248, 3, 73, 74, SHIP_SCOUT2);
+// make_wship_collision_mask(base_bmp, WSHIP_SPRITE_SCOUT2, 248, 3, 73, 74, SHIP_SCOUT2);
 // if a different value is used for offset (currently 35), must change the offset (35/3) in m_w_c_m!!
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_SCOUT2_1, 322, 0, 40, 22, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_SCOUT2_2, 323, 23, 38, 16, -1);
@@ -1516,9 +1776,9 @@ base_colour = COL_E1;
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_SCOUT2_3, 385, 2, 23, 43, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_SCOUT2_4, 326, 65, 57, 22, 3);*/
 
- make_wship_sprite(base_bmp, WSHIP_SPRITE_SCOUT3, WSHIP_SCOUT3, 1, 219, 321, 350, 420, 51, 36, SHIP_SCOUT3);
+// make_wship_sprite(base_bmp, WSHIP_SPRITE_SCOUT3, WSHIP_SCOUT3, 1, 219, 321, 350, 420, 51, 36, SHIP_SCOUT3);
 // for each wship, collision_mask must come after make_wship_sprite
- make_wship_collision_mask(base_bmp, WSHIP_SPRITE_SCOUT3, 212, 83, 111, 110, SHIP_SCOUT3);
+// make_wship_collision_mask(base_bmp, WSHIP_SPRITE_SCOUT3, 212, 83, 111, 110, SHIP_SCOUT3);
 // if a different value is used for offset (currently 35), must change the offset (35/3) in m_w_c_m!!
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_SCOUT3_1, 386, 2, 41, 15, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_SCOUT3_2, 384, 18, 45, 15, -1);
@@ -1528,23 +1788,40 @@ base_colour = COL_E1;
 
  load_progress();
 
- make_wship_sprite(base_bmp, WSHIP_SPRITE_SCOUTCAR, WSHIP_SCOUTCAR, 1, 571, 221, 340, 400, 81, 36, SHIP_SCOUTCAR);
+// make_wship_sprite(base_bmp, WSHIP_SPRITE_SCOUTCAR, WSHIP_SCOUTCAR, 1, 571, 221, 340, 400, 81, 36, SHIP_SCOUTCAR);
 // for each wship, collision_mask must come after make_wship_sprite
- make_wship_collision_mask(base_bmp, WSHIP_SPRITE_SCOUTCAR, 341, 205, 83, 115, SHIP_SCOUTCAR);
+// make_wship_collision_mask(base_bmp, WSHIP_SPRITE_SCOUTCAR, 341, 205, 83, 115, SHIP_SCOUTCAR);
 // if a different value is used for offset (currently 35), must change the offset (35/3) in m_w_c_m!!
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_SCOUTCAR_1, 453, 34, 29, 14, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_SCOUTCAR_2, 453, 4, 29, 29, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_SCOUTCAR_3, 483, 15, 13, 17, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_SCOUTCAR_4, 452, 49, 31, 15, 3);
 
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_ECARRIER_1, 453, 34, 29, 14, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_ECARRIER_2, 453, 4, 29, 29, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_ECARRIER_3, 483, 15, 13, 17, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_ECARRIER_4, 452, 49, 31, 15, 3);
+
+// make_wship_sprite(base_bmp, WSHIP_SPRITE_FREIGHT, WSHIP_FREIGHT, 247, 603, 251, 281, 350, 81, 36, SHIP_FREIGHT);
+// for each wship, collision_mask must come after make_wship_sprite
+// make_wship_collision_mask(base_bmp, WSHIP_SPRITE_FREIGHT, 337, 93, 84, 104, SHIP_FREIGHT);
+// if a different value is used for offset (currently 35), must change the offset (35/3) in m_w_c_m!!
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_FREIGHT_1, 464, 149, 35, 21, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_FREIGHT_2, 463, 122, 37, 26, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_FREIGHT_3, 448, 137, 13, 20, -1);
+ make_damage_sprite(base_bmp, DSPRITE_WSHIP_FREIGHT_4, 460, 171, 43, 22, 3);
+
+
+
  load_progress();
 
- destroy_bitmap(base_bmp);
+// destroy_bitmap(base_bmp); still used as wship_bmp_e
 
 
 
 
  base_bmp = load_up_bitmap("gfx//ebase.bmp");
+ wship_bmp_base = base_bmp;
 
  for (i = 0; i < BMPS_VALUES; i ++)
  {
@@ -1557,10 +1834,13 @@ base_colour = COL_E1;
  END_TRANS
 
 // make_wship_sprite(base_bmp, WSHIP_SPRITE_EBASE, WSHIP_EBASE, 133, 589, 339, 607, 650, 162, 24, SHIP_EBASE);
+
+/*
  make_wship_sprite(base_bmp, WSHIP_SPRITE_EBASE, WSHIP_EBASE, 1, 1, 357, 661, 700, 168, 12, SHIP_EBASE);
 // for each wship, collision_mask must come after make_wship_sprite
  make_wship_collision_mask(base_bmp, WSHIP_SPRITE_EBASE, 360, 3, 136, 236, SHIP_EBASE);
 // if a different value is used for offset (currently 35), must change the offset (35/3) in m_w_c_m!!
+*/
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_EBASE_1, 504, 1, 27, 13, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_EBASE_2, 504, 64, 27, 13, -1);
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_EBASE_3, 502, 15, 31, 13, -1);
@@ -1569,7 +1849,7 @@ base_colour = COL_E1;
  make_damage_sprite(base_bmp, DSPRITE_WSHIP_EBASE_6, 537, 1, 9, 20, -1);
 
 
- destroy_bitmap(base_bmp);
+// destroy_bitmap(base_bmp); // still needed as wship_bmp_base
 
  load_progress();
 
@@ -1669,10 +1949,50 @@ base_colour = COL_E1;
 
 base_colour = COL_F1;
 
+ width = 45;
+ make_player_sprite(base_bmp, PLAYER_SPRITE_1_1, x, y, width, 42, 95, 15, 15);
+ x += width + 1;
+
+ width = 51;
+ make_player_sprite(base_bmp, PLAYER_SPRITE_1_2, x, y, width, 41, 95, 15, 15);
+ x += width + 1;
+
+ width = 51;
+ make_player_sprite(base_bmp, PLAYER_SPRITE_1_3, x, y, width, 40, 95, 15, 15);
+
+ x = 2;
+ y = 45;
+
+ width = 45;
+ make_player_sprite(base_bmp, PLAYER_SPRITE_2_1, x, y, width, 42, 95, 15, 15);
+ x += width + 1;
+
+ width = 51;
+ make_player_sprite(base_bmp, PLAYER_SPRITE_2_2, x, y, width, 41, 95, 15, 15);
+ x += width + 1;
+
+ width = 51;
+ make_player_sprite(base_bmp, PLAYER_SPRITE_2_3, x, y, width, 40, 95, 15, 15);
+
+ x = 2;
+ y = 88;
+
+ width = 45;
+ make_player_sprite(base_bmp, PLAYER_SPRITE_3_1, x, y, width, 42, 95, 15, 15);
+ x += width + 1;
+
+ width = 51;
+ make_player_sprite(base_bmp, PLAYER_SPRITE_3_2, x, y, width, 41, 95, 15, 15);
+ x += width + 1;
+
+ width = 51;
+ make_player_sprite(base_bmp, PLAYER_SPRITE_3_3, x, y, width, 40, 95, 15, 15);
+
+/*
 // first row of player_sprite - each of the 3 fin positions for cannon rest position
  width = 63;
 // make_player_sprite(base_bmp, PLAYER_SPRITE_1_1, x, y, width, 60, 95, 6, 6);
- make_player_sprite(base_bmp, PLAYER_SPRITE_1_1, x, y, width, 60, 95, 16, 16);
+ make_player_sprite(base_bmp, PLAYER_SPRITE_1_1, x, y, width, 60, 95, 15, 15);
  x += width + 1;
 
  width = 69;
@@ -1718,24 +2038,70 @@ base_colour = COL_F1;
 
  y += 63; // this is how much we need to move downwards to get to the top useful pixel of next row.
  x = 2;
-
+*/
 base_colour = COL_E1;
 
  width = 64;
-// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_BASIC_1, FIGHTER_BASIC, x, y, width, 57, 75, 6, 6);
 
-// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_BASIC_1, FIGHTER_BASIC, 2, 187, 47, 56, 68, 6, 6);
- make_fighter_sprite(base_bmp, FIGHTER_SPRITE_BASIC_1, FIGHTER_BASIC, 435, 77, 53, 55, 68, 6, 6);
- make_fighter_sprite(base_bmp, FIGHTER_SPRITE_BOMBER_1, FIGHTER_BOMBER, 736, 49, 95, 75, 125, 6, 6);
-// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_BOMBER_1, FIGHTER_BOMBER, 50, 187, 81, 66, 95, 6, 6);
- make_fighter_sprite(base_bmp, FIGHTER_SPRITE_ESCOUT_1, FIGHTER_BASIC, 208, 182, 71, 53, 85, 6, 6);
- make_fighter_sprite(base_bmp, FIGHTER_SPRITE_EINT_1, FIGHTER_EINT, 280, 182, 73, 78, 95, 6, 6);
+// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_BASIC_1, FIGHTER_BASIC, 75, 184, 53, 55, 68, 6, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_BASIC_1, FIGHTER_BASIC, 152, 2, 39, 39, 58, 6, 6);
+
+// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_BOMBER_1, FIGHTER_BOMBER, 203, 182, 95, 75, 125, 6, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_BOMBER_1, FIGHTER_BOMBER, 212, 81, 67, 57, 90, 5, 5);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_EINT_1, FIGHTER_EINT, 164, 85, 47, 56, 85, 6, 6);
+// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_EINT_1, FIGHTER_EINT, 129, 184, 73, 78, 95, 6, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_ESCOUT_1, FIGHTER_ESCOUT, 358, 84, 67, 63, 85, 5, 5);
 
  load_progress();
 
  base_colour = COL_F1;
- make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FRIEND_1, FIGHTER_FRIEND, 132, 187, 75, 57, 91, 6, 6);
+// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FRIEND_1, FIGHTER_FRIEND, 2, 131, 51, 39, 70, 6, 6);
+// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FRIEND_2, FIGHTER_FRIEND, 54, 131, 51, 39, 70, 6, 6);
+// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FRIEND_3, FIGHTER_FRIEND, 106, 131, 57, 39, 74, 6, 6);
 
+/* make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FSTRIKE_1, FIGHTER_FSTRIKE, 653, 212, 59, 42, 75, 5, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FSTRIKE_2, FIGHTER_FSTRIKE, 713, 212, 59, 44, 75, 5, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FSTRIKE_3, FIGHTER_FSTRIKE, 773, 212, 59, 46, 75, 5, 6);
+*/
+/*
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_LACEWING_1, FIGHTER_LACEWING, 2, 171, 39, 42, 75, 6, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_LACEWING_2, FIGHTER_LACEWING, 42, 171, 45, 45, 75, 6, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_LACEWING_3, FIGHTER_LACEWING, 88, 171, 47, 47, 75, 5, 6);
+*/
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_LACEWING_1, FIGHTER_LACEWING, 137, 185, 31, 56, 96, 10, 12);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_LACEWING_2, FIGHTER_LACEWING, 169, 185, 31, 56, 96, 10, 12);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_LACEWING_3, FIGHTER_LACEWING, 201, 185, 31, 56, 96, 10, 12);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_LACEWING_4, FIGHTER_LACEWING, 233, 185, 33, 56, 96, 12, 12);
+
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FRIEND_1, FIGHTER_FRIEND, 2, 2, 45, 42, 75, 15, 15);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FRIEND_2, FIGHTER_FRIEND, 48, 2, 51, 41, 75, 15, 15);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FRIEND_3, FIGHTER_FRIEND, 100, 2, 51, 40, 75, 15, 15);
+// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_MONARCH_1, FIGHTER_MONARCH, 2, 2, 45, 42, 75, 15, 15);
+// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_MONARCH_2, FIGHTER_MONARCH, 48, 2, 51, 41, 75, 15, 15);
+// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_MONARCH_3, FIGHTER_MONARCH, 100, 2, 51, 40, 75, 15, 15);
+
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_IBEX_1, FIGHTER_IBEX, 2, 171, 71, 50, 95, 11, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_IBEX_2, FIGHTER_IBEX, 2, 222, 71, 50, 95, 11, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_IBEX_3, FIGHTER_IBEX, 74, 246, 71, 50, 95, 11, 6);
+
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_AUROCHS_1, FIGHTER_AUROCHS, 2, 45, 71, 50, 100, 11, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_AUROCHS_2, FIGHTER_AUROCHS, 2, 96, 77, 50, 100, 11, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_AUROCHS_3, FIGHTER_AUROCHS, 2, 147, 81, 50, 110, 12, 6);
+
+// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_AUROCHS_2, FIGHTER_AUROCHS, 153, 243, 83, 52, 100, 6, 6);
+// make_fighter_sprite(base_bmp, FIGHTER_SPRITE_AUROCHS_3, FIGHTER_AUROCHS, 153, 243, 83, 52, 100, 6, 6);
+
+
+/*
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FRIEND_1, FIGHTER_FRIEND, 2, 185, 63, 52, 75, 6, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FRIEND_2, FIGHTER_FRIEND, 212, 130, 71, 51, 80, 6, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FRIEND_3, FIGHTER_FRIEND, 212, 81, 75, 48, 85, 6, 6);
+
+
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FSTRIKE_1, FIGHTER_FSTRIKE, 288, 81, 67, 57, 75, 6, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FSTRIKE_2, FIGHTER_FSTRIKE, 356, 81, 73, 59, 86, 6, 6);
+ make_fighter_sprite(base_bmp, FIGHTER_SPRITE_FSTRIKE_3, FIGHTER_FSTRIKE, 430, 81, 77, 59, 86, 6, 6);
+*/
 // make_missile_sprite(base_bmp, MISSILE_SPRITE_PTORP1, 213, 4, 7, 10, 14, 0, 0);
  make_missile_sprite(base_bmp, MISSILE_SPRITE_PTORP1, 216, 4, 12, 27, 35, 12, 6);
  make_missile_sprite(base_bmp, MISSILE_SPRITE_AF, 230, 6, 7, 14, 30, 6, 6);
@@ -1758,11 +2124,17 @@ base_colour = COL_E1;
  x += width + 1;
 */
 // width = 36;
- make_damage_sprite(base_bmp, DSPRITE_FIGHTER_1, 34, 277, 23, 23, -1);
- make_damage_sprite(base_bmp, DSPRITE_BOMBER_1, 0, 276, 33, 24, -1);
- make_damage_sprite(base_bmp, DSPRITE_FRIEND_1, 58, 276, 29, 24, -1);
- make_damage_sprite(base_bmp, DSPRITE_ESCOUT_1, 133, 250, 35, 24, -1);
- make_damage_sprite(base_bmp, DSPRITE_EINT_1, 169, 249, 32, 31, -1);
+ make_damage_sprite(base_bmp, DSPRITE_FIGHTER_1, 218, 35, 23, 23, -1);
+ make_damage_sprite(base_bmp, DSPRITE_BOMBER_1, 274, 37, 28, 22, -1);
+ make_damage_sprite(base_bmp, DSPRITE_FRIEND_1, 243, 35, 26, 22, -1);
+ make_damage_sprite(base_bmp, DSPRITE_FSTRIKE_1, 242, 35, 29, 24, -1);
+ make_damage_sprite(base_bmp, DSPRITE_ESCOUT_1, 306, 35, 35, 24, -1);
+ make_damage_sprite(base_bmp, DSPRITE_EINT_1, 346, 36, 24, 28, -1);
+
+ make_damage_sprite(base_bmp, DSPRITE_LACEWING_1, 242, 35, 29, 24, -1);
+ make_damage_sprite(base_bmp, DSPRITE_MONARCH_1, 242, 35, 29, 24, -1);
+ make_damage_sprite(base_bmp, DSPRITE_IBEX_1, 242, 35, 29, 24, -1);
+ make_damage_sprite(base_bmp, DSPRITE_AUROCHS_1, 242, 35, 29, 24, -1);
 
  load_progress();
 
@@ -1870,6 +2242,10 @@ base_colour = COL_E1;
 // destroy_bitmap(base_bmp);
 
 
+// log_str("Record 2: ", 0);
+// log_num(damage_sprite[DSPRITE_WSHIP_OLD2_2] [0]->w);
+
+
 
 }
 
@@ -1975,10 +2351,426 @@ void make_fighter_sprite(BITMAP *base_bmp, int fighter, int fship_index, int x_p
 
 }
 
+/*
+
+Special wship rotation functions follow:
+
+*/
+
+
+BITMAP* ws_bmp2;
+BITMAP* ws_bmp3;
+BITMAP* ws_bmp4;
+
+int ws_wship;
+int ws_wship_index;
+int ws_x_pos;
+int ws_y_pos;
+int ws_xsize;
+int ws_ysize;
+int ws_size2;
+int ws_x_offset;
+int ws_y_offset;
+int ws_type;
+int rot;
+int current_wship;
+
+int ws_sprite_status [WSHIP_SPRITES];
+
+enum
+{
+WSS_NOT_YET,
+WSS_NEEDED,
+WSS_DONE
+};
+
+int get_ws_sprite_from_etype(int etype);
+int get_ws_from_etype(int etype);
+void start_making_new_wship(void);
+void process_wship_sprite(void);
+
+/*
+How this works ---
+
+At startup, all ws_sprite_status values are set to WSS_NOT_YET.
+When a new level is started, a function in level.c goes through the level
+data to find all the wships that will appear during the level and if any don't have
+WSS_DONE sets their ws_sprite_status values to WSS_NEEDED by calling set_wss_status.
+
+Then start_making_new_wships is called to setup.
+
+Then wship_process is called repeatedly (basically during downtime in the mission briefing etc).
+It fills the wship sprite arrays, and when a wship sprite is finished it sets wss_sprite_status
+to WSS_DONE.
+It returns 0 until no wship sprites still have WSS_NEEDED.
+
+
+
+*/
+
+char wship_process(void)
+{
+
+//    for (i = 0; i < WSHIP_ROTATIONS; i ++)
+//    {
+
+ if (rot == WSHIP_ROTATIONS)
+ {
+
+  do
+  {
+   if (ws_sprite_status [ws_wship] == WSS_NEEDED)
+   {
+    rot = 0;
+    break;
+   }
+   if (ws_wship == WSHIP_SPRITES)
+    return 1; // finished for now!
+   ws_wship++;
+  }
+   while(TRUE);
+
+  start_making_new_wship();
+ }
+
+ process_wship_sprite();
+
+ rot ++;
+
+ if (rot == WSHIP_ROTATIONS)
+ {
+  destroy_bitmap(ws_bmp2);
+  destroy_bitmap(ws_bmp3);
+  ws_sprite_status [ws_wship] = WSS_DONE;
+  switch(ws_wship)
+  {
+   case WSHIP_SPRITE_OLD2:
+    make_wship_collision_mask(wship_bmp_f, WSHIP_SPRITE_OLD2, 327, 1176, 71, 89, SHIP_OLD2);
+    calculate_wship_rotations(RP_OLD2_ENGINE_1, wship_sprite [WSHIP_SPRITE_OLD2], 1);
+    calculate_wship_rotations(RP_OLD2_ENGINE_2, wship_sprite [WSHIP_SPRITE_OLD2], 2);
+    calculate_wship_rotations(RP_OLD2_TURRET_1, wship_sprite [WSHIP_SPRITE_OLD2], 3);
+    calculate_wship_rotations(RP_OLD2_TURRET_2, wship_sprite [WSHIP_SPRITE_OLD2], 4);
+     break;
+   case WSHIP_SPRITE_OLD3:
+    make_wship_collision_mask(wship_bmp_f, WSHIP_SPRITE_OLD3, 289, 1267, 95, 117, SHIP_OLD3);
+    calculate_wship_rotations(RP_OLD3_ENGINE_1, wship_sprite [WSHIP_SPRITE_OLD3], 1);
+    calculate_wship_rotations(RP_OLD3_ENGINE_2, wship_sprite [WSHIP_SPRITE_OLD3], 2);
+    calculate_wship_rotations(RP_OLD3_ENGINE_3, wship_sprite [WSHIP_SPRITE_OLD3], 3);
+    calculate_wship_rotations(RP_OLD3_ENGINE_4, wship_sprite [WSHIP_SPRITE_OLD3], 4);
+    calculate_wship_rotations(RP_OLD3_TURRET_1, wship_sprite [WSHIP_SPRITE_OLD3], 5);
+    calculate_wship_rotations(RP_OLD3_TURRET_2, wship_sprite [WSHIP_SPRITE_OLD3], 6);
+    calculate_wship_rotations(RP_OLD3_TURRET_3, wship_sprite [WSHIP_SPRITE_OLD3], 7);
+     break;
+   case WSHIP_SPRITE_FRIEND3:
+    make_wship_collision_mask(wship_bmp_f, WSHIP_SPRITE_FRIEND3, 310, 444, 116, 116, SHIP_FRIEND3);
+    calculate_wship_rotations(RP_FRIEND3_ENGINE_1, wship_sprite [WSHIP_SPRITE_FRIEND3], 1);
+    calculate_wship_rotations(RP_FRIEND3_ENGINE_2, wship_sprite [WSHIP_SPRITE_FRIEND3], 2);
+    calculate_wship_rotations(RP_FRIEND3_TURRET_1, wship_sprite [WSHIP_SPRITE_FRIEND3], 3);
+    calculate_wship_rotations(RP_FRIEND3_TURRET_2, wship_sprite [WSHIP_SPRITE_FRIEND3], 4);
+    calculate_wship_rotations(RP_FRIEND3_TURRET_3, wship_sprite [WSHIP_SPRITE_FRIEND3], 5);
+     break;
+   case WSHIP_SPRITE_SCOUT2:
+    make_wship_collision_mask(wship_bmp_e, WSHIP_SPRITE_SCOUT2, 248, 3, 73, 74, SHIP_SCOUT2);
+    calculate_wship_rotations(RP_SCOUT2_ENGINE_1, wship_sprite [WSHIP_SPRITE_SCOUT2], 1);
+    calculate_wship_rotations(RP_SCOUT2_ENGINE_1, wship_sprite [WSHIP_SPRITE_SCOUT2], 2);
+    calculate_wship_rotations(RP_SCOUT2_TURRET_1, wship_sprite [WSHIP_SPRITE_SCOUT2], 3);
+    calculate_wship_rotations(RP_SCOUT2_TURRET_2, wship_sprite [WSHIP_SPRITE_SCOUT2], 4);
+     break;
+   case WSHIP_SPRITE_SCOUT3:
+    make_wship_collision_mask(wship_bmp_e, WSHIP_SPRITE_SCOUT3, 212, 83, 111, 110, SHIP_SCOUT3);
+    calculate_wship_rotations(RP_SCOUT3_ENGINE_1, wship_sprite [WSHIP_SPRITE_SCOUT3], 1);
+    calculate_wship_rotations(RP_SCOUT3_ENGINE_1, wship_sprite [WSHIP_SPRITE_SCOUT3], 2);
+    calculate_wship_rotations(RP_SCOUT3_ENGINE_1, wship_sprite [WSHIP_SPRITE_SCOUT3], 3);
+    calculate_wship_rotations(RP_SCOUT3_TURRET_1, wship_sprite [WSHIP_SPRITE_SCOUT3], 4);
+    calculate_wship_rotations(RP_SCOUT3_TURRET_2, wship_sprite [WSHIP_SPRITE_SCOUT3], 5);
+    calculate_wship_rotations(RP_SCOUT3_TURRET_3, wship_sprite [WSHIP_SPRITE_SCOUT3], 6);
+     break;
+   case WSHIP_SPRITE_SCOUTCAR:
+    make_wship_collision_mask(wship_bmp_e, WSHIP_SPRITE_SCOUTCAR, 341, 205, 83, 115, SHIP_SCOUTCAR);
+    calculate_wship_rotations(RP_SCOUTCAR_ENGINE_1, wship_sprite [WSHIP_SPRITE_SCOUTCAR], 1);
+    calculate_wship_rotations(RP_SCOUTCAR_TURRET_1, wship_sprite [WSHIP_SPRITE_SCOUTCAR], 2);
+     break;
+   case WSHIP_SPRITE_ECARRIER:
+    make_wship_collision_mask(wship_bmp_e, WSHIP_SPRITE_ECARRIER, 326, 324, 149, 165, SHIP_ECARRIER);
+//    make_wship_collision_mask(wship_bmp_e, WSHIP_SPRITE_ECARRIER, 3, 917, 399, 447, SHIP_ECARRIER);
+    calculate_wship_rotations(RP_ECARRIER_ENGINE_1, wship_sprite [WSHIP_SPRITE_ECARRIER], 1);
+    calculate_wship_rotations(RP_ECARRIER_ENGINE_2, wship_sprite [WSHIP_SPRITE_ECARRIER], 2);
+    calculate_wship_rotations(RP_ECARRIER_ENGINE_3, wship_sprite [WSHIP_SPRITE_ECARRIER], 3);
+    calculate_wship_rotations(RP_ECARRIER_ENGINE_4, wship_sprite [WSHIP_SPRITE_ECARRIER], 4);
+    calculate_wship_rotations(RP_ECARRIER_TURRET_1, wship_sprite [WSHIP_SPRITE_ECARRIER], 5);
+     break;
+   case WSHIP_SPRITE_FREIGHT:
+    make_wship_collision_mask(wship_bmp_e, WSHIP_SPRITE_FREIGHT, 337, 93, 84, 104, SHIP_FREIGHT);
+    calculate_wship_rotations(RP_FREIGHT_ENGINE_1, wship_sprite [WSHIP_SPRITE_FREIGHT], 1);
+    calculate_wship_rotations(RP_FREIGHT_ENGINE_2, wship_sprite [WSHIP_SPRITE_FREIGHT], 2);
+    calculate_wship_rotations(RP_FREIGHT_ENGINE_3, wship_sprite [WSHIP_SPRITE_FREIGHT], 3);
+    calculate_wship_rotations(RP_FREIGHT_TURRET_1, wship_sprite [WSHIP_SPRITE_FREIGHT], 4);
+     break;
+   case WSHIP_SPRITE_DROM:
+    make_wship_collision_mask(wship_bmp_f, WSHIP_SPRITE_DROM, 174, 948, 90, 102, SHIP_DROM);
+    calculate_wship_rotations(RP_DROM_ENGINE_1, wship_sprite [WSHIP_SPRITE_DROM], 1);
+    calculate_wship_rotations(RP_DROM_ENGINE_2, wship_sprite [WSHIP_SPRITE_DROM], 2);
+     break;
+   case WSHIP_SPRITE_LINER:
+    make_wship_collision_mask(wship_bmp_f, WSHIP_SPRITE_LINER, 413, 1178, 41, 71, SHIP_LINER);
+    calculate_wship_rotations(RP_LINER_ENGINE_1, wship_sprite [WSHIP_SPRITE_LINER], 1);
+    calculate_wship_rotations(RP_LINER_ENGINE_2, wship_sprite [WSHIP_SPRITE_LINER], 2);
+     break;
+   case WSHIP_SPRITE_EBASE:
+    make_wship_collision_mask(wship_bmp_base, WSHIP_SPRITE_EBASE, 360, 3, 136, 236, SHIP_EBASE);
+    calculate_wship_rotations(RP_EBASE_TURRET_1, wship_sprite [WSHIP_SPRITE_EBASE], 1);
+    calculate_wship_rotations(RP_EBASE_TURRET_2, wship_sprite [WSHIP_SPRITE_EBASE], 2);
+    calculate_wship_rotations(RP_EBASE_TURRET_3, wship_sprite [WSHIP_SPRITE_EBASE], 3);
+    calculate_wship_rotations(RP_EBASE_TURRET_4, wship_sprite [WSHIP_SPRITE_EBASE], 4);
+    calculate_wship_rotations(RP_EBASE_TURRET_5, wship_sprite [WSHIP_SPRITE_EBASE], 5);
+     break;
+
+  }
+ }
+
+ return 0;
+
+}
 
 
 
 
+
+
+// called at the start of each level, after set_wss_status has been called for each wship type
+// that's going to appear:
+void start_making_new_wships(void)
+{
+
+ rot = WSHIP_ROTATIONS; // so that wship_process will look for a new ship
+ ws_wship = 0;
+
+}
+
+// this is called for every wship type that will appear in level:
+// pass the ship type (eg SHIP_OLD2) as stype
+int set_wss_status(int stype)
+{
+
+ int index = get_ws_sprite_from_etype(stype);
+
+ if (index == -1)
+  return 0; // probably a fighter
+
+ if (ws_sprite_status [index] == WSS_NOT_YET)
+ {
+  ws_sprite_status [index] = WSS_NEEDED;
+  return WSHIP_ROTATIONS; // means we have a wship that needs to be calculated using this many processes
+ }
+
+ return 0; // already done
+
+}
+
+// call once, at startup
+void init_wship_sprite_process(void)
+{
+ int i;
+
+ for (i = 0; i < WSHIP_SPRITES; i ++)
+ {
+  ws_sprite_status [i] = WSS_NOT_YET;
+ }
+
+}
+
+
+// wship is sprite number, wship_index is wship type number, type is ship (or eclass) index (e.g. SHIP_OLD2)
+void start_making_new_wship(void)
+{
+
+
+// ws_wship = wship;
+
+ switch(ws_wship)
+ {
+  case WSHIP_SPRITE_OLD2:
+   base_colour = COL_F1;
+   ws_type = SHIP_OLD2; //base_bmp = wship_bmp_f;
+   ws_wship_index = get_ws_from_etype(ws_type);
+//   ws_bmp2 = extract_bitmap(wship_bmp_f, 1, 1, 263, 218);
+   ws_bmp2 = extract_bitmap(wship_bmp_f, 2, 1324, 257, 230);
+   ws_bmp3 = new_bitmap(310, 310, "ws_bmp");
+   ws_x_offset = 36; ws_y_offset = 36;
+   break;
+  case WSHIP_SPRITE_DROM:
+   base_colour = COL_F1;
+   ws_type = SHIP_DROM; //base_bmp = wship_bmp_e;
+   ws_wship_index = get_ws_from_etype(ws_type);
+   ws_bmp2 = extract_bitmap(wship_bmp_f, 2, 1055, 217, 254);
+   ws_bmp3 = new_bitmap(310, 310, "ws_bmp");
+   ws_x_offset = 81; ws_y_offset = 36;
+   break;
+  case WSHIP_SPRITE_LINER:
+   base_colour = COL_E1; // uses Fed colours even though it's in the OCSF ship bitmap file
+   ws_type = SHIP_LINER;
+   ws_wship_index = get_ws_from_etype(ws_type);
+   ws_bmp2 = extract_bitmap(wship_bmp_f, 222, 1055, 92, 184);
+   ws_bmp3 = new_bitmap(260, 260, "ws_bmp");
+   ws_x_offset = 81; ws_y_offset = 36;
+   break;
+  case WSHIP_SPRITE_OLD3:
+   base_colour = COL_F1;
+   ws_type = SHIP_OLD3; //base_bmp = wship_bmp_f;
+   ws_wship_index = get_ws_from_etype(ws_type);
+//   ws_bmp2 = extract_bitmap(wship_bmp_f, 1, 222, 297, 291);
+   ws_bmp2 = extract_bitmap(wship_bmp_f, 2, 1563, 383, 330);
+   ws_bmp3 = new_bitmap(430, 430, "ws_bmp");
+   ws_x_offset = 36; ws_y_offset = 1;
+   break;
+  case WSHIP_SPRITE_FRIEND3:
+   base_colour = COL_F1;
+   ws_type = SHIP_FRIEND3; //base_bmp = wship_bmp_f;
+   ws_wship_index = get_ws_from_etype(ws_type);
+   ws_bmp2 = extract_bitmap(wship_bmp_f, 12, 524, 297, 300);
+   ws_bmp3 = new_bitmap(390, 390, "ws_bmp");
+   ws_x_offset = 36; ws_y_offset = 36;
+   break;
+  case WSHIP_SPRITE_SCOUT2:
+   base_colour = COL_E1;
+   ws_type = SHIP_SCOUT2; //base_bmp = wship_bmp_e;
+   ws_wship_index = get_ws_from_etype(ws_type);
+   ws_bmp2 = extract_bitmap(wship_bmp_e, 1, 1, 177, 216);
+   ws_bmp3 = new_bitmap(280, 280, "ws_bmp");
+   ws_x_offset = 60; ws_y_offset = 36;
+   break;
+  case WSHIP_SPRITE_SCOUT3:
+   base_colour = COL_E1;
+   ws_type = SHIP_SCOUT3; //base_bmp = wship_bmp_e;
+   ws_wship_index = get_ws_from_etype(ws_type);
+   ws_bmp2 = extract_bitmap(wship_bmp_e, 1, 219, 321, 350);
+   ws_bmp3 = new_bitmap(420, 420, "ws_bmp");
+   ws_x_offset = 51; ws_y_offset = 36;
+   break;
+  case WSHIP_SPRITE_SCOUTCAR:
+   base_colour = COL_E1;
+   ws_type = SHIP_SCOUTCAR; //base_bmp = wship_bmp_e;
+   ws_wship_index = get_ws_from_etype(ws_type);
+   ws_bmp2 = extract_bitmap(wship_bmp_e, 1, 571, 221, 340);
+   ws_bmp3 = new_bitmap(400, 400, "ws_bmp");
+   ws_x_offset = 81; ws_y_offset = 36;
+   break;
+  case WSHIP_SPRITE_ECARRIER:
+   base_colour = COL_E1;
+   ws_type = SHIP_ECARRIER; //base_bmp = wship_bmp_e;
+   ws_wship_index = get_ws_from_etype(ws_type);
+   ws_bmp2 = extract_bitmap(wship_bmp_e, 3, 917, 399, 447);
+   ws_bmp3 = new_bitmap(550, 550, "ws_bmp");
+   ws_x_offset = 81; ws_y_offset = 36;
+   break;
+  case WSHIP_SPRITE_FREIGHT:
+   base_colour = COL_E1;
+   ws_type = SHIP_FREIGHT; //base_bmp = wship_bmp_e;
+   ws_wship_index = get_ws_from_etype(ws_type);
+   ws_bmp2 = extract_bitmap(wship_bmp_e, 247, 603, 251, 281);
+   ws_bmp3 = new_bitmap(350, 350, "ws_bmp");
+   ws_x_offset = 81; ws_y_offset = 36;
+   break;
+  case WSHIP_SPRITE_EBASE:
+   base_colour = COL_E1;
+   ws_type = SHIP_EBASE; //base_bmp = wship_bmp_e;
+   ws_wship_index = get_ws_from_etype(ws_type);
+   ws_bmp2 = extract_bitmap(wship_bmp_base, 1, 1, 357, 661);
+   ws_bmp3 = new_bitmap(700, 700, "ws_bmp_ebase");
+   ws_x_offset = 168; ws_y_offset = 12;
+   break;
+
+ }
+
+}
+
+
+
+void process_wship_sprite(void)
+{
+
+/*
+     static int dy = 10;
+     textprintf_ex(screen, small_font, 10, dy, COL_WHITE, 1, "ws_ship %i rot %i", ws_wship, rot);
+     dy += 12;
+     if (dy > 550)
+      dy = 10;
+     if (key [KEY_ESC])
+      exit(1);
+do
+{
+    rest(1);
+}
+ while(key [KEY_P] == 0);
+*/
+
+    fixed rotation;
+
+    int rotation_value = 256 / (WSHIP_ROTATIONS*4);
+
+     clear_to_color(ws_bmp3, 0);
+
+     rotation = itofix(rot * rotation_value);
+
+     rotate_sprite(ws_bmp3, ws_bmp2, ws_x_offset, ws_y_offset, rotation);
+
+     BITMAP* ws_bmp4 = reduce_wship_sprite(ws_bmp3, 0, ws_wship_index, rot);
+
+     new_wship_bmp_struct(ws_bmp4, "make_wship_sprite", wship_sprite [ws_wship], rot);
+
+     destroy_bitmap(ws_bmp4);
+// still need ws_bmp2 and ws_bmp3...
+
+//     rot ++;
+
+}
+
+
+int get_ws_sprite_from_etype(int etype)
+{
+ switch(etype)
+ {
+  case SHIP_SCOUT2: return WSHIP_SPRITE_SCOUT2;
+  case SHIP_SCOUT3: return WSHIP_SPRITE_SCOUT3;
+  case SHIP_OLD2: return WSHIP_SPRITE_OLD2;
+  case SHIP_OLD3: return WSHIP_SPRITE_OLD3;
+  case SHIP_FRIEND3: return WSHIP_SPRITE_FRIEND3;
+  case SHIP_SCOUTCAR: return WSHIP_SPRITE_SCOUTCAR;
+  case SHIP_ECARRIER: return WSHIP_SPRITE_ECARRIER;
+  case SHIP_FREIGHT: return WSHIP_SPRITE_FREIGHT;
+  case SHIP_EBASE: return WSHIP_SPRITE_EBASE;
+  case SHIP_DROM: return WSHIP_SPRITE_DROM;
+  case SHIP_LINER: return WSHIP_SPRITE_LINER;
+ }
+
+ return -1;
+
+}
+
+int get_ws_from_etype(int etype)
+{
+
+ switch(etype)
+ {
+  case SHIP_SCOUT2: return WSHIP_SCOUT2;
+  case SHIP_SCOUT3: return WSHIP_SCOUT3;
+  case SHIP_OLD2: return WSHIP_OLD2;
+  case SHIP_OLD3: return WSHIP_OLD3;
+  case SHIP_FRIEND3: return WSHIP_FRIEND3;
+  case SHIP_SCOUTCAR: return WSHIP_SCOUTCAR;
+  case SHIP_ECARRIER: return WSHIP_ECARRIER;
+  case SHIP_FREIGHT: return WSHIP_FREIGHT;
+  case SHIP_DROM: return WSHIP_DROM;
+  case SHIP_LINER: return WSHIP_LINER;
+  case SHIP_EBASE: return WSHIP_EBASE;
+ }
+
+ return -1;
+
+}
+
+
+/*
 // wship is sprite number, wship_index is wship type number, type is ship (or eclass) index (e.g. SHIP_OLD2)
 void make_wship_sprite(BITMAP *base_bmp, int wship, int wship_index, int x_pos, int y_pos, int xsize, int ysize, int size2, int x_offset, int y_offset, int type)
 {
@@ -2018,6 +2810,8 @@ void make_wship_sprite(BITMAP *base_bmp, int wship, int wship_index, int x_pos, 
 
 }
 
+*/
+
 void make_wship_collision_mask(BITMAP *base_bmp, int wship, int x_pos, int y_pos, int xsize, int ysize, int type)
 {
 int x_offset = 0, y_offset = 0;
@@ -2025,12 +2819,18 @@ int x_offset = 0, y_offset = 0;
     ship_collision_mask [type].sprite = extract_bitmap(base_bmp, x_pos, y_pos, xsize, ysize);
     switch(type)
     {
-     case SHIP_OLD2: x_offset = -9; y_offset = 7; break;
-     case SHIP_OLD3: x_offset = -13; y_offset = 8; break;
+//     case SHIP_OLD2: x_offset = -9; y_offset = 7; break;
+     case SHIP_OLD2: x_offset = -7; y_offset = 10; break;
+     case SHIP_OLD3: x_offset = -15; y_offset = 9; break;
+//     case SHIP_OLD3: x_offset = -13; y_offset = 8; break;
      case SHIP_FRIEND3: x_offset = 9; y_offset = 8; break;
      case SHIP_SCOUT2: x_offset = 8; y_offset = 8; break;
      case SHIP_SCOUT3: x_offset = 2; y_offset = 9; break;
      case SHIP_SCOUTCAR: x_offset = 5; y_offset = 7; break;
+     case SHIP_ECARRIER: x_offset = 9; y_offset = 7; break;
+     case SHIP_FREIGHT: x_offset = 5; y_offset = 7; break;
+     case SHIP_DROM: x_offset = 9; y_offset = 9; break;
+     case SHIP_LINER: x_offset = 6; y_offset = 5; break;
      case SHIP_EBASE: x_offset = 9; y_offset = 8; break;
     }
 // the offsets are the size of the shield on the leftmost and forwardmost point.
@@ -2602,6 +3402,8 @@ BITMAP *reduce_fighter_sprite(BITMAP *bmp, char do_alpha)
      {
       control_x [num - COL_CONTROL_BASE] = i;
       control_y [num - COL_CONTROL_BASE] = j;
+      num = getpixel(bmp, i*3 + l + 1, j * 3 + m);
+//      putpixel(bmp, i*3 + l, j * 3 + m, 0);//getpixel(bmp, i*3 + l + 1, j * 3 + m));
 //      control_x [num - COL_CONTROL_BASE] = 100;
 // control_x [0] = num - COL_CONTROL_BASE;//num - COL_CONTROL_BASE;
 
@@ -3609,6 +4411,82 @@ void new_shield_bmp_struct(BITMAP *source, const char errtxt [], struct BMP_STRU
 
 // destroy_bitmap(tmp);
 }
+
+
+/*
+
+***********************************************************************************************
+
+Starmap
+
+***********************************************************************************************
+
+*/
+
+extern struct sstarstruct sstar_template [SSTARS]; // defined in briefing.c
+
+void get_starmap(void)
+{
+
+ BITMAP* star_bmp = load_up_bitmap("gfx//starmap.bmp");
+
+ int i, s, x, y;
+
+ for (i = 0; i < BMPS_VALUES; i ++)
+ {
+  control_colour [i] = getpixel(star_bmp, COL_CONTROL_BASE + i, 0);
+  set_control_blend(control_colour [i], i);
+ }
+
+ TRANS_MODE
+ rectfill(star_bmp, 0, 0, star_bmp->w, star_bmp->h, TRANS_CONTROL);
+ END_TRANS
+
+ s = 0;
+ int p;
+
+ for (x = 0; x < star_bmp->w; x ++)
+ {
+  for (y = 1; y < star_bmp->h; y ++)
+  {
+   p = _getpixel(star_bmp, x, y);
+   if (p == 0)
+    continue;
+/*   switch(p)
+   {
+    case COL_CONTROL_BASE:
+     sstar_template [s].side = SSIDE_FED; break;
+    case COL_CONTROL_BASE + 3:
+     sstar_template [s].side = SSIDE_OC; break;
+    case COL_CONTROL_BASE + 4:
+     sstar_template [s].side = SSIDE_CWLTH; break;
+    case COL_CONTROL_BASE + 5:
+     sstar_template [s].side = SSIDE_IND; break;
+    default:
+     sstar_template [s].side = SSIDE_NONE; break;
+   }*/
+   sstar_template [s].x = x * 1.5;// * 3;
+   sstar_template [s].y = y * 1.5;// * 3;
+   sstar_template [s].col = p - COL_CONTROL_BASE + 1;
+   sstar_template [s].exists = 1;
+   s++;
+   if (s >= SSTARS)
+    exit(1); // should never be possible
+  }
+ }
+
+// fill the rest of the struct with empty space:
+ while(s < SSTARS)
+ {
+  sstar_template [s].exists = 0;
+  s++;
+ };
+
+ destroy_bitmap(star_bmp);
+}
+
+
+
 
 void load_progress(void)
 {

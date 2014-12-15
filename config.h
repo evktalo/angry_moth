@@ -171,6 +171,7 @@
 #define TEAM_FRIEND 0
 #define TEAM_ENEMY 1
 
+#define MODS 3
 
 
 enum
@@ -178,10 +179,14 @@ enum
 RP_OLD2_TURRET_1,
 RP_OLD2_TURRET_2,
 RP_OLD2_ENGINE_1,
+RP_OLD2_ENGINE_2,
 RP_OLD3_TURRET_1,
 RP_OLD3_TURRET_2,
 RP_OLD3_TURRET_3,
 RP_OLD3_ENGINE_1,
+RP_OLD3_ENGINE_2,
+RP_OLD3_ENGINE_3,
+RP_OLD3_ENGINE_4,
 RP_FRIEND3_TURRET_1,
 RP_FRIEND3_TURRET_2,
 RP_FRIEND3_TURRET_3,
@@ -200,11 +205,24 @@ RP_SCOUT3_ENGINE_3,
 RP_SCOUTCAR_TURRET_1,
 RP_SCOUTCAR_ENGINE_1,
 // must be in this order, i.e. all turrets for a ship then all engines
+RP_FREIGHT_TURRET_1,
+RP_FREIGHT_ENGINE_1,
+RP_FREIGHT_ENGINE_2,
+RP_FREIGHT_ENGINE_3,
+RP_DROM_ENGINE_1,
+RP_DROM_ENGINE_2,
+RP_LINER_ENGINE_1,
+RP_LINER_ENGINE_2,
 RP_EBASE_TURRET_1,
 RP_EBASE_TURRET_2,
 RP_EBASE_TURRET_3,
 RP_EBASE_TURRET_4,
 RP_EBASE_TURRET_5,
+RP_ECARRIER_TURRET_1,
+RP_ECARRIER_ENGINE_1,
+RP_ECARRIER_ENGINE_2,
+RP_ECARRIER_ENGINE_3,
+RP_ECARRIER_ENGINE_4,
 ROTATE_POS
 };
 
@@ -216,6 +234,10 @@ WSHIP_FRIEND3,
 WSHIP_SCOUT2,
 WSHIP_SCOUT3,
 WSHIP_SCOUTCAR,
+WSHIP_ECARRIER,
+WSHIP_FREIGHT,
+WSHIP_DROM,
+WSHIP_LINER,
 WSHIP_EBASE,
 WSHIP_TYPES
 };
@@ -229,6 +251,11 @@ FIGHTER_BOMBER,
 FIGHTER_FRIEND,
 FIGHTER_ESCOUT,
 FIGHTER_EINT,
+FIGHTER_FSTRIKE,
+FIGHTER_IBEX,
+FIGHTER_AUROCHS,
+FIGHTER_LACEWING,
+FIGHTER_MONARCH,
 FIGHTER_TYPES
 };
 
@@ -242,6 +269,8 @@ TURRET_EBEAM,
 TURRET_EHEAVY,
 TURRET_ELONG,
 TURRET_EANTI,
+TURRET_CGUN,
+TURRET_CLAUNCHER,
 TURRET_TYPES
 // when adding e-turrets remember to add a threat value to calculate_threat in level.c
 };
@@ -287,6 +316,14 @@ JBUTTONS
 
 enum
 {
+JAXIS_ACCEL,
+JAXIS_TURN,
+JAXIS_SLIDE,
+JAXES
+};
+
+enum
+{
 WEAPON_BASIC,
 WEAPON_MINE,
 WEAPON_ROCKET,
@@ -300,15 +337,19 @@ WEAPONS
 
 enum
 {
-U_POWER,
-U_RANGE,
-U_AGILITY,
-U_SHIELD,
-U_CHARGE,
-U_CHANGE,
-U_EXTEND,
-U_TYPES
+CVAR_NONE, // standard version of all fighters
+CVAR_RAM_HEAVY,
 
+CVAR_LW_B,
+CVAR_LW_C,
+CVAR_MONARCH_B,
+CVAR_MONARCH_C,
+CVAR_IBEX_B,
+CVAR_IBEX_C,
+CVAR_AUROCHS_B,
+CVAR_AUROCHS_C,
+
+CVAR_END
 };
 
 
@@ -330,6 +371,15 @@ WPN_TORP,
 WPN_ROCKET2,
 WPN_DEFLECT,
 WPN_BLASTER,
+WPN_WROCKET,
+WPN_HROCKET,
+WPN_LW_MISSILE,
+WPN_ADV_LW_MISSILE,
+WPN_HVY_LW_MISSILE,
+WPN_RAIN,
+WPN_AUTOCANNON,
+
+WPN_E_AF_MISSILE,
 
 WPN_NONE,
 
@@ -355,8 +405,21 @@ CONTROL_JOY_B
 
 };
 
+enum
+{
+MOD_TORP,
+MOD_DRIVE,
+MOD_SPEED,
+NO_MODS
+};
+
+// needs to be 4 because the actual numbers are {0,1}{2,3} rather than {0,1}{0,1}
 #define WING_SIZE 4
+#define WINGS 2
 #define HPULSE 8
+#define WPNS 3
+
+#define COVER_RANGE 200000
 
 struct playerstruct
 {
@@ -382,6 +445,9 @@ struct playerstruct
 
  int control;
 
+ int type;
+ int variant;
+
  int alive;
  int ships;
  int starting_ships;
@@ -392,19 +458,19 @@ struct playerstruct
  int accelerating; // used to control squadron AI
  int flap [2];
 
- int weapon_type [2];
- int weapon_charge [2];
- int weapon_lock [2];
- int weapon_target [2] [WPN_TARGETS];
- int weapon_block [2]; // prevents cannons or other weapon firing
- int weapon_sight_x [2] [WPN_TARGETS];
- int weapon_sight_y [2] [WPN_TARGETS];
- int weapon_sight_visible [2] [WPN_TARGETS];
- int weapon_angle [2];
- int weapon_status [2];
- int weapon_status2 [2];
- int weapon_recycle [2];
- int weapon_firing [2];
+ int weapon_type [WPNS];
+ int weapon_charge [WPNS];
+ int weapon_lock [WPNS];
+ int weapon_target [WPNS] [WPN_TARGETS];
+ int weapon_block [WPNS]; // prevents cannons or other weapon firing
+ int weapon_sight_x [WPNS] [WPN_TARGETS];
+ int weapon_sight_y [WPNS] [WPN_TARGETS];
+ int weapon_sight_visible [WPNS] [WPN_TARGETS];
+ int weapon_angle [WPNS];
+ int weapon_status [WPNS];
+ int weapon_status2 [WPNS];
+ int weapon_recycle [WPNS];
+ int weapon_firing [WPNS];
 
  int camera_x;
  int camera_y;
@@ -418,12 +484,11 @@ struct playerstruct
  int max_hp;
  int shield;
  int max_shield;
+ int shield_recharge;
  int shield_up;
  int shield_flash;
  int shield_threshold;
  int shield_just_up;
-
- int upgrade [U_TYPES];
 
  int target_a;
  int target_e;
@@ -456,13 +521,37 @@ struct playerstruct
  int hitpulse_end [2] [HPULSE];
  char hitpulse_beam [2] [HPULSE];
 
- int wing_orders;
- int wing_size;
- int wing [WING_SIZE];
+ int wing_orders [WINGS];
+ int wing_size [WINGS];
+ int wing [WINGS] [WING_SIZE];
+ int wing_type [WINGS]; // just used to set wing type during mission ship select screen then to make sure correct type is created. Values refer to escorts (0 or 1) rather than ship types
+ int escort_type [2]; // two types of fighter in Cwlth fleet - only player 0's value is used for this
+ int wings; // number of wings (1 or 2)
  int commanding;
+ int wing_command; // which wing are you commanding?
  int just_commanded;
- char command_key;
+ char command_key; // this is the command key just pressed (if any). Stops you firing after issuing command
+ int command_mode; //
+ int wing_fire1; // if >0 and wing is in formation, this tells wing to fire best anti-fighter weapon
+ int wing_fire2; // if >0 and wing is in formation, this tells wing to fire best anti-wship weapon
 
+ int jump_safe; // is the player safe to jump out? (i.e. close enough to friendly wship?)
+
+ int mod [NO_MODS];
+
+};
+
+enum
+{
+JUMP_SAFE,
+JUMP_RISK,
+JUMP_NOT_SAFE
+};
+
+enum
+{
+CMODE_TACTIC,
+CMODE_WING
 };
 
 #define MINE_BITS 15
@@ -478,6 +567,7 @@ struct bulletstruct
  int status2;
  int status3;
  int status4;
+ int status5;
  int turning;
  int timeout;
  int damage;
@@ -510,15 +600,23 @@ BULLET_EBEAM3,
 BULLET_PTORP1,
 BULLET_AWS_MISSILE,
 BULLET_AF_MISSILE,
+BULLET_LW_MISSILE,
+BULLET_ADV_LW_MISSILE,
+BULLET_HVY_LW_MISSILE,
+BULLET_EAF_MISSILE, // enemy AF missile
 BULLET_HOMING,
 BULLET_EBIGSHOT,
 BULLET_ELONGSHOT,
 BULLET_ESHOT1,
 BULLET_ESHOT2,
 BULLET_ROCKET,
+BULLET_HROCKET,
 BULLET_ROCKET2,
 BULLET_PSEEKER,
 BULLET_BLAST,
+BULLET_FSHOT,
+BULLET_FROCK,
+BULLET_RAIN,
 
 BULLET_BASIC,
 BULLET_WORM,
@@ -576,19 +674,50 @@ SHIP_NONE,
 SHIP_FRIEND3,
 SHIP_OLD3,
 SHIP_OLD2,
+SHIP_DROM,
+SHIP_AUROCHS,
+SHIP_IBEX,
+SHIP_FSTRIKE,
+SHIP_LACEWING,
+SHIP_MONARCH,
 SHIP_FIGHTER_FRIEND,
+SHIP_LINER,
 
 SHIP_EBASE,
+SHIP_ECARRIER,
 SHIP_SCOUTCAR,
+SHIP_FREIGHT,
 SHIP_SCOUT3,
 SHIP_SCOUT2,
 SHIP_BOMBER,
 SHIP_ESCOUT,
 SHIP_EINT,
 SHIP_FIGHTER,
-NO_SHIP_TYPES
+NO_SHIP_TYPES,
+
+SHIP_ESCORT1, // these are used in level.c to set up CTBR fighters as escort_type 1 or 2
+SHIP_ESCORT2
 
 };
+
+enum
+{
+FF_NONE,
+FF_SANDFLY,
+//FF_RAM,
+//FF_LACEWING,
+FF_MONARCH,
+FF_IBEX,
+FF_AUROCHS,
+NO_FF
+};
+// these must be in the same order as they are in fighter_ship in briefing.c
+
+struct gamestruct
+{
+ int fighter_available [NO_FF];
+};
+
 
 struct arenastruct
 {
@@ -601,9 +730,13 @@ struct arenastruct
  int game_over;
  int mission_over;
  int all_wships_lost; // also mission failed
+ int send_messages; // if zero, no messages will be sent. Use e.g. if mission is over and no more messages needed (see RESULT_NO_MORE_MESSAGE in level.c)
 
  int end_stage;
  int stage;
+ int jump_countdown; // this informs the player and triggers pickup - the actual jump is handled by the script
+ int missed_jump;
+ int jumped_out; // if the player (or either player in 2up) is near wship when it jumps out, and jump_countdown > -1, this is set to 1 and mission is over
 
  int players;
  int only_player; // is -1 if 2 players until 1 player dies with no lives left. Is 0 if 1 player.
@@ -615,6 +748,8 @@ struct arenastruct
  int srecord [SRECORDS] [NO_TEAMS] [NO_SHIP_TYPES];
 
  char camera_fix;
+
+ char debug_invulnerable;
 
 };
 
@@ -653,9 +788,9 @@ struct cloudstruct
 };
 
 // these are used for setting time, but also for array dimensions:
-#define SMALL_SHOCK_TIME 15
-#define LARGE_SHOCK_TIME 20
-#define HUGE_SHOCK_TIME 40
+#define SMALL_SHOCK_TIME 30
+#define LARGE_SHOCK_TIME 50
+#define HUGE_SHOCK_TIME 50
 
 enum
 {
@@ -683,6 +818,10 @@ CLOUD_BIGFADEFLARE,
 CLOUD_LINKLINE,
 CLOUD_EX_SHIELD,
 
+CLOUD_FIRE,
+CLOUD_FIRE2,
+CLOUD_FIRE3,
+
 CLOUD_SMALL,
 CLOUD_BANG,
 CLOUD_DRAG_BALL,
@@ -691,6 +830,7 @@ CLOUD_SPARSE_NARROW_FLARE,
 CLOUD_BURST,
 CLOUD_2BALL,
 CLOUD_SEEKER_TRAIL,
+CLOUD_SEEKER_TRAIL2,
 CLOUD_LINE_TRAIL,
 CLOUD_ROCKET_TRAIL,
 CLOUD_WORM_TRAIL,
@@ -713,6 +853,8 @@ struct optionstruct
 
  int ckey [2] [CKEY_END];
  int joy_button [2] [JBUTTONS];
+ int joy_stick [2] [JAXES];
+ int joy_axis [2] [JAXES];
  int joystick_available [2];
 
  char joystick_dual;
@@ -759,6 +901,7 @@ struct shipstruct
  int old_x, old_y; // probably only good for wships
 // int speed; // scalar speed of warship (only). Needs to be kept updated as it's used when a ship is destroyed and veers off course.
  int recycle;
+ int recycle2; // used for eg Lacewing's missiles (which have a separate recycle timer)
  int angle;
  int counter;
 
@@ -776,6 +919,8 @@ struct shipstruct
  int turning;
  int turning_time;
  int turn_speed;
+ int slide_dir; // -1, 0 or 1
+ int slide_count;
  int engine [MAX_ENGINES];
  int engine_power;
  int wship_throttle;
@@ -852,8 +997,10 @@ struct shipstruct
  int turret_status2 [NO_TURRETS]; // used for other misc things
  int turret_bullet_speed [NO_TURRETS]; // speed of bullet fired. May not be exact. Used for leading targets.
 
+ int fighter_group; // special variable set in script according to certain flags
  int leader;
  int player_leader;
+ int player_wing;
  int player_command;
  int formation_position;
  int available_formation_position; // for leaders of carrier-launched groups - this is the
@@ -887,6 +1034,8 @@ struct shipstruct
 
  int letter; // alpha, beta etc for wships
  int letter_rank;
+ int scancol;
+ int drive_colour;
 
 // char angle_lock;
 // char position_lock;
@@ -914,6 +1063,13 @@ MISSION_SCRAMBLE,
 MISSION_PLAYER_WING
 };
 
+enum
+{
+SCANCOL_OCSF,
+SCANCOL_FED,
+SCANCOL_CWLTH,
+SCANCOLS
+};
 
 /*
 SHIP_OLD2,
@@ -944,6 +1100,13 @@ FCLASS_FIGHTER,
 FCLASS_BOMBER
 };
 
+enum
+{
+MOVE_NORMAL,
+MOVE_SLIDE,
+MOVE_ALL // slide capability is tested by > MOVE_SLIDE
+};
+
 struct eclass_struct
 {
  int ship_class;
@@ -954,12 +1117,17 @@ struct eclass_struct
  int engines;
  int hp [MAX_PARTS];
  int energy_production [MAX_PARTS];
+ int max_shield;
+ int shield_recharge; // for wships, this becomes shield_energy_use; for fighters it becomes shield_recharge
  int dsprite [MAX_PARTS] [3];
  char fins;
  int generator_part;
  int generator_y;
  int engine_power [MAX_ENGINES];
  int engine_output;
+ int move_mode;
+ int turn;
+ int drag;
  int base_turret_rp;
  int structure;
  int elongation;
@@ -1001,7 +1169,10 @@ ACT_WING_FORM,
 ACT_WING_AWAY, // move away to make space for attack
 ACT_WING_SEEK, // approach to attack
 ACT_WING_ATTACK, // attacking!
-ACT_WING_EVADE // take evasive action
+ACT_WING_EVADE, // take evasive action
+
+ACT_WING_SEEK_HOVER, // approach to hover
+ACT_WING_HOVER // fighters/gunships with slide
 
 };
 
@@ -1036,10 +1207,28 @@ enum
 FIGHTER_SPRITE_BASIC_1,
 FIGHTER_SPRITE_BOMBER_1,
 FIGHTER_SPRITE_FRIEND_1,
+FIGHTER_SPRITE_FRIEND_2,
+FIGHTER_SPRITE_FRIEND_3,
+FIGHTER_SPRITE_FSTRIKE_1,
+FIGHTER_SPRITE_FSTRIKE_2,
+FIGHTER_SPRITE_FSTRIKE_3,
 FIGHTER_SPRITE_ESCOUT_1,
 FIGHTER_SPRITE_EINT_1,
 FIGHTER_SPRITE_BASIC_3,
 FIGHTER_SPRITE_BASIC_4,
+FIGHTER_SPRITE_IBEX_1,
+FIGHTER_SPRITE_IBEX_2,
+FIGHTER_SPRITE_IBEX_3,
+FIGHTER_SPRITE_AUROCHS_1,
+FIGHTER_SPRITE_AUROCHS_2,
+FIGHTER_SPRITE_AUROCHS_3,
+FIGHTER_SPRITE_LACEWING_1,
+FIGHTER_SPRITE_LACEWING_2,
+FIGHTER_SPRITE_LACEWING_3,
+FIGHTER_SPRITE_LACEWING_4,
+FIGHTER_SPRITE_MONARCH_1,
+FIGHTER_SPRITE_MONARCH_2,
+FIGHTER_SPRITE_MONARCH_3,
 FIGHTER_SPRITES
 };
 
@@ -1069,7 +1258,8 @@ CONVOY_15
 
 
 #define NO_CONVOYS 16
-#define WSHIP_DRAG 1005
+#define WSHIP_DRAG 18
+// WSHIP_DRAG needs to be defined here because it's used for convoy movement as well as wships
 
 struct convoystruct
 {
@@ -1084,6 +1274,7 @@ struct convoystruct
  int arrangement;
  int throttle;
  int turn_speed;
+ int drag;
 
  int fine_angle;
 
@@ -1092,6 +1283,7 @@ struct convoystruct
  int turning;
  int turn_count;
  int can_turn;
+ char approach_lead;
 };
 /*
 #define MSG_LINES 4
@@ -1106,7 +1298,7 @@ struct messagestruct
 */
 struct msgstruct
 {
- char text [350];
+ char text [2000];
  int val [5];
 };
 
@@ -1125,8 +1317,9 @@ struct commstruct
  int from_rank;
  int to;
 // any new variables need to be put in pack_messages in level.c
- int col_min;
- int col_max;
+// int col_min;
+// int col_max;
+ int comm_col;
 
 //int message; // remove!
 };
@@ -1136,7 +1329,7 @@ struct commstruct
 
 #define MESSAGE_LINE_SPACE 12
 
-#define LINES 15
+#define LINES 20
 #define END_STRING '\0'
 #define END_MESSAGE 1
 
@@ -1151,3 +1344,38 @@ struct linestruct
 #define NO_TONES 57
 #define BASE_TONE 200
 // from sound.h
+
+
+// used in the strategic map in briefing.c (initialised in display_init from starmap.bmp)
+struct sstarstruct
+{
+ char exists;
+ int x;
+ int y;
+ int old_x;
+ int old_y;
+ int type;
+ int settled;
+ int side;
+ int col;
+};
+
+#define SSTARS 500
+
+enum
+{
+SS_WHITE,
+SS_YELLOW,
+SS_RED,
+SS_BLUE
+};
+
+enum
+{
+SSIDE_NONE,
+SSIDE_CWLTH,
+SSIDE_FED,
+SSIDE_IMP,
+SSIDE_OTHER
+};
+
