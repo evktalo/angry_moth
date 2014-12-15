@@ -122,8 +122,9 @@ int next_mission(void)
  switch(arena.stage)
  {
   case 1: arena.stage = 2; return 1;
-  case 2: return 0; // finished game!
-
+  case 2: arena.stage = 3; return 1;
+  case 3: arena.stage = 4; return 1;
+  default: return 0; // finished game!
  }
 
  return 0;
