@@ -2178,9 +2178,6 @@ void run_menu_background(void)
 
 }
 
-RLE_SPRITE *RLE_ccircle_basic [3] [RLE_CCIRCLES];
-RLE_SPRITE *RLE_ccircle_2cols [3] [RLE_CCIRCLES];
-
 void display_menu_background(void)
 {
 
@@ -2191,45 +2188,6 @@ void display_menu_background(void)
   vline(display[0], mstar_x [i] >> 10, mstar_y [i] >> 10, (mstar_y [i] - mstar_speed) >> 10, mstar_bright1 [i]);
 //  putpixel(display[0], mstar_x [i] >> 10, mstar_y [i] >> 10, mstar_bright1 [i]);
  }
-/*
- int sprite = PLAYER_RLE_MENU1;
-
- sprite += mship_frame / 10;
- if (sprite > PLAYER_RLE_MENU6)
-  sprite = PLAYER_RLE_MENU6;
-
-// draw_rle_sprite(display[0], RLE_player [sprite], (mship_x >> 10) - 48, (mship_y >> 10) - 30);
-
-// line(display[0], (mship_x >> 10) - 50, (mship_y >> 10) - 33, 240, 200, COL_WHITE);
-
-   int size = mship_drive / 5;
-
-   if (size <= 0)
-    return;
-
-   size += grand(10);
-
-   if (size >= RLE_CCIRCLES)
-    size = RLE_CCIRCLES - 1;
-
-   draw_trans_rle_sprite(display[0], RLE_ccircle_2cols [0] [size], (mship_x>>10)-size, (mship_y>>10) + 25);
-   size /= 2;
-   size += grand(5);
-   if (size > 0)
-    draw_trans_rle_sprite(display[0], RLE_ccircle_basic [0] [size], (mship_x>>10)-size, (mship_y>>10) + 29);
-//   size /= 2;
-//   size += grand(5);
-   if (size > 0)
-    draw_trans_rle_sprite(display[0], RLE_ccircle_2cols [0] [size], (mship_x>>10)-size, (mship_y>>10) + 25 + (size*2));
-
-   size /= 2;
-   if (size > 0)
-    draw_trans_rle_sprite(display[0], RLE_ccircle_2cols [0] [size], (mship_x>>10)-size, (mship_y>>10) + 25 + (size*7));
-
-//   draw_trans_rle_sprite(display[0], RLE_ccircle_basic [0] [size], x - size - 1, y - size - 1);
-
-// may have returned before here.
-*/
 }
 
 

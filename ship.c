@@ -88,12 +88,6 @@ void set_wing_seek(int a, int e);
 int target_ship_angle(int a, int target);
 int target_ship_class(int a, int target);
 
-// these sprite structs are in display.c
-// they're used here because they contain some data about turret/weapon locations
-struct BMP_STRUCT wship_sprite [WSHIP_SPRITES] [WSHIP_ROTATIONS];
-struct BMP_STRUCT turret_sprite [TURRET_SPRITES] [TURRET_ROTATIONS];
-struct BMP_STRUCT fighter_sprite [FIGHTER_SPRITES] [FIGHTER_ROTATIONS];
-
 enum
 {
 BURST_NO,
