@@ -694,7 +694,7 @@ char bmsg [BMSGS] [150] =
 
 int waiting;
 int waiting_for_fire;
-int pos;
+int briefing_pos;
 int selecting [2];
 
 enum
@@ -755,14 +755,14 @@ void init_mission_briefing(void)
   bselect[s].exists = 0;
  }
 
- pos = 0;
+ briefing_pos = 0;
 
  for (i = 0; i < BSCRIPTS; i ++)
  {
   if (bscript [i].type == BSCRIPT_HEADER
    && bscript [i].var [0] == arena.stage)
   {
-   pos = i;
+   briefing_pos = i;
    break;
   }
  }
@@ -792,7 +792,7 @@ int mission_briefing(void)
   if (briefing_loop() == 1)
    return 0; // must have quit
 
-  if (bscript[pos].type == BSCRIPT_END
+  if (bscript[briefing_pos].type == BSCRIPT_END
    || pressing_a_key(0, CKEY_FIRE2, JBUTTON_FIRE2))
    {
      bkey_wait [0] = 10;
@@ -879,7 +879,7 @@ int briefing_loop(void)
   }
 //   else
    {
-    if (bscript[pos].type == BSCRIPT_SETTLE)
+    if (bscript[briefing_pos].type == BSCRIPT_SETTLE)
     {
      if (check_settled() == 0)
       waiting = 1;
@@ -1104,29 +1104,29 @@ void run_bscripts(void)
 
  do
  {
-  pos ++;
+  briefing_pos ++;
 
-  switch(bscript[pos].type)
+  switch(bscript[briefing_pos].type)
   {
    case BSCRIPT_NEW_CONVOY:
-    c = bscript[pos].var[BNEWCONVOY_CONVOY];
-    bconvoy [c].x = bscript[pos].var[BNEWCONVOY_X]<<10;
-    bconvoy [c].y = bscript[pos].var[BNEWCONVOY_Y]<<10;
+    c = bscript[briefing_pos].var[BNEWCONVOY_CONVOY];
+    bconvoy [c].x = bscript[briefing_pos].var[BNEWCONVOY_X]<<10;
+    bconvoy [c].y = bscript[briefing_pos].var[BNEWCONVOY_Y]<<10;
     bconvoy [c].exists = 1;
     bconvoy [c].x_speed = 0;
     bconvoy [c].y_speed = 0;
-    bconvoy [c].face = bscript[pos].var[BNEWCONVOY_FACE];
+    bconvoy [c].face = bscript[briefing_pos].var[BNEWCONVOY_FACE];
     break;
    case BSCRIPT_NEW_SHIP:
-    c = bscript[pos].var[BNEWSHIP_BCONVOY];
+    c = bscript[briefing_pos].var[BNEWSHIP_BCONVOY];
     for (s = 0; s < BSHIPS; s ++)
     {
      if (bship[s].type == BSHIP_NONE)
      {
-      bship[s].type = bscript[pos].var[BNEWSHIP_TYPE];
-      bship[s].convoy = bscript[pos].var[BNEWSHIP_BCONVOY];
-      bship[s].x = bscript[pos].var[BNEWSHIP_X];
-      bship[s].y = bscript[pos].var[BNEWSHIP_Y];
+      bship[s].type = bscript[briefing_pos].var[BNEWSHIP_TYPE];
+      bship[s].convoy = bscript[briefing_pos].var[BNEWSHIP_BCONVOY];
+      bship[s].x = bscript[briefing_pos].var[BNEWSHIP_X];
+      bship[s].y = bscript[briefing_pos].var[BNEWSHIP_Y];
       if (bship[s].type < BSHIP_END_FRIENDS)
        bship[s].side = TEAM_FRIEND;
         else
@@ -1136,29 +1136,29 @@ void run_bscripts(void)
     }
     break;
    case BSCRIPT_MOVE:
-    c = bscript[pos].var[BMOVE_CONVOY];
-    f_angle = atan2((bscript[pos].var[BMOVE_Y]<<10) - bconvoy[c].y, (bscript[pos].var[BMOVE_X]<<10) - bconvoy[c].x);
+    c = bscript[briefing_pos].var[BMOVE_CONVOY];
+    f_angle = atan2((bscript[briefing_pos].var[BMOVE_Y]<<10) - bconvoy[c].y, (bscript[briefing_pos].var[BMOVE_X]<<10) - bconvoy[c].x);
 //    if (dist > 0)
     {
-     bconvoy[c].x_speed = fxpart(f_angle, bscript[pos].var[BMOVE_SPEED]);
-     bconvoy[c].y_speed = fypart(f_angle, bscript[pos].var[BMOVE_SPEED]);
+     bconvoy[c].x_speed = fxpart(f_angle, bscript[briefing_pos].var[BMOVE_SPEED]);
+     bconvoy[c].y_speed = fypart(f_angle, bscript[briefing_pos].var[BMOVE_SPEED]);
     }
-    bconvoy[c].goal_x = bscript[pos].var[BMOVE_X]<<10;
-    bconvoy[c].goal_y = bscript[pos].var[BMOVE_Y]<<10;
-    bconvoy[c].face = bscript[pos].var[BMOVE_FACE];
-    bconvoy[c].move_settle = bscript[pos].var[BMOVE_SETTLE];
+    bconvoy[c].goal_x = bscript[briefing_pos].var[BMOVE_X]<<10;
+    bconvoy[c].goal_y = bscript[briefing_pos].var[BMOVE_Y]<<10;
+    bconvoy[c].face = bscript[briefing_pos].var[BMOVE_FACE];
+    bconvoy[c].move_settle = bscript[briefing_pos].var[BMOVE_SETTLE];
     break;
    case BSCRIPT_WAIT:
-    waiting = bscript[pos].var[BWAIT_TIME];
+    waiting = bscript[briefing_pos].var[BWAIT_TIME];
     break;
    case BSCRIPT_HIT_FIRE:
     waiting_for_fire = 2;
     break;
    case BSCRIPT_BMESSAGE:
-    create_tbox(bscript[pos].var[BMESSAGE_BMESSAGE],
-     bscript[pos].var[BMESSAGE_X], bscript[pos].var[BMESSAGE_Y],
-     bscript[pos].var[BMESSAGE_W], bscript[pos].var[BMESSAGE_X2],
-     bscript[pos].var[BMESSAGE_Y2], bscript[pos].var[BMESSAGE_CONVOY]);
+    create_tbox(bscript[briefing_pos].var[BMESSAGE_BMESSAGE],
+     bscript[briefing_pos].var[BMESSAGE_X], bscript[briefing_pos].var[BMESSAGE_Y],
+     bscript[briefing_pos].var[BMESSAGE_W], bscript[briefing_pos].var[BMESSAGE_X2],
+     bscript[briefing_pos].var[BMESSAGE_Y2], bscript[briefing_pos].var[BMESSAGE_CONVOY]);
     break;
    case BSCRIPT_CLEAR_MESSAGE:
     tbox_exists = 0;
@@ -1168,8 +1168,8 @@ void run_bscripts(void)
     {
      if (bselect[s].exists == 0)
      {
-      bselect[s].x = (bconvoy[bscript[pos].var[BSELECT_CONVOY]].x >> 10) + bscript[pos].var[BSELECT_X_OFFSET] + MAP_X;// + 5;
-      bselect[s].y = (bconvoy[bscript[pos].var[BSELECT_CONVOY]].y >> 10) + bscript[pos].var[BSELECT_Y_OFFSET] + MAP_Y;// + 5;
+      bselect[s].x = (bconvoy[bscript[briefing_pos].var[BSELECT_CONVOY]].x >> 10) + bscript[briefing_pos].var[BSELECT_X_OFFSET] + MAP_X;// + 5;
+      bselect[s].y = (bconvoy[bscript[briefing_pos].var[BSELECT_CONVOY]].y >> 10) + bscript[briefing_pos].var[BSELECT_Y_OFFSET] + MAP_Y;// + 5;
       bselect[s].x1 = -5;
       bselect[s].y1 = -5;
       bselect[s].x2 = 5;
@@ -1177,7 +1177,7 @@ void run_bscripts(void)
       for (c = 0; c < BSHIPS; c ++)
       {
        if (bship[c].type != BSHIP_NONE
-        && bship[c].convoy == bscript[pos].var[BSELECT_CONVOY])
+        && bship[c].convoy == bscript[briefing_pos].var[BSELECT_CONVOY])
         {
          if (bship[c].x < bselect[s].x1 - 0)
           bselect[s].x1 = bship[c].x - 0;
@@ -1206,10 +1206,10 @@ void run_bscripts(void)
 
   }
 
- } while (bscript [pos].type != BSCRIPT_WAIT
-       && bscript [pos].type != BSCRIPT_HIT_FIRE
-       && bscript [pos].type != BSCRIPT_SETTLE
-       && bscript [pos].type != BSCRIPT_END);
+ } while (bscript [briefing_pos].type != BSCRIPT_WAIT
+       && bscript [briefing_pos].type != BSCRIPT_HIT_FIRE
+       && bscript [briefing_pos].type != BSCRIPT_SETTLE
+       && bscript [briefing_pos].type != BSCRIPT_END);
 
 }
 
