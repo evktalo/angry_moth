@@ -30,6 +30,9 @@ Call at startup of program.
 */
 void init_sound(void)
 {
+    if (!options.sound_init) {
+        return;
+    }
    // first we'll populate the tone array with the right frequencies:
    int i, j;
    float t;
@@ -100,6 +103,9 @@ Loads a .wav file. Should be in the .wavs subdirectory
 */
 void load_sample_in(int samp, const char *sfile)
 {
+    if (!options.sound_init) {
+        return;
+    }
 
  char sfile_name [70];
 
@@ -122,48 +128,44 @@ Pass e.g. WAV_FIRE to this and it plays it
 */
 void play_effect(int sample)
 {
-
-// play_sample(sounds [sample], 200, 127, 1000, 0);
- new_voice_wvfxy_xs_ys(sample, SPRIORITY_LOW, 200, 1000, 0, 0, 0, 0);
-
+    if (!options.sound_init) {
+        return;
+    }
+    new_voice_wvfxy_xs_ys(sample, SPRIORITY_LOW, 200, 1000, 0, 0, 0, 0);
 }
 
 void play_basicwfv(int sample, int f, int v)
 {
+    if (!options.sound_init) {
+        return;
+    }
 
- v *= options.sfx_volume;
- v /= 100;
+    v *= options.sfx_volume;
+    v /= 100;
 
     play_sample(sounds [sample], v, 127, f, 0);
-
 }
 
 
 // Only use this for sounds which come from the angry moth itself: (or interface sounds)
 void play_effectwfv(int sample, int f, int v)
 {
+    if (!options.sound_init) {
+        return;
+    }
 
-// play_sample(sounds [sample], v, 127, f, 0);
+    v *= options.sfx_volume;
+    v /= 100;
 
- v *= options.sfx_volume;
- v /= 100;
-
- play_sample(sounds [sample], v, 127, f, 0);
-
-
-
-// new_voice_wvfxy_xs_ys(sample, v, f, 0, 0, 0, 0);
-
-
+    play_sample(sounds [sample], v, 127, f, 0);
 }
 
 // This is probably not so useful as it doesn't have a speed:
 void play_effectwfvxy(int sample, int priority, int f, int v, int x, int y)
 {
-
-// int pan = 127;//x / 2500; // this gives us a # from 0 to 255, from the left of the screen to the right. For stereo
-
-// play_sample(sounds [sample], v, pan, f, 0);
+    if (!options.sound_init) {
+        return;
+    }
 
  if (arena.only_player == -1) // i.e. there are two players
  {
@@ -177,34 +179,32 @@ void play_effectwfvxy(int sample, int priority, int f, int v, int x, int y)
     && y > player[1].y - 900000
     && y < player[1].y + 900000))
     {
-     v *= options.sfx_volume;
-     v /= 100;
+        v *= options.sfx_volume;
+        v /= 100;
 
-     int dist [2];
-     int d = 0;
+        int dist [2];
+        int d = 0;
 
-     dist [0] = abs(hypot(player[0].y - y, player[0].x - x));
-     dist [1] = abs(hypot(player[1].y - y, player[1].x - x));
+        dist [0] = abs(hypot(player[0].y - y, player[0].x - x));
+        dist [1] = abs(hypot(player[1].y - y, player[1].x - x));
 
-     if (dist [1] < dist [0])
-      d = 1;
+        if (dist [1] < dist [0]) {
+            d = 1;
+        }
 
-     dist [d] /= 8000;
+        dist [d] /= 8000;
 
-     v -= dist [d];
+        v -= dist [d];
 
-     if (v < 0)
-      return;
+        if (v < 0) {
+        return;
+        }
 
-    play_sample(sounds [sample], v, 127, f, 0);
-//     new_voice_wvfxy_xs_ys(sample, v, f, x, y, 0, 0);
-
+        play_sample(sounds [sample], v, 127, f, 0);
     }
 
-  return;
+    return;
  }
-
-// just one player:
 
    if (x > player[arena.only_player].x - 900000
      && x < player[arena.only_player].x + 900000
@@ -218,11 +218,13 @@ void play_effectwfvxy(int sample, int priority, int f, int v, int x, int y)
     new_voice_wvfxy_xs_ys(sample, priority, v, f, x, y, 0, 0);
 
    }
-
 }
 
 void play_effectwfvxy_xs_ys(int sample, int priority, int f, int v, int x, int y, int xs, int ys)
 {
+    if (!options.sound_init) {
+        return;
+    }
 
  if (arena.only_player == -1) // i.e. there are two players
  {
@@ -256,8 +258,6 @@ void play_effectwfvxy_xs_ys(int sample, int priority, int f, int v, int x, int y
       return;
 
     play_sample(sounds [sample], v, 127, f, 0);
-//     new_voice_wvfxy_xs_ys(sample, v, f, x, y, 0, 0);
-
     }
 
   return;
@@ -282,6 +282,10 @@ void play_effectwfvxy_xs_ys(int sample, int priority, int f, int v, int x, int y
 
 void indicator(int sample, int t, int v, int p)
 {
+    if (!options.sound_init) {
+        return;
+    }
+
  int pan = 127;
 
  if (arena.only_player == -1
@@ -323,10 +327,12 @@ void init_voices(void)
 
 }
 
-
 // DO NOT call this function when arena.only_player is -1! Only use it when there is just one player.
 void new_voice_wvfxy_xs_ys(int sample, int priority, int vol, int freq, int x, int y, int x_speed, int y_speed)
 {
+    if (!options.sound_init) {
+        return;
+    }
 
  int v;
 
@@ -473,7 +479,9 @@ int fix_freq(int new_freq)
 
 void run_voices(void)
 {
-
+    if (!options.sound_init) {
+        return;
+    }
  int v;
 
  for (v = 0; v < VOICES; v ++)
@@ -577,7 +585,6 @@ int recycle_chip;
 
 void new_level_music(void)
 {
-
  int i, j;
 
  for (i = 0; i < MBOX_X; i ++)
@@ -630,7 +637,6 @@ void new_level_music(void)
 
 int new_random_chip(void)
 {
-
   int ch_type = CH_LINE;
   if (grand(4) == 0)
    ch_type = CH_BASS;
@@ -678,12 +684,11 @@ int new_chip(int ch_type)
 
 void destroy_chip(int ch)
 {
- chip [ch] = CH_NONE;
+    chip [ch] = CH_NONE;
 }
 
 int place_chip(int ch, int x, int y, int dir)
 {
-
  if (music_box [x] [y] != -1)
   return -1;
 
@@ -697,7 +702,9 @@ int place_chip(int ch, int x, int y, int dir)
 
 void run_music(void)
 {
-
+    if (!options.sound_init) {
+        return;
+    }
   bt ++;
   if (bt == beat)
   {
@@ -721,7 +728,9 @@ void run_music(void)
 
 void play_music(void)
 {
-
+    if (!options.sound_init) {
+        return;
+    }
  int ch;
  char move_x=0;
  char move_y=0;
@@ -795,15 +804,19 @@ void play_music(void)
 
 void rotate_chip(int ch)
 {
- chip_dir [ch] ++;
- if (chip_dir [ch] == CD_DIRS)
-  chip_dir [ch] = 0;
+    chip_dir [ch] ++;
+    if (chip_dir [ch] == CD_DIRS) {
+        chip_dir [ch] = 0;
+    }
 }
 
 int chip_notes [MBOX_X] = {NOTE_3C, NOTE_3D, NOTE_3E, NOTE_3G, NOTE_3A, NOTE_4C, NOTE_4D, NOTE_4E, NOTE_4G};
 
 void play_chip(int ch)
 {
+    if (!options.sound_init) {
+        return;
+    }
 
  int n = NOTE_2C;
 
@@ -821,23 +834,6 @@ void play_chip(int ch)
 
  n += chip_freq_offset [ch];
 
-/*
- int wv = WAV_LINE;
-
- switch(chip [ch])
- {
-  case CH_SAW:
-  wv = WAV_SAW; break;
-  case CH_BASS:
-  wv = WAV_BASS; break;
-  case CH_LINE:
-  wv = WAV_LINE; break;
-  case CH_WARM:
-  wv = WAV_WARM; break;
- }
-
- wv = WAV_WARM;
-*/
  play_music_note(chip [ch], 150, 7 + chip_x [ch] * 30, n);
  new_ech(ch, n);
 
@@ -867,6 +863,10 @@ int new_ech(int ch, int note)
 
 void run_echoes(void)
 {
+    if (!options.sound_init) {
+        return;
+    }
+
  int i;
 
  for (i = 0; i < ECHOES; i++)
@@ -877,15 +877,16 @@ void run_echoes(void)
    ech_vol[i] --;
    if (ech_vol[i] == 0)
     ech [i] = CH_NONE;
-
   }
-
  }
-
 }
 
 void play_music_note(int ch_type, int vol, int pan, int n)
 {
+    if (!options.sound_init) {
+        return;
+    }
+
  int wv = WAV_BASS;
  switch(ch_type)
  {
