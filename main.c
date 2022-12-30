@@ -181,7 +181,7 @@ void init_at_startup(void)
 
  prepare_display();
  init_sound();
- init_music();
+
 /*
  PP.ckey [CKEY_UP] = KEY_UP;
  PP.ckey [CKEY_DOWN] = KEY_DOWN;

@@ -580,8 +580,6 @@ CD_DIRS
 extern volatile unsigned char ticked;
 extern BITMAP *display [3];
 
-
-void init_music(void);
 void new_level_music(void);
 int new_chip(int ch_type);
 int place_chip(int ch, int x, int y, int dir);
@@ -596,27 +594,11 @@ int new_ech(int ch, int note);
 void run_echoes(void);
 void play_music_note(int ch_type, int vol, int pan, int n);
 
-// testing functions:
-void test_run_music(void);
-void music_display(void);
-
-
-
 int beat;
 int bt;
 int echo;
 int ec;
 int recycle_chip;
-
-
-void init_music(void)
-{
-
-// init_sound();
-
-
-}
-
 
 void new_level_music(void)
 {

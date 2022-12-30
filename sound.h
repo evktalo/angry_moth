@@ -15,7 +15,6 @@ void init_voices(void);
 //void build_tracks(void);
 //void play_tracks(void);
 
-void init_music(void);
 void new_level_music(void);
 void run_music(void);
 
