@@ -209,18 +209,6 @@ void startup_menu(void)
 
  int i, p;
 
-//#define TEST_MUSIC
-
-
-#ifdef TEST_MUSIC
-
- arena.level = 3;
-
-// init_beat_new_level();
-
-#endif
-
-
  init_menu_background();
 
  while (TRUE)
@@ -228,11 +216,6 @@ void startup_menu(void)
 
  if (key_wait == 0 && key [KEY_ESC])
    exit(0);
-
-#ifdef TEST_MUSIC
-run_beat();
-
-#endif
 
  grand(100);
 

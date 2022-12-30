@@ -168,13 +168,6 @@ void prepare_display(void)
 level_test();
 #endif
 
-//#define TESTING_MUSIC
-
-#ifdef TESTING_MUSIC
-init_sound();
-test_run_music();
-#endif
-
 get_starmap();
 
 make_sprites();
