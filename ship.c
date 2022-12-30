@@ -3399,7 +3399,6 @@ void ship_fire(int a, int e, int burst_status, int fire_type)
    BL.status = 3;
    BL.owner = e;
    BL.owner_t = 0;
- //  play_effectwfvx(WAV_FIRE, 500 + grand(1000), 200, bullet[a][b].x);
 //   EE.x_speed -= xpart(angle, 400);
 //   EE.y_speed -= ypart(angle, 400); // a little bit of recoil
 
@@ -3457,7 +3456,6 @@ void ship_fire(int a, int e, int burst_status, int fire_type)
    BL.status = 3;
    BL.owner = e;
    BL.owner_t = 0;
- //  play_effectwfvx(WAV_FIRE, 500 + grand(1000), 200, bullet[a][b].x);
 //   EE.x_speed -= xpart(angle, 400);
 //   EE.y_speed -= ypart(angle, 400); // a little bit of recoil
 
@@ -3511,7 +3509,6 @@ void ship_fire(int a, int e, int burst_status, int fire_type)
    BL.status = 2;
    BL.owner = e;
    BL.owner_t = 0;
- //  play_effectwfvx(WAV_FIRE, 500 + grand(1000), 200, bullet[a][b].x);
 //   EE.x_speed -= xpart(angle, 400);
 //   EE.y_speed -= ypart(angle, 400); // a little bit of recoil
 
@@ -3686,7 +3683,6 @@ void ship_fire(int a, int e, int burst_status, int fire_type)
     BL.status = 3;
     BL.owner = e;
     BL.owner_t = 0;
- //  play_effectwfvx(WAV_FIRE, 500 + grand(1000), 200, bullet[a][b].x);
 //    EE.x_speed -= xpart(angle, 200);
 //    EE.y_speed -= ypart(angle, 200); // a little bit of recoil
 
@@ -3751,8 +3747,6 @@ void ship_fire(int a, int e, int burst_status, int fire_type)
 
   break;
  }
-//      play_effectwfvx(w, NWAV_ZAP, 1800 + grand(50), 30, ship[a][w][e].x);
-
 }
 
 void turret_fire(int a, int e, int t)
@@ -3802,7 +3796,6 @@ void turret_fire(int a, int e, int t)
   BL.status = 3;
   BL.owner = e;
   BL.owner_t = t;
-//  play_effectwfvx(WAV_FIRE, 500 + grand(1000), 200, bullet[a][b].x);
 //  EE.x_speed -= xpart(angle, 400);
   //EE.y_speed -= ypart(angle, 400); // a little bit of recoil
 
@@ -3842,7 +3835,6 @@ void turret_fire(int a, int e, int t)
    EE.turret_recoil [t] = 4;
 
 
-//      play_effectwfvx(w, NWAV_ZAP, 1800 + grand(50), 30, ship[a][w][e].x);
  EE.turret_recycle [t] = EE.turret_recycle_time [t];
  EE.turret_energy [t] -= EE.turret_energy_use [t];
 
@@ -3891,7 +3883,6 @@ void turret_fire(int a, int e, int t)
   BL.status = 3;
   BL.owner = e;
   BL.owner_t = t;
-//  play_effectwfvx(WAV_FIRE, 500 + grand(1000), 200, bullet[a][b].x);
 //  EE.x_speed -= xpart(angle, 400);
   //EE.y_speed -= ypart(angle, 400); // a little bit of recoil
 
@@ -3930,7 +3921,6 @@ void turret_fire(int a, int e, int t)
    EE.turret_recoil [t] = 4;
 
 
-//      play_effectwfvx(w, NWAV_ZAP, 1800 + grand(50), 30, ship[a][w][e].x);
  EE.turret_recycle [t] = EE.turret_recycle_time [t];
  EE.turret_energy [t] -= EE.turret_energy_use [t];
 
@@ -3971,7 +3961,6 @@ void turret_fire(int a, int e, int t)
   BL.status = 5;
   BL.owner = e;
   BL.owner_t = t;
-//  play_effectwfvx(WAV_FIRE, 500 + grand(1000), 200, bullet[a][b].x);
 //  EE.x_speed -= xpart(angle, 400);
   //EE.y_speed -= ypart(angle, 400); // a little bit of recoil
 
@@ -4040,7 +4029,6 @@ void turret_fire(int a, int e, int t)
   BL.status = pos_or_neg(20 + grand(20));
   BL.owner = e;
   BL.owner_t = t;
-//  play_effectwfvx(WAV_FIRE, 500 + grand(1000), 200, bullet[a][b].x);
 //  EE.x_speed -= xpart(angle, 400);
   //EE.y_speed -= ypart(angle, 400); // a little bit of recoil
 
@@ -4116,7 +4104,6 @@ void turret_fire(int a, int e, int t)
   BL.status = 3;
   BL.owner = e;
   BL.owner_t = t;
-//  play_effectwfvx(WAV_FIRE, 500 + grand(1000), 200, bullet[a][b].x);
 //  EE.x_speed -= xpart(angle, 400);
   //EE.y_speed -= ypart(angle, 400); // a little bit of recoil
 
@@ -4153,7 +4140,6 @@ void turret_fire(int a, int e, int t)
 
 
    EE.turret_recoil [t] = 4;
-//      play_effectwfvx(w, NWAV_ZAP, 1800 + grand(50), 30, ship[a][w][e].x);
  EE.turret_recycle [t] = EE.turret_recycle_time [t];
  EE.turret_energy [t] -= EE.turret_energy_use [t];
 
@@ -4196,7 +4182,6 @@ void turret_fire(int a, int e, int t)
   BL.owner_t = t;
   play_effectwfvxy_xs_ys(WAV_BLAT, SPRIORITY_LOW, 600 + grand(200), 150, BL.x, BL.y, EE.x_speed, EE.y_speed);
 
-//  play_effectwfvx(WAV_FIRE, 500 + grand(1000), 200, bullet[a][b].x);
   EE.x_speed -= xpart(angle, 100);
   EE.y_speed -= ypart(angle, 100); // a little bit of recoil
 
@@ -4282,7 +4267,6 @@ void turret_fire(int a, int e, int t)
   BL.status = 7;
   BL.owner = e;
   BL.owner_t = t;
-//  play_effectwfvx(WAV_FIRE, 500 + grand(1000), 200, bullet[a][b].x);
 //  EE.x_speed -= xpart(angle, 400);
   //EE.y_speed -= ypart(angle, 400); // a little bit of recoil
 
@@ -4319,7 +4303,6 @@ void turret_fire(int a, int e, int t)
 
 
    EE.turret_recoil [t] = 8;
-//      play_effectwfvx(w, NWAV_ZAP, 1800 + grand(50), 30, ship[a][w][e].x);
  EE.turret_recycle [t] = EE.turret_recycle_time [t];
  EE.turret_energy [t] -= EE.turret_energy_use [t];
 
@@ -4433,7 +4416,6 @@ void turret_fire(int a, int e, int t)
    BL.size = 70 - EE.turret_firing [t];
   }
   BL.damage = BL.size * 20;
-//  play_effectwfvx(WAV_FIRE, 500 + grand(1000), 200, bullet[a][b].x);
 //  EE.x_speed -= xpart(angle, 400);
   //EE.y_speed -= ypart(angle, 400); // a little bit of recoil
   play_effectwfvxy_xs_ys(WAV_BEAM, SPRIORITY_HIGH, 2000, 220, BL.x, BL.y, EE.x_speed, EE.y_speed);

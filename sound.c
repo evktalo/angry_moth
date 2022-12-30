@@ -30,8 +30,7 @@ Call at startup of program.
 */
 void init_sound(void)
 {
-
-// first we'll populate the tone array with the right frequencies:
+   // first we'll populate the tone array with the right frequencies:
    int i, j;
    float t;
    for (i = 0; i < NOTE_ENDNOTE; i ++)
@@ -155,20 +154,6 @@ void play_effectwfv(int sample, int f, int v)
 
 // new_voice_wvfxy_xs_ys(sample, v, f, 0, 0, 0, 0);
 
-
-}
-
-/*
-plays sample at frequency f (normal is 1000), volume v (255 is max), x position x (middle is 127)
-*/
-void play_effectwfvx(int sample, int f, int v, int x)
-{
-
-// int pan = x / 2500; // this gives us a # from 0 to 255, from the left of the screen to the right. For stereo
-
-// play_sample(sounds [sample], v, pan, f, 0);
-
-// new_voice_wvfxy_xs_ys(sample, v, f, x, 0, 0, 0);
 
 }
 
@@ -297,7 +282,6 @@ void play_effectwfvxy_xs_ys(int sample, int priority, int f, int v, int x, int y
 
 void indicator(int sample, int t, int v, int p)
 {
-
  int pan = 127;
 
  if (arena.only_player == -1
@@ -408,7 +392,6 @@ void new_voice_wvfxy_xs_ys(int sample, int priority, int vol, int freq, int x, i
 
 int position_pan(int x, int y)
 {
-
  float angle = atan2(player[arena.only_player].y - y, player[arena.only_player].x - x) - angle_to_radians(player[arena.only_player].angle);
 
  return 127 - fypart(angle, 127);
@@ -416,7 +399,6 @@ int position_pan(int x, int y)
 
 int position_vol(int x, int y, int base_vol)
 {
-
  int dist = hypot(player[arena.only_player].y - y, player[arena.only_player].x - x);
 
  dist /= 8000;
@@ -432,12 +414,10 @@ int position_vol(int x, int y, int base_vol)
   return 0;
 
  return vol;
-
 }
 
 int doppler_shift(int x, int y, int xs, int ys, int base_freq)
 {
-
  int speed = hypot(player[arena.only_player].y_speed - ys, player[arena.only_player].x_speed - xs);
 /*
  int x1 = (PP.x - x);
@@ -484,14 +464,11 @@ int doppler_shift(int x, int y, int xs, int ys, int base_freq)
   return 200;
 
  return new_freq;
-
 }
 
 int fix_freq(int new_freq)
 {
-
- return (44100 * new_freq) / 1000;
-
+    return (44100 * new_freq) / 1000;
 }
 
 void run_voices(void)
@@ -519,9 +496,7 @@ void run_voices(void)
    voice_set_volume(voice_index [v], position_vol(voice_x [v], voice_y [v], voice_vol [v]));
    voice_set_frequency(voice_index [v], fix_freq(doppler_shift(voice_x [v], voice_y [v], voice_x_speed [v], voice_y_speed [v], voice_freq [v])));
   }
-
  }
-
 }
 
 /*

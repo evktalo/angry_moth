@@ -4,7 +4,6 @@ void init_sound(void);
 void play_basicwfv(int sample, int f, int v);
 void play_effect(int sample);
 void play_effectwfv(int sample, int f, int v);
-void play_effectwfvx(int sample, int f, int v, int x);
 void play_effectwfvxy(int sample, int priority, int f, int v, int x, int y);
 void play_effectwfvxy_xs_ys(int sample, int priority, int f, int v, int x, int y, int xs, int ys);
 void indicator(int sample, int t, int v, int p);
