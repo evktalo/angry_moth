@@ -1,0 +1,6 @@
+# Runtime related files
+angry_moth
+logfile.log
+
+# IDE folders and such
+.vscode/*
