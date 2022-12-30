@@ -18,8 +18,6 @@ void init_voices(void);
 void new_level_music(void);
 void run_music(void);
 
-void test_run_music(void);
-
 #define SPRIORITY_LOW 0
 #define SPRIORITY_HIGH 1
 
