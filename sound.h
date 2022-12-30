@@ -11,10 +11,6 @@ void indicator(int sample, int t, int v, int p);
 void run_voices(void);
 void init_voices(void);
 
-//void init_beats(void);
-//void build_tracks(void);
-//void play_tracks(void);
-
 void new_level_music(void);
 void run_music(void);
 

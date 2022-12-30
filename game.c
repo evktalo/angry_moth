@@ -214,11 +214,7 @@ void new_mission(void)
   setup_player_wing(1, 1, player[0].escort_type [player[1].wing_type [1]], 3);
  }
 
-
  }
-
-
-// build_tracks();
 
  arena.game_over = 0;
  arena.end_stage = 0;
@@ -381,23 +377,6 @@ int game_loop(void)
       return MRESULT_GAME_OVER;
      }
     }
-
-/*  if (arena.end_stage > 0)
-  {
-   arena.end_stage --;
-   if (arena.end_stage <= 0)
-   {
-      if (arena.stage == 25)
-      {
-       congratulations();
-       break;
-      }
-      get_interlude_background();
-      init_palette(arena.stage);
-      init_player_new_level(0);
-      build_tracks();
-   }
-  }*/
   }
 
 
@@ -414,7 +393,6 @@ int game_loop(void)
    return MRESULT_FINISHED;
   run_bullets();
   run_clouds();
-//  play_tracks();
   run_voices();
 
 
