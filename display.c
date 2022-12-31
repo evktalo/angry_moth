@@ -72,7 +72,6 @@ void draw_worm_trail_line(BITMAP* bmp, int x, int y, int size);
 void draw_rocket_trail_line(BITMAP* bmp, int x, int y, int size);
 //void draw_shield_circle(BITMAP* bmp, int x, int y, int size);
 void draw_pshield_circle(BITMAP *bmp, int x, int y, int strength);
-void detect_player_collision(int p);
 char check_pixel(int x, int y);
 void run_display(int draw_everything, int star_motion);
 void draw_ships(int d, int p);
@@ -221,15 +220,13 @@ void run_display(int draw_everything, int star_motion)
    clear_to_color(display [0], COL_STAR1);
    draw_stars(1, 0, star_motion);
    draw_ships(1, 0);
-   if (player[1].alive)
-    draw_other_player(1, 0, 1);
-   if (player[0].alive)
-    draw_player(1, 0);
-//  if (PP.alive)
-//   draw_player();
+    if (player[1].alive) {
+        draw_other_player(1, 0, 1);
+    }
+    if (player[0].alive) {
+        draw_player(1, 0);
+    }
    draw_bullets(1, 0);
-//  if (PP.alive)
-//   detect_player_collision(0);
    draw_clouds(1, 0);
    draw_HUD(1, 0);
 // draw_HUD for a p must come after draw_ships for that p and before draw_ships for other p
@@ -239,17 +236,15 @@ void run_display(int draw_everything, int star_motion)
    camera_angle_rad = angle_to_radians(camera_angle);
    draw_stars(2, 1, star_motion);
    draw_ships(2, 1);
-   if (player[0].alive)
-    draw_other_player(2, 1, 0);
-   if (player[1].alive)
-    draw_player(2, 1);
-//  if (PP.alive)
-//   draw_player();
-   draw_bullets(2, 1);
-//  if (PP.alive)
-//   detect_player_collision(0);
-   draw_clouds(2, 1);
-   draw_HUD(2, 1);
+    if (player[0].alive) {
+        draw_other_player(2, 1, 0);
+    }
+    if (player[1].alive) {
+        draw_player(2, 1);
+    }
+    draw_bullets(2, 1);
+    draw_clouds(2, 1);
+    draw_HUD(2, 1);
   }
 
   draw_final_details(); // just draws ships left and the central line and overscan for 2-player
@@ -440,245 +435,44 @@ int get_player_sprite(int p)
 
 void draw_player(int d, int p)
 {
+    int sprite;
+    sprite = get_player_sprite(p);
 
- int sprite;
- sprite = get_player_sprite(p);
+    draw_sprite(display[d], fighter_sprite [sprite] [0].sprite, PP.camera_x - fighter_sprite [sprite] [0].x [0], PP.camera_y - fighter_sprite [sprite] [0].y [0]);
+    print_number(300, 300, PP.weapon_block [0]);
+    print_number(300, 320, PP.weapon_block [1]);
+    print_number(300, 340, PP.weapon_block [2]);
 
-// draw_sprite(display[d], player_sprite [sprite] [0].sprite, PP.camera_x - player_sprite [sprite] [0].x [0], PP.camera_y - player_sprite [sprite] [0].y [0]);
- draw_sprite(display[d], fighter_sprite [sprite] [0].sprite, PP.camera_x - fighter_sprite [sprite] [0].x [0], PP.camera_y - fighter_sprite [sprite] [0].y [0]);
- print_number(300, 300, PP.weapon_block [0]);
- print_number(300, 320, PP.weapon_block [1]);
- print_number(300, 340, PP.weapon_block [2]);
+    if (PP.drive [0] > 0)
+    {
+        draw_edrive(d, PP.camera_x - fighter_sprite [sprite] [0].x [1], PP.camera_y + fighter_sprite [sprite] [0].y [1], 0, 0, PP.drive [0], 2, 3, 0);
+        if (eclass[PP.type].engines == 2) {
+            draw_edrive(d, PP.camera_x - fighter_sprite [sprite] [0].x [2], PP.camera_y + fighter_sprite [sprite] [0].y [2], 0, 0, PP.drive [0], 2, 3, 0);
+        }
+    }
 
- if (PP.drive [0] > 0)
- {
+    if (PP.drive [1] > 0) {
+        draw_edrive(d, PP.camera_x, PP.camera_y - 9, -ANGLE_2, PP.drive[1], PP.drive[1], 1, 2, 0);
+    }
+    if (PP.drive [2] > 0) {
+        draw_edrive(d, PP.camera_x + 5, PP.camera_y, -ANGLE_4, PP.drive[2]>>1, PP.drive[2], 1, 2, 0);
+    }
+    if (PP.drive [3] > 0) {
+        draw_edrive(d, PP.camera_x - 5, PP.camera_y, ANGLE_4, PP.drive[3]>>1, PP.drive[3], 1, 2, 0);
+    }
 
-       draw_edrive(d, PP.camera_x - fighter_sprite [sprite] [0].x [1], PP.camera_y + fighter_sprite [sprite] [0].y [1],
-        0, 0, PP.drive [0], 2, 3, 0);
-   if (eclass[PP.type].engines == 2)
-       draw_edrive(d, PP.camera_x - fighter_sprite [sprite] [0].x [2], PP.camera_y + fighter_sprite [sprite] [0].y [2],
-        0, 0, PP.drive [0], 2, 3, 0);
- }
-
-
- if (PP.drive [1] > 0)
-  draw_edrive(d, PP.camera_x, PP.camera_y - 9, -ANGLE_2, PP.drive[1], PP.drive[1], 1, 2, 0);
- if (PP.drive [2] > 0)
-  draw_edrive(d, PP.camera_x + 5, PP.camera_y, -ANGLE_4, PP.drive[2]>>1, PP.drive[2], 1, 2, 0);
- if (PP.drive [3] > 0)
-  draw_edrive(d, PP.camera_x - 5, PP.camera_y, ANGLE_4, PP.drive[3]>>1, PP.drive[3], 1, 2, 0);
-/*
-
- if (PP.drive [0] > 0)
-//  draw_edrive(d, PP.camera_x, PP.camera_y + 4, 0, 3 + (PP.drive[0]>>2), 2 + (PP.drive[0]>>2), 1, 2, 0);
-  draw_edrive(d, PP.camera_x, PP.camera_y + 2, 0, 3 + (PP.drive[0]>>3), 1 + (PP.drive[0]>>3), 1, 2, 0);
-
- if (PP.drive [1] > 0)
-  draw_edrive(d, PP.camera_x, PP.camera_y - 9, -ANGLE_2, 2 + (PP.drive[1]>>2), 2 + (PP.drive[1]>>2), 1, 2, 0);
-
- if (PP.drive [2] > 0)
-  draw_edrive(d, PP.camera_x + 7, PP.camera_y, -ANGLE_4, 3 + (PP.drive[2]>>2), 2 + (PP.drive[2]>>2), 1, 2, 0);
- if (PP.drive [3] > 0)
-  draw_edrive(d, PP.camera_x - 7, PP.camera_y, ANGLE_4, 3 + (PP.drive[3]>>2), 2 + (PP.drive[3]>>2), 1, 2, 0);
-*/
-/*
- if (PP.mflash [0] > 0)
-  ccircle2(d, PP.camera_x - 2, PP.camera_y - 6, PP.mflash [0], 0);
- if (PP.mflash [1] > 0)
-  ccircle2(d, PP.camera_x + 2, PP.camera_y - 6, PP.mflash [1], 0);
-*/
-/*
- draw_sprite(display[d], player_sprite [sprite] [0].sprite, PP.camera_x - player_sprite [sprite] [0].x [0], PP.camera_y - player_sprite [sprite] [0].y [0]);
-
- if (PP.drive [0] > 0)
-  draw_edrive(d, PP.camera_x, PP.camera_y + 4, 0, 3 + (PP.drive[0]>>2), 2 + (PP.drive[0]>>2), 1, 2, 0);
-
- if (PP.drive [1] > 0)
-  draw_edrive(d, PP.camera_x, PP.camera_y - 9, -ANGLE_2, 2 + (PP.drive[1]>>2), 2 + (PP.drive[1]>>2), 1, 2, 0);
-
- if (PP.drive [2] > 0)
-  draw_edrive(d, PP.camera_x + 7, PP.camera_y, -ANGLE_4, 3 + (PP.drive[2]>>2), 2 + (PP.drive[2]>>2), 1, 2, 0);
- if (PP.drive [3] > 0)
-  draw_edrive(d, PP.camera_x - 7, PP.camera_y, ANGLE_4, 3 + (PP.drive[3]>>2), 2 + (PP.drive[3]>>2), 1, 2, 0);
-
- if (PP.mflash [0] > 0)
-  ccircle2(d, PP.camera_x - 3, PP.camera_y - 8, PP.mflash [0], 0);
- if (PP.mflash [1] > 0)
-  ccircle2(d, PP.camera_x + 3, PP.camera_y - 8, PP.mflash [1], 0);
-*/
- draw_player_shield(d, p, PP.camera_x, PP.camera_y, 0);
-// print_number(300, 300, PP.weapon_charge [1]);
-// print_number(300, 320, PP.weapon_target [1] [0]);
-
-/*
- if (PP.drive > 5)
- {
-  sprite = PLAYER_RLE_BASE_2;
-  y = 0;
- }
-
- if (PP.drive > 9)
- {
-  sprite = PLAYER_RLE_BASE_3;
-  y = 1;
- }
-
- draw_rle_sprite(display[d], RLE_player [sprite], 320 - 12, 360 - 10);
-
- int sprite2 = PLAYER_RLE_SIDE_L1;
- if (PP.flap [0] > 5)
-  sprite2 = PLAYER_RLE_SIDE_L2;
- if (PP.flap [0] > 9)
-  sprite2 = PLAYER_RLE_SIDE_L3;
- draw_rle_sprite(display[d], RLE_player [sprite2], 320 - 15, 360 + y);
-
- sprite2 = PLAYER_RLE_SIDE_R1;
- if (PP.flap [1] > 5)
-  sprite2 = PLAYER_RLE_SIDE_R2;
- if (PP.flap [1] > 9)
-  sprite2 = PLAYER_RLE_SIDE_R3;
- draw_rle_sprite(display[d], RLE_player [sprite2], 320 + 9, 360 + y);
-
- int size;
- int drive = PP.drive;
-
- int col = 0;
-
- if (PP.upgrade [U_AGILITY] == 2)
-  col = 2;
-
- if (drive > 10)
-  drive = 10;
-
- if (drive > 0)
- {
-  size = (drive>>1) + grand(4);
-
-  if (PP.upgrade [U_AGILITY] == 1)
-   ccircle3(d, 320, 360 + 8, size, col);
-    else
-     ccircle2(d, 320, 360 + 8, size, col);
-
-  size -= 2 + grand(3);
-
-  if (size > 0)
-   ccircle(d, 320, 360 + 6, size, col);
-
-  if (drive > 5)
-  {
-   if (PP.upgrade [U_AGILITY] == 1)
-    ccircle3(d, 320, 360 + 10 + grand(3), size, col);
-     else
-      ccircle2(d, 320, 360 + 10 + grand(3), size, col);
-   if (drive > 8 && size > 2)
-   {
-    if (PP.upgrade [U_AGILITY] == 1)
-     ccircle3(d, 320, 360 + 14 + grand(3), size - 2, col);
-      else
-       ccircle2(d, 320, 360 + 14 + grand(3), size - 2, col);
-   }
-
-  }
-
- }
-
-// draw_rle_sprite(display, RLE_player [PLAYER_RLE_BASE], 320 - 12, 360 - 4);
-
- int anim;*/
-/*
- if (PP.recycle == 10)
-  anim = 1;
- if (PP.recycle == 9)
-  anim = 2;
- if (PP.recycle == 8)
-  anim = 3;
- if (PP.recycle < 8)
-  anim = PP.recycle >> 1;
- if (anim > 3) anim = 3;
-
- draw_rle_sprite(display[d], RLE_player [PLAYER_RLE_FRONT_1 + anim], 320 - 5, 360 - 11);
-*/
-/* if (PP.recycle > 0)
- {
-  int ccol = 0;
-  if (PP.upgrade [U_POWER] == 2)
-   ccol = 2;
-  ccircle(d, 320 - 3, 360 - 10 + anim, PP.recycle >> 1, ccol);
-  ccircle(d, 320 + 3, 360 - 10 + anim, PP.recycle >> 1, ccol);
-
-  ccircle2(d, 320 - 3, 360 - 10 + anim, PP.recycle >> 0, ccol);
-  ccircle2(d, 320 + 3, 360 - 10 + anim, PP.recycle >> 0, ccol);
- }*/
-/*
- rectfill(display[d], 320 - 2, 360 - 4, 320 + 2, 360 + 1, COL_4); // prepares player sprite for collision detection later
- hline(display[d], 320 - 1, 360 - 5, 320 + 1, COL_4);
- hline(display[d], 320 - 1, 360 + 2, 320 + 1, COL_4);
-*/
-
+    draw_player_shield(d, p, PP.camera_x, PP.camera_y, 0);
 }
-
-/*
-void detect_player_collision(int p)
-{
-//    return;
-
-  int x = 320;
-  int y = 360;
-
-  if (check_pixel(x - 1, y + 2)
-   || check_pixel(x, y + 2)
-   || check_pixel(x + 1, y + 2)
-
-   || check_pixel(x - 2, y + 1)
-   || check_pixel(x + 2, y + 1)
-
-   || check_pixel(x - 2, y + 0)
-   || check_pixel(x + 2, y + 0)
-
-   || check_pixel(x - 2, y - 1)
-   || check_pixel(x + 2, y - 1)
-
-   || check_pixel(x - 2, y - 2)
-   || check_pixel(x + 2, y - 2)
-
-   || check_pixel(x - 2, y - 3)
-   || check_pixel(x + 2, y - 3)
-
-   || check_pixel(x - 2, y - 4)
-   || check_pixel(x + 2, y - 4)
-
-   || check_pixel(x - 1, y - 5)
-   || check_pixel(x, y - 5)
-   || check_pixel(x + 1, y - 5)
-
-   || check_pixel(x, y - 4)
-   || check_pixel(x, y - 3)
-   || check_pixel(x, y - 2)
-   || check_pixel(x, y - 1)
-   || check_pixel(x, y - 0)
-   || check_pixel(x, y + 1)
-   )
-   {
-    player_hit(p, 0);
-   }
-
- rectfill(display[d], 320 - 2, 360 - 4, 320 + 2, 360 + 1, COL_14);
- hline(display, 320 - 1, 360 - 5, 320 + 1, COL_14);
- hline(display, 320 - 1, 360 + 2, 320 + 1, COL_14);
-
-  return;
-
-}
-*/
-
 
 void draw_other_player(int d, int p, int op)
 {
-
-   if (player[op].x < PP.x - (600 << 10) || player[op].x > PP.x + (600 << 10)
-    || player[op].y < PP.y - (600 << 10) || player[op].y > PP.y + (600 << 10))
-     return;
-
+    if (player[op].x < PP.x - (600 << 10)
+        || player[op].x > PP.x + (600 << 10)
+        || player[op].y < PP.y - (600 << 10)
+        || player[op].y > PP.y + (600 << 10)
+    ) {
+        return;
+    }
 
  int sprite;
  sprite = get_player_sprite(op);
