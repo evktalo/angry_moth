@@ -182,6 +182,7 @@ void init_at_startup(void)
  prepare_display();
 
  options.sound_init = get_config_int("Misc", "SoundInit", 0);
+ options.music = get_config_int("Misc", "Music", 0);
  init_sound();
 
 /*

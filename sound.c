@@ -731,6 +731,9 @@ void play_music(void)
     if (!options.sound_init) {
         return;
     }
+    if (!options.music) {
+        return;
+    }
  int ch;
  char move_x=0;
  char move_y=0;
@@ -817,7 +820,9 @@ void play_chip(int ch)
     if (!options.sound_init) {
         return;
     }
-
+    if (!options.music) {
+        return;
+    }
  int n = NOTE_2C;
 
  if (chip_dir [ch] == CD_DOWN
@@ -866,7 +871,9 @@ void run_echoes(void)
     if (!options.sound_init) {
         return;
     }
-
+    if (!options.music) {
+        return;
+    }
  int i;
 
  for (i = 0; i < ECHOES; i++)
@@ -886,7 +893,9 @@ void play_music_note(int ch_type, int vol, int pan, int n)
     if (!options.sound_init) {
         return;
     }
-
+    if (!options.music) {
+        return;
+    }
  int wv = WAV_BASS;
  switch(ch_type)
  {

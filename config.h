@@ -843,6 +843,7 @@ CLOUD_XBALL
 struct optionstruct
 {
  int sound_init; // if 0, sound isn't initialised at all. Changed in config file only.
+ int music; // if 0, music is off
  int sound_mode; // mono, stereo, reversed, off
  int run_vsync; // on or off
  int windowed;

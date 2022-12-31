@@ -2,6 +2,7 @@
 [Misc]
 EffectVolume = 100
 SoundInit = 1
+Music = 1
 Hscore1 = 4060
 Hscore0 = 4975
 Hscore2 = 4935
