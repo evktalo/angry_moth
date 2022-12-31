@@ -832,7 +832,7 @@ char check_pixel(int x, int y)
 void draw_convoys(int d, int p)
 {
 //return;
-#define SHOW_RUNNING_SCRIPTS
+//#define SHOW_RUNNING_SCRIPTS
 
 #ifdef SHOW_RUNNING_SCRIPTS
  int r;
