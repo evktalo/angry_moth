@@ -21,6 +21,7 @@
 #include "briefing.h"
 
 #include "sound.h"
+#include "music.h"
 
 void run_game(void);
 

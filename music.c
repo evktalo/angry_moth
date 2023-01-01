@@ -12,6 +12,7 @@ Music time!
 #include "music.h"
 #include "sound.h"
 #include "globvars.h"
+#include "stuff.h"
 
 #define MBOX_X 9
 #define MBOX_Y 9

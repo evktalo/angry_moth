@@ -5,6 +5,7 @@
 #include "allegro.h"
 
 #include <math.h>
+#include <stdio.h>
 
 #include "globvars.h"
 
