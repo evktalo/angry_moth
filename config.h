@@ -37,7 +37,6 @@
 #define ANGLE_64 64
 #define ANGLE_128 32
 #define ANGLE_256 16
-#define ANGLE_TO_FIXED 4
 
 #ifndef PI
 #define PI 3.141592
