@@ -21,7 +21,7 @@
 
 #include "stuff.h"
 #include "text.h"
-#include "debug.h"
+#include "debug_logger.h"
 
 #define TRANS_MODE drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
 #define END_TRANS_MODE drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);

@@ -15,7 +15,7 @@
 #include "sound.h"
 #include "menu.h"
 #include "input.h"
-#include "debug.h"
+#include "debug_logger.h"
 
 // timer interupt functions and variables:
 void framecount(void);
