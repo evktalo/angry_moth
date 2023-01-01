@@ -905,8 +905,7 @@ void show_controls_display(void)
     else
     {
       scancode_to_keyname(options.ckey [i] [j], sstr);
-      textprintf_ex(display[0], small_font, x + 2, y, COL_BOX4, -1,
-       sstr);
+      textprintf_ex(display[0], small_font, x + 2, y, COL_BOX4, -1, "%s", sstr);
     }
   }
 
@@ -1438,76 +1437,56 @@ int cselect_final_row(void)
 }
 
 
-void key_box(const char ktext [], int command, int p)
+void key_box(const char ktext[], int command, int p)
 {
+    rectfill(display[0], 200, 240, 400, 290, COL_OUTLINE);
+    rect(display[0], 201, 241, 399, 289, COL_LGREY);
 
- rectfill(display[0], 200, 240, 400, 290, COL_OUTLINE);
- rect(display[0], 201, 241, 399, 289, COL_LGREY);
+    textprintf_centre_ex(display[0], small_font, 300, 257, MENU_TEXT, -1, "%s", ktext);
 
- textprintf_centre_ex(display[0], small_font, 300, 257, MENU_TEXT, -1, ktext);
+    vsync();
+    blit(display[0], screen, 0, 0, 0, 0, 800, 600);
 
- vsync();
- blit(display[0], screen, 0, 0, 0, 0, 800, 600);
+    int inputted = KEY_ESC;
 
- int inputted = KEY_ESC;
+    int i;
+    int anykey = 0;
 
- int i;
- int anykey = 0;
+    char holding = 1;
 
- char holding = 1;
+    do {
+        do {
+            thing ++;
+        } while (ticked == 0);
+        ticked = 0;
+        key_wait --;
+        anykey = 0;
 
- do
- {
+        for (i = KEY_A; i < KEY_CAPSLOCK + 1; i ++) {
+            if (key [i]) {
+                anykey = 1;
+            }
+        }
 
-  do
-    {
-        thing ++;
-    } while (ticked == 0);
-    ticked = 0;
-  key_wait --;
+        if (anykey == 0) {
+            holding = 0;
+        }
 
+        if (holding == 0) {
+            for (i = KEY_A; i < KEY_CAPSLOCK + 1; i ++) {
+                if (key [i]) {
+                    inputted = i;
+                    holding = 1;
+                }
+            }
+        }
 
- anykey = 0;
+        if (acceptable_char(inputted) != 0) {
+            break;
+        }
+    } while (TRUE);
 
-  for (i = KEY_A; i < KEY_CAPSLOCK + 1; i ++)
-  {
-   if (key [i])
-   {
-    anykey = 1;
-   }
-  }
-
-  if (anykey == 0)
-   holding = 0;
-
-
-//  if (key_wait > 0)
-//   continue;
-
-
-  if (holding == 0)
-  {
-
-  for (i = KEY_A; i < KEY_CAPSLOCK + 1; i ++)
-  {
-   if (key [i])
-   {
-    inputted = i;
-    holding = 1;
-   }
-  }
- }
-//   while(acceptable_char(inputted) == 0);
-  if (acceptable_char(inputted) != 0)
-   break;
-
- } while (TRUE);
-
-
-// PP.ckey [command] = inputted;
-
- key_wait = 10;
-
+    key_wait = 10;
 }
 
 #define OPTION_X 100

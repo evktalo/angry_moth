@@ -2183,56 +2183,42 @@ char message_header [40];
 
 void display_message_header(int i, int x, int y)
 {
+    message_header [0] = '\0';
 
- message_header [0] = '\0';
-// int pix;
+    if (comm[i].from_type != SHIP_NONE) {
+        switch(comm[i].from_type) {
+            case SHIP_OLD2: strcpy(message_header, "CTBR-SUNSHARK "); break;
+            case SHIP_OLD3: strcpy(message_header, "CTBR-STARWHALE "); break;
+            case SHIP_DROM: strcpy(message_header, "CTBR-DROMEDARY "); break;
+            case SHIP_LINER: strcpy(message_header, "STARLINER "); break;
 
- if (comm[i].from_type != SHIP_NONE)
- {
-  switch(comm[i].from_type)
-  {
-   case SHIP_OLD2: strcpy(message_header, "CTBR-SUNSHARK "); break;
-   case SHIP_OLD3: strcpy(message_header, "CTBR-STARWHALE "); break;
-   case SHIP_DROM: strcpy(message_header, "CTBR-DROMEDARY "); break;
-   case SHIP_LINER: strcpy(message_header, "STARLINER "); break;
+            case SHIP_FRIEND3: strcpy(message_header, "IF-TRIREME "); break;
+            case SHIP_SCOUT2: strcpy(message_header, "FSF-RIGHTEOUS "); break;
+            case SHIP_SCOUT3: strcpy(message_header, "FSF-MERCIFUL "); break;
+        }
 
-   case SHIP_FRIEND3: strcpy(message_header, "IF-TRIREME "); break;
-   case SHIP_SCOUT2: strcpy(message_header, "FSF-RIGHTEOUS "); break;
-   case SHIP_SCOUT3: strcpy(message_header, "FSF-MERCIFUL "); break;
+        if (comm[i].from_letter != -1) {
+            switch(comm[i].from_letter) {
+                case 0: strcat(message_header, "Gazer"); break;
+                case 1: strcat(message_header, "Beta"); break;
+                case 2: strcat(message_header, "Gamma"); break;
+            }
+        }
 
+        if (comm[i].from_rank == -1) {
+            textprintf_ex(display[0], small_font, x + 3, y, COL_WHITE, -1, "%s", message_header);
+        } else {
+            textprintf_ex(display[0], small_font, x + 3, y, COL_WHITE, -1, "%s %i", message_header, comm[i].from_rank);
+        }
+    }
 
-
-
-  }
-//  pix = text_length(small_font, message_header);
-  //textprintf_ex(display[0], small_font, x + 3, y, COL_STAR1, -1, message_header);
-  if (comm[i].from_letter != -1)
-  {
-   switch(comm[i].from_letter)
-   {
-    case 0: strcat(message_header, "Gazer"); break;
-    case 1: strcat(message_header, "Beta"); break;
-    case 2: strcat(message_header, "Gamma"); break;
-//   default: strcat(message_header, "Unknown"); break;
-   }
-  }
-  if (comm[i].from_rank == -1)
-   textprintf_ex(display[0], small_font, x + 3, y, COL_WHITE, -1, message_header);
-    else
-     textprintf_ex(display[0], small_font, x + 3, y, COL_WHITE, -1, "%s %i", message_header, comm[i].from_rank);
- }
-
-
- if (comm[i].to != MSG_TO_ALL)
- {
-  switch(comm[i].to)
-  {
-   case MSG_TO_AM:
-    textprintf_ex(display[0], small_font, x + 3, y + 12, COL_WHITE, -1, "  >> Angry Moth"); break;
-  }
- }
+    if (comm[i].to != MSG_TO_ALL) {
+        switch(comm[i].to) {
+            case MSG_TO_AM:
+                textprintf_ex(display[0], small_font, x + 3, y + 12, COL_WHITE, -1, "%s", "  >> Angry Moth"); break;
+        }
+    }
 }
-
 
 void draw_HUD(int d, int p)
 {
@@ -3688,7 +3674,7 @@ SHIP_SCOUTCAR,
    default: strcat(comstring, "ERROR"); break;
   }
 
-  textprintf_ex(display[d], small_font, 5, y - 10, COL_WHITE, -1, comstring);
+  textprintf_ex(display[d], small_font, 5, y - 10, COL_WHITE, -1, "%s", comstring);
 
  }
 

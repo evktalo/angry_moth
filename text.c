@@ -199,30 +199,15 @@ void new_text_colour(struct linestruct lines [LINES], int col)
  lines[current_line].text [0] = END_STRING;
 }
 
-
-
-void display_message(BITMAP *bmp, struct linestruct lines [LINES], int x, int y)
+void display_message(BITMAP *bmp, struct linestruct lines[LINES], int x, int y)
 {
- int i;
+    int i;
 
-//  textprintf_ex(bmp, font, 500, 200, -1, -1, "%i, %i", x, y);
-//  textprintf_ex(bmp, font, 500, 200, COL_F7, -1, tline[0].text);
+    for (i = 0; i < LINES; i ++) {
+        if (lines[i].text[0] == END_MESSAGE) {
+            return;
+        }
+        textprintf_ex(bmp, small_font, x + lines[i].x, y + lines[i].y, lines[i].col, -1, "%s", lines[i].text);
 
- for (i = 0; i < LINES; i ++)
- {
-//  textprintf_ex(bmp, font, x + tline[i].x, y + tline[i].y, tline[i].col, -1, "test");
-  if (lines[i].text [0] == END_MESSAGE)
-   return;
-  textprintf_ex(bmp, small_font, x + lines[i].x, y + lines[i].y, lines[i].col, -1, lines[i].text);
-//  textprintf_ex(bmp, font, 500, 10 + i * 20, -1, -1, "%i: %i, %i", i, tline[i].x, tline[i].y);
-//  textprintf_ex(bmp, font, x + tline[i].x, y + tline[i].y, tline[i].col, -1, "test");
- }
-
-
+    }
 }
-
-
-
-
-
-

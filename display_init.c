@@ -1415,15 +1415,11 @@ void new_bmp_struct(BITMAP *source, const char errtxt [], struct BMP_STRUCT *str
 
 
 
-void announce(const char anntext [])
+void announce(const char anntext[])
 {
-
- static int row = 0;
-
- textprintf_ex(screen, font, 10, 20 + row * 12, COL_14, -1, anntext);
-
- row ++;
-
+    static int row = 0;
+    textprintf_ex(screen, font, 10, 20 + row * 12, COL_14, -1, "%s", anntext);
+    row++;
 }
 
 RLE_SPRITE *extract_flip_rle_sprite(BITMAP *source, int x_source, int y_source, int x, int y, int flip_type)

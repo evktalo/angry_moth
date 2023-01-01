@@ -2638,45 +2638,42 @@ void boverdisplay(void)
 
 void display_mdata(int x, int y, int btype)
 {
-   if (mdata[btype].side == TEAM_FRIEND)
-    draw_sprite(display[0], bsprite [mdata[btype].side] [get_bsprite(btype)] [0], x, y);
-     else
-      draw_sprite_h_flip(display[0], bsprite [mdata[btype].side] [get_bsprite(btype)] [0], x, y);
+    if (mdata[btype].side == TEAM_FRIEND) {
+        draw_sprite(display[0], bsprite [mdata[btype].side] [get_bsprite(btype)] [0], x, y);
+    } else {
+        draw_sprite_h_flip(display[0], bsprite [mdata[btype].side] [get_bsprite(btype)] [0], x, y);
+    }
 
-   textprintf_ex(display[0], small_font, x + 15, y, BCOL_TEXT, -1, "(%i)", mdata[btype].number);
+    textprintf_ex(display[0], small_font, x + 15, y, BCOL_TEXT, -1, "(%i)", mdata[btype].number);
 
-  char sname [30];
+    char sname [30];
 
-   switch(btype)
-   {
-    case BSHIP_OLD2: strcpy(sname, "CTBR-LC SUNSHARK"); break;
-    case BSHIP_OLD3: strcpy(sname, "CTBR-BC STARWHALE"); break;
-    case BSHIP_TRIREME:
-    case BSHIP_FRIEND3: strcpy(sname, "IF-HC TRIREME"); break;
-    case BSHIP_DROM: strcpy(sname, "CTBR-T DROMEDARY"); break;
-    case BSHIP_LINER: strcpy(sname, "STARLINER"); break;
-    case BSHIP_FIGHTER_FRIEND: strcpy(sname, "CTBR-SANDFLY"); break;
-    case BSHIP_FIGHTER_FSTRIKE: strcpy(sname, "CTBR-RAM"); break;
-    case BSHIP_MOTH: strcpy(sname, "CTBR-ANGRY MOTH"); break;
+    switch(btype) {
+        case BSHIP_OLD2: strcpy(sname, "CTBR-LC SUNSHARK"); break;
+        case BSHIP_OLD3: strcpy(sname, "CTBR-BC STARWHALE"); break;
+        case BSHIP_TRIREME:
+        case BSHIP_FRIEND3: strcpy(sname, "IF-HC TRIREME"); break;
+        case BSHIP_DROM: strcpy(sname, "CTBR-T DROMEDARY"); break;
+        case BSHIP_LINER: strcpy(sname, "STARLINER"); break;
+        case BSHIP_FIGHTER_FRIEND: strcpy(sname, "CTBR-SANDFLY"); break;
+        case BSHIP_FIGHTER_FSTRIKE: strcpy(sname, "CTBR-RAM"); break;
+        case BSHIP_MOTH: strcpy(sname, "CTBR-ANGRY MOTH"); break;
 
-    case BSHIP_FIGHTER: strcpy(sname, "FSF-CALLED"); break;
-    case BSHIP_SCOUT2: strcpy(sname, "FSF-RIGHTEOUS"); break;
-    case BSHIP_SCOUT3: strcpy(sname, "FSF-MERCIFUL"); break;
-    case BSHIP_SCOUTCAR: strcpy(sname, "FSF-GRACEFUL"); break;
-    case BSHIP_ECARRIER: strcpy(sname, "FSF-INFINITE"); break;
-    case BSHIP_FREIGHT: strcpy(sname, "FSF-BENEVOLENT"); break;
-    case BSHIP_BOMBER: strcpy(sname, "FSF-MESSENGER"); break;
-    case BSHIP_EBASE: strcpy(sname, "FSF ORBITAL BASE"); break;
-    case BSHIP_EINT: strcpy(sname, "FSF-CHOSEN"); break;
-    case BSHIP_ESCOUT: strcpy(sname, "FSF-DISCIPLE"); break;
-    default:
-    case BSHIP_UNKNOWN: strcpy(sname, "UNKNOWN SHIP"); break;
-//    case BSHIP_: strcpy(sname, ""); break;
-   }
+        case BSHIP_FIGHTER: strcpy(sname, "FSF-CALLED"); break;
+        case BSHIP_SCOUT2: strcpy(sname, "FSF-RIGHTEOUS"); break;
+        case BSHIP_SCOUT3: strcpy(sname, "FSF-MERCIFUL"); break;
+        case BSHIP_SCOUTCAR: strcpy(sname, "FSF-GRACEFUL"); break;
+        case BSHIP_ECARRIER: strcpy(sname, "FSF-INFINITE"); break;
+        case BSHIP_FREIGHT: strcpy(sname, "FSF-BENEVOLENT"); break;
+        case BSHIP_BOMBER: strcpy(sname, "FSF-MESSENGER"); break;
+        case BSHIP_EBASE: strcpy(sname, "FSF ORBITAL BASE"); break;
+        case BSHIP_EINT: strcpy(sname, "FSF-CHOSEN"); break;
+        case BSHIP_ESCOUT: strcpy(sname, "FSF-DISCIPLE"); break;
+        default:
+        case BSHIP_UNKNOWN: strcpy(sname, "UNKNOWN SHIP"); break;
+    }
 
-   textprintf_ex(display[0], small_font, x + 35, y, BCOL_TEXT, -1, sname);
-
-
+    textprintf_ex(display[0], small_font, x + 35, y, BCOL_TEXT, -1, "%s", sname);
 }
 
 
@@ -3532,62 +3529,55 @@ void display_variant_choices(int p, int x, int y)
 
 void print_variant_name(int x, int y, int col, int type, int variant)
 {
+    char sname [30] = "error";
 
- char sname [30] = "error";
-
- switch(variant)
- {
-  case CVAR_NONE: // basic type
-   switch(type)
-   {
-    case SHIP_FIGHTER_FRIEND: strcpy(sname, "Sandfly"); break;
-    case SHIP_FSTRIKE: strcpy(sname, "Ram"); break;
-    case SHIP_LACEWING: strcpy(sname, "Lacewing"); break;
-    case SHIP_MONARCH: strcpy(sname, "Monarch"); break;
-    case SHIP_IBEX: strcpy(sname, "Ibex"); break;
-    case SHIP_AUROCHS: strcpy(sname, "Aurochs"); break;
-    default: strcpy(sname, "Unknown"); break;
-   }
-   strcat(sname, "   ");
-   textprintf_ex(display[0], small_font, x, y, col, -1, sname);
-   textprintf_ex(display[0], small_font, x + text_length(small_font, sname), y, col-1, -1, "<standard>");
-   break;
-  case CVAR_RAM_HEAVY:
-   strcpy(sname, "HellRam   ");
-   textprintf_ex(display[0], small_font, x, y, col, -1, sname);
-//   textprintf_ex(display[0], small_font, x + text_length(small_font, sname), y, col-1, -1, "<heavy rockets>");
-   break;
-  case CVAR_LW_B:
-   strcpy(sname, "Hungry Lacewing   ");
-   textprintf_ex(display[0], small_font, x, y, col, -1, sname);
-   break;
-  case CVAR_LW_C:
-   strcpy(sname, "Furious Lacewing   ");
-   textprintf_ex(display[0], small_font, x, y, col, -1, sname);
-   break;
-  case CVAR_MONARCH_B:
-   strcpy(sname, "Hungry Monarch   ");
-   textprintf_ex(display[0], small_font, x, y, col, -1, sname);
-   break;
-  case CVAR_MONARCH_C:
-   strcpy(sname, "Wise Monarch   ");
-   textprintf_ex(display[0], small_font, x, y, col, -1, sname);
-   break;
-  case CVAR_IBEX_B:
-   strcpy(sname, "Golden Ibex   ");
-   textprintf_ex(display[0], small_font, x, y, col, -1, sname);
-   break;
-  case CVAR_IBEX_C:
-   strcpy(sname, "Black Ibex   ");
-   textprintf_ex(display[0], small_font, x, y, col, -1, sname);
-   break;
-  default:
-   textprintf_ex(display[0], small_font, x, y, col, -1, "Unknown");
-   break;
- }
-
-
-
+    switch(variant) {
+        case CVAR_NONE: // basic type
+            switch(type) {
+                case SHIP_FIGHTER_FRIEND: strcpy(sname, "Sandfly"); break;
+                case SHIP_FSTRIKE: strcpy(sname, "Ram"); break;
+                case SHIP_LACEWING: strcpy(sname, "Lacewing"); break;
+                case SHIP_MONARCH: strcpy(sname, "Monarch"); break;
+                case SHIP_IBEX: strcpy(sname, "Ibex"); break;
+                case SHIP_AUROCHS: strcpy(sname, "Aurochs"); break;
+                default: strcpy(sname, "Unknown"); break;
+            }
+            strcat(sname, "   ");
+            textprintf_ex(display[0], small_font, x, y, col, -1, "%s", sname);
+            textprintf_ex(display[0], small_font, x + text_length(small_font, sname), y, col-1, -1, "<standard>");
+            break;
+        case CVAR_RAM_HEAVY:
+            strcpy(sname, "HellRam   ");
+            textprintf_ex(display[0], small_font, x, y, col, -1, "%s", sname);
+            break;
+        case CVAR_LW_B:
+            strcpy(sname, "Hungry Lacewing   ");
+            textprintf_ex(display[0], small_font, x, y, col, -1, "%s", sname);
+            break;
+        case CVAR_LW_C:
+            strcpy(sname, "Furious Lacewing   ");
+            textprintf_ex(display[0], small_font, x, y, col, -1, "%s", sname);
+            break;
+        case CVAR_MONARCH_B:
+            strcpy(sname, "Hungry Monarch   ");
+            textprintf_ex(display[0], small_font, x, y, col, -1, "%s", sname);
+            break;
+        case CVAR_MONARCH_C:
+            strcpy(sname, "Wise Monarch   ");
+            textprintf_ex(display[0], small_font, x, y, col, -1, "%s", sname);
+            break;
+        case CVAR_IBEX_B:
+            strcpy(sname, "Golden Ibex   ");
+            textprintf_ex(display[0], small_font, x, y, col, -1, "%s", sname);
+            break;
+        case CVAR_IBEX_C:
+            strcpy(sname, "Black Ibex   ");
+            textprintf_ex(display[0], small_font, x, y, col, -1, "%s", sname);
+            break;
+        default:
+            textprintf_ex(display[0], small_font, x, y, col, -1, "%s", "Unknown");
+            break;
+    }
 }
 
 
@@ -3708,9 +3698,8 @@ void choose_display(int finished1, int finished2)
 
 void bover_box(int x, int y)
 {
- rectfill(display[0], x - 5, y - 3, x + 150, y + 15, COL_BOX1);
- rect(display[0], x - 5, y - 3, x + 150, y + 15, COL_BOX2);
-
+    rectfill(display[0], x - 5, y - 3, x + 150, y + 15, COL_BOX1);
+    rect(display[0], x - 5, y - 3, x + 150, y + 15, COL_BOX2);
 }
 
 void print_weapon_name(int x, int y, int col, int w, int number)
@@ -3865,165 +3854,126 @@ void battle_report(void)
 
 void battle_report_display(int row, int flash, int space)
 {
+    clear_to_color(display [0], 0);
 
+    rectfill(display[0], 100, 50, 700, 550, BCOL_DARK);
+    rect(display[0], 100, 50, 700, 550, BCOL_EDGE);
 
- clear_to_color(display [0], 0);
+    rectfill(display[0], 100, 55, 700, 72, BCOL_EDGE);
+    textprintf_centre_ex(display[0], small_font, 400, 58, BCOL_TEXT, -1, "%s", "Battle Report");
 
-// rectfill
+    int r = 0;
+    int mincol = COL_BOX1;
+    int maxcol = COL_BOX4;
+    int textcol = COL_BOX4;
+    int y = 100;
+    int col;
+    // int x1 = 0, x2 = 13;
+    char str [350];
+    int i;
+    int col2;
 
- rectfill(display[0], 100, 50, 700, 550, BCOL_DARK);
- rect(display[0], 100, 50, 700, 550, BCOL_EDGE);
+    for (r = 0; r < row + 1; r ++) {
 
- rectfill(display[0], 100, 55, 700, 72, BCOL_EDGE);
- textprintf_centre_ex(display[0], small_font, 400, 58, BCOL_TEXT, -1, "Battle Report");
+        if (br_row [r] == BR_ROW_ENEMY_TITLE) {
+            mincol = COL_EBOX1;
+            maxcol = COL_EBOX4;
+            textcol = COL_EBOX4;
+        }
+        if (r == row && flash > 0) {
+            col = mincol + (flash >> 1);
+            if (col > maxcol) {
+                col = maxcol;
+            }
+            rectfill(display[0], 100, y + 5, 700, y + 22, col);
+        }
 
- int r = 0;
- int mincol = COL_BOX1;
- int maxcol = COL_BOX4;
- int textcol = COL_BOX4;
- int y = 100;
- int col;
-// int x1 = 0, x2 = 13;
- char str [350];
- int i;
- int col2;
-
- for (r = 0; r < row + 1; r ++)
- {
-
-  if (br_row [r] == BR_ROW_ENEMY_TITLE)
-  {
-   mincol = COL_EBOX1;
-   maxcol = COL_EBOX4;
-   textcol = COL_EBOX4;
-  }
-  if (r == row && flash > 0)
-  {
-   col = mincol + (flash >> 1);
-   if (col > maxcol)
-    col = maxcol;
-   rectfill(display[0], 100, y + 5, 700, y + 22, col);
-  }
-
-
-// if (r != row || col < maxcol)
-  switch(br_row [r])
-  {
-   case BR_ROW_OURS_TITLE:
-    if (r != row)
-     rectfill(display[0], 101, y + 5, 699, y + 22, COL_BOX1);
-    textprintf_ex(display[0], small_font, 150, y + 7, textcol, -1, "Friendly Forces");
-    y += 5;
-    break;
-   case BR_ROW_OUR_SHIP:
-    switch(br_row_val [r])
-    {
-     case SHIP_OLD2: strcpy(str, "CTBR-SUNSHARK"); break;
-     case SHIP_OLD3: strcpy(str, "CTBR-STARWHALE"); break;
-     case SHIP_FRIEND3: strcpy(str, "IF-TRIREME"); break;
-     case SHIP_FIGHTER_FRIEND: strcpy(str, "CTBR-SANDFLY"); break;
-     case SHIP_FSTRIKE: strcpy(str, "CTBR-RAM"); break;
-     case SHIP_LACEWING: strcpy(str, "CTBR-LACEWING"); break;
-     case SHIP_MONARCH: strcpy(str, "CTBR-MONARCH"); break;
-     case SHIP_IBEX: strcpy(str, "CTBR-IBEX"); break;
-     case SHIP_AUROCHS: strcpy(str, "CTBR-AUROCHS"); break;
-     case SHIP_DROM: strcpy(str, "CTBR-DROMEDARY"); break;
-     case SHIP_LINER: strcpy(str, "STARLINER"); break;
-     default: strcpy(str, "Unknown ship type");
-      textprintf_right_ex(display[0], small_font, 80, y + 7, textcol, -1, "%i %i %i", br_row_val [r], arena.srecord [SREC_CREATED] [TEAM_FRIEND] [br_row_val [r]], arena.srecord [SREC_DESTROYED] [TEAM_FRIEND] [br_row_val [r]]);
-      break;
-/*
-     case SHIP_OLD2: strcpy(str, "Light Cruiser"); break;
-     case SHIP_OLD3: strcpy(str, "Battle Cruiser"); break;
-     case SHIP_FRIEND3: strcpy(str, "Trireme"); break;
-     case SHIP_FIGHTER_FRIEND: strcpy(str, "Fighter"); break;
-     case SHIP_FSTRIKE: strcpy(str, "Strike"); break;
-     case SHIP_DROM: strcpy(str, "Dromedary"); break;
-     default: strcpy(str, "Unknown ship type");
-      textprintf_right_ex(display[0], small_font, 80, y + 7, textcol, -1, "%i %i %i", br_row_val [r], arena.srecord [SREC_CREATED] [TEAM_FRIEND] [br_row_val [r]], arena.srecord [SREC_DESTROYED] [TEAM_FRIEND] [br_row_val [r]]);
-      break;
-*/
-/*
-     case SHIP_SCOUT2: strcpy(str, "Small Warship"); break;
-     case SHIP_SCOUT3: strcpy(str, "Large Warship"); break;
-     case SHIP_BOMBER: strcpy(str, "Bomber"); break;
-     case SHIP_FIGHTER: strcpy(str, "Fighter"); break;
-     case SHIP_ESCOUT: strcpy(str, "Interceptor"); break;
-     case SHIP_SCOUTCAR: strcpy(str, "Carrier"); break;
-     default: strcpy(str, "Unknown ship type"); break;
-*/
+        switch(br_row [r])
+        {
+            case BR_ROW_OURS_TITLE:
+                if (r != row) {
+                    rectfill(display[0], 101, y + 5, 699, y + 22, COL_BOX1);
+                }
+                textprintf_ex(display[0], small_font, 150, y + 7, textcol, -1, "%s", "Friendly Forces");
+                y += 5;
+                break;
+            case BR_ROW_OUR_SHIP:
+                switch(br_row_val[r]) {
+                    case SHIP_OLD2: strcpy(str, "CTBR-SUNSHARK"); break;
+                    case SHIP_OLD3: strcpy(str, "CTBR-STARWHALE"); break;
+                    case SHIP_FRIEND3: strcpy(str, "IF-TRIREME"); break;
+                    case SHIP_FIGHTER_FRIEND: strcpy(str, "CTBR-SANDFLY"); break;
+                    case SHIP_FSTRIKE: strcpy(str, "CTBR-RAM"); break;
+                    case SHIP_LACEWING: strcpy(str, "CTBR-LACEWING"); break;
+                    case SHIP_MONARCH: strcpy(str, "CTBR-MONARCH"); break;
+                    case SHIP_IBEX: strcpy(str, "CTBR-IBEX"); break;
+                    case SHIP_AUROCHS: strcpy(str, "CTBR-AUROCHS"); break;
+                    case SHIP_DROM: strcpy(str, "CTBR-DROMEDARY"); break;
+                    case SHIP_LINER: strcpy(str, "STARLINER"); break;
+                    default:
+                        strcpy(str, "Unknown ship type");
+                        textprintf_right_ex(display[0], small_font, 80, y + 7, textcol, -1, "%i %i %i", br_row_val [r], arena.srecord [SREC_CREATED] [TEAM_FRIEND] [br_row_val [r]], arena.srecord [SREC_DESTROYED] [TEAM_FRIEND] [br_row_val [r]]);
+                        break;
+                }
+                textprintf_right_ex(display[0], small_font, 230, y + 7, textcol, -1, "%s", str);
+                col2 = 0;
+                for (i = 0; i < arena.srecord[SREC_CREATED][TEAM_FRIEND][br_row_val[r]]; i ++) {
+                    if (i >= arena.srecord[SREC_CREATED][TEAM_FRIEND][br_row_val[r]] - arena.srecord[SREC_DESTROYED][TEAM_FRIEND][br_row_val[r]]) {
+                        col2 = 1; // destroyed
+                    }
+                    draw_sprite(display[0], bsprite[TEAM_FRIEND][get_bsprite_from_ship(br_row_val[r])][col2], 235 + (i * 13), y + 7);
+                }
+                break;
+            case BR_ROW_AM:
+                textprintf_right_ex(display[0], small_font, 230, y + 7, textcol, -1, "%s", "Angry Moth");
+                col2 = 0;
+                for (i = 0; i < player[0].starting_ships; i ++) {
+                    if (i >= player[0].starting_ships - player[0].ships_lost) {
+                        col2 = 1; // destroyed
+                    }
+                    draw_sprite(display[0], bsprite[TEAM_FRIEND][BSF_FIGHTER][col2], 235 + (i * 13), y + 7);
+                }
+                y += 10;
+                break;
+            case BR_ROW_ENEMY_TITLE:
+                if (r != row) {
+                    rectfill(display[0], 101, y + 5, 699, y + 22, COL_EBOX1);
+                }
+                textprintf_ex(display[0], small_font, 150, y + 7, textcol, -1, "%s", "Enemy Forces");
+                y += 5;
+                break;
+            case BR_ROW_ENEMY_SHIP:
+                switch(br_row_val [r]) {
+                    case SHIP_SCOUT2: strcpy(str, "FSF-RIGHTEOUS"); break;
+                    case SHIP_SCOUT3: strcpy(str, "FSF-MERCIFUL"); break;
+                    case SHIP_BOMBER: strcpy(str, "FSF-MESSENGER"); break;
+                    case SHIP_FIGHTER: strcpy(str, "FSF-CALLED"); break;
+                    case SHIP_ESCOUT: strcpy(str, "FSF-DISCIPLE"); break;
+                    case SHIP_EINT: strcpy(str, "FSF-CHOSEN"); break;
+                    case SHIP_SCOUTCAR: strcpy(str, "FSF-GRACEFUL"); break;
+                    case SHIP_ECARRIER: strcpy(str, "FSF-INFINITE"); break;
+                    case SHIP_FREIGHT: strcpy(str, "FSF-BENEVOLENT"); break;
+                    case SHIP_EBASE: strcpy(str, "Base"); break;
+                    default: strcpy(str, "Unknown ship type"); break;
+                }
+                textprintf_right_ex(display[0], small_font, 230, y + 7, textcol, -1, "%s", str);
+                col2 = 0;
+                for (i = 0; i < arena.srecord[SREC_CREATED][TEAM_ENEMY][br_row_val[r]]; i ++) {
+                    if (i >= arena.srecord[SREC_CREATED][TEAM_ENEMY][br_row_val[r]] - arena.srecord[SREC_DESTROYED][TEAM_ENEMY][br_row_val[r]]) {
+                        col2 = 1; // destroyed
+                    }
+                    draw_sprite(display[0], bsprite[TEAM_ENEMY][get_bsprite_from_ship(br_row_val[r])][col2], 235 + (i * 13), y + 7);
+                }
+                break;
+        }
+        y += 20;
     }
-    textprintf_right_ex(display[0], small_font, 230, y + 7, textcol, -1, str);
-    col2 = 0;
-    for (i = 0; i < arena.srecord [SREC_CREATED] [TEAM_FRIEND] [br_row_val [r]]; i ++)
-    {
-     if (i >= arena.srecord [SREC_CREATED] [TEAM_FRIEND] [br_row_val [r]] - arena.srecord [SREC_DESTROYED] [TEAM_FRIEND] [br_row_val [r]])
-      col2 = 1; // destroyed
-     draw_sprite(display[0], bsprite [TEAM_FRIEND] [get_bsprite_from_ship(br_row_val [r])] [col2],
-      235 + (i * 13), y + 7);
+
+    y += 20;
+    if (space) {
+        report_text(y);
+        textprintf_centre_ex(display[0], small_font, 400, 530, BCOL_TEXT, -1, "%s", "Press space to continue");
     }
-//    textprintf_right_ex(display[0], small_font, 245 + (i * 13), y + 7, textcol, 1, "%i", br_row_val [r]);
-    break;
-   case BR_ROW_AM:
-    textprintf_right_ex(display[0], small_font, 230, y + 7, textcol, -1, "Angry Moth");
-    col2 = 0;
-    for (i = 0; i < player[0].starting_ships; i ++)
-    {
-     if (i >= player[0].starting_ships - player[0].ships_lost)
-      col2 = 1; // destroyed
-     draw_sprite(display[0], bsprite [TEAM_FRIEND] [BSF_FIGHTER] [col2],
-      235 + (i * 13), y + 7);
-    }
-    y += 10;
-    break;
-   case BR_ROW_ENEMY_TITLE:
-    if (r != row)
-     rectfill(display[0], 101, y + 5, 699, y + 22, COL_EBOX1);
-    textprintf_ex(display[0], small_font, 150, y + 7, textcol, -1, "Enemy Forces");
-    y += 5;
-    break;
-   case BR_ROW_ENEMY_SHIP:
-    switch(br_row_val [r])
-    {
-     case SHIP_SCOUT2: strcpy(str, "FSF-RIGHTEOUS"); break;
-     case SHIP_SCOUT3: strcpy(str, "FSF-MERCIFUL"); break;
-     case SHIP_BOMBER: strcpy(str, "FSF-MESSENGER"); break;
-     case SHIP_FIGHTER: strcpy(str, "FSF-CALLED"); break;
-     case SHIP_ESCOUT: strcpy(str, "FSF-DISCIPLE"); break;
-     case SHIP_EINT: strcpy(str, "FSF-CHOSEN"); break;
-     case SHIP_SCOUTCAR: strcpy(str, "FSF-GRACEFUL"); break;
-     case SHIP_ECARRIER: strcpy(str, "FSF-INFINITE"); break;
-     case SHIP_FREIGHT: strcpy(str, "FSF-BENEVOLENT"); break;
-     case SHIP_EBASE: strcpy(str, "Base"); break;
-     default: strcpy(str, "Unknown ship type"); break;
-    }
-    textprintf_right_ex(display[0], small_font, 230, y + 7, textcol, -1, str);
-//    textprintf_right_ex(display[0], small_font, 300, y + 4, textcol, -1, "%i, %i, %i", br_row_val [r], arena.srecord [SREC_CREATED] [TEAM_ENEMY] [br_row_val [r]], arena.srecord [SREC_DESTROYED] [TEAM_ENEMY] [br_row_val [r]]);
-    col2 = 0;
-    for (i = 0; i < arena.srecord [SREC_CREATED] [TEAM_ENEMY] [br_row_val [r]]; i ++)
-    {
-     if (i >= arena.srecord [SREC_CREATED] [TEAM_ENEMY] [br_row_val [r]] - arena.srecord [SREC_DESTROYED] [TEAM_ENEMY] [br_row_val [r]])
-      col2 = 1; // destroyed
-     draw_sprite(display[0], bsprite [TEAM_ENEMY] [get_bsprite_from_ship(br_row_val [r])] [col2],
-      235 + (i * 13), y + 7);
-    }
-    break;
-
-  }
-
-  y += 20;
- }
-
- y += 20;
-
- if (space)
- {
-  report_text(y);
-
-  textprintf_centre_ex(display[0], small_font, 400, 530, BCOL_TEXT, -1, "Press space to continue");
- }
-
-
 }
 
 int get_rank(int lost, int r2, int r3, int r4, int r5)

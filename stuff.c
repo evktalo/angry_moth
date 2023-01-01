@@ -223,11 +223,10 @@ int pulsate(int speed, int amount, int county)
 
 void error_message_out(const char *errm)
 {
-      set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
-      allegro_message(errm);
-      exit(1);
+    set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
+    allegro_message("%s", errm);
+    exit(1);
 }
-
 
 int angle_difference(int a1, int a2)
 {
