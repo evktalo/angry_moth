@@ -1670,191 +1670,140 @@ int briefing_over_menu(void)
 //  to skip third weapon selection in 2-p games.
 int get_bover_input(int p, int min, int max, int select2, int min2, int max2, int choosing)
 {
- int move = 0;
- int hmove = 0;
- int select = 0;
- int js;
- int kb;
+    int move = 0;
+    int hmove = 0;
+    int select = 0;
+    int js;
+    int kb;
 
-  char anykey = 0;
+    char anykey = 0;
 
- if (PP.control == CONTROL_KEY_A
-  || PP.control == CONTROL_KEY_B)
- {
-  kb = PP.control;
-  if (bkey_wait_pressed [p] != -1
-   && key [options.ckey [kb] [bkey_wait_pressed [p]]])
-   anykey = 1;
+    if (PP.control == CONTROL_KEY_A
+        || PP.control == CONTROL_KEY_B
+    ) {
+        kb = PP.control;
+        if (bkey_wait_pressed[p] != -1
+            && key [options.ckey[kb][bkey_wait_pressed[p]]]
+        ) {
+            anykey = 1;
+        }
+    }
 
-/*  for (i = CKEY_LEFT; i < CKEY_FIRE2 + 1; i ++)
-  {
-   if (key [options.ckey [kb] [i]])
-   {
-    anykey = 1;
-   }
-  }*/
- }
+    if (anykey == 0 && player_joystick_input(p) == 0) {
+        bkey_wait[p] = 0;
+    }
 
+    if (bkey_wait[p] > 0) {
+        bkey_wait[p]--;
+        if (bkey_wait[p] == 0) {
+            bkey_wait_pressed[p] = -1;
+        }
+        return -1;
+    }
 
- if (anykey == 0 && player_joystick_input(p) == 0)
-  bkey_wait [p] = 0;
-
- if (bkey_wait [p] > 0)
- {
-  bkey_wait [p] --;
-  if (bkey_wait [p] == 0)
-   bkey_wait_pressed [p] = -1;
-  return -1;
- }
-
-
-
-     if (PP.control == CONTROL_KEY_A
-      || PP.control == CONTROL_KEY_B)
-     {
-      kb = PP.control;
-      if (key [options.ckey [kb] [CKEY_UP]])
-      {
-       move = -1;
-       bkey_wait [p] = 10;
-       bkey_wait_pressed [p] = CKEY_UP;
-      }
-      if (key [options.ckey [kb] [CKEY_DOWN]])
-      {
-       move = 1;
-       bkey_wait [p] = 10;
-       bkey_wait_pressed [p] = CKEY_DOWN;
-      }
-      if (key [options.ckey [kb] [CKEY_LEFT]])
-      {
-       hmove = -1;
-       bkey_wait [p] = 10;
-       bkey_wait_pressed [p] = CKEY_LEFT;
-      }
-      if (key [options.ckey [kb] [CKEY_RIGHT]])
-      {
-       hmove = 1;
-       bkey_wait [p] = 10;
-       bkey_wait_pressed [p] = CKEY_RIGHT;
-      }
-      if (key [options.ckey [kb] [CKEY_FIRE1]])
-      {
-       move = 0;
-       select = 1;
-       bkey_wait [p] = 10;
-       bkey_wait_pressed [p] = CKEY_FIRE1;
-      }
-
-     }
-      else
-      {
+    if (PP.control == CONTROL_KEY_A
+        || PP.control == CONTROL_KEY_B
+    ) {
+        kb = PP.control;
+        if (key[options.ckey[kb][CKEY_UP]]) {
+            move = -1;
+            bkey_wait[p] = 10;
+            bkey_wait_pressed[p] = CKEY_UP;
+        }
+        if (key[options.ckey[kb][CKEY_DOWN]]) {
+            move = 1;
+            bkey_wait[p] = 10;
+            bkey_wait_pressed[p] = CKEY_DOWN;
+        }
+        if (key[options.ckey[kb][CKEY_LEFT]]) {
+            hmove = -1;
+            bkey_wait[p] = 10;
+            bkey_wait_pressed[p] = CKEY_LEFT;
+        }
+        if (key[options.ckey[kb][CKEY_RIGHT]]) {
+            hmove = 1;
+            bkey_wait[p] = 10;
+            bkey_wait_pressed[p] = CKEY_RIGHT;
+        }
+        if (key[options.ckey[kb][CKEY_FIRE1]]) {
+            move = 0;
+            select = 1;
+            bkey_wait[p] = 10;
+            bkey_wait_pressed[p] = CKEY_FIRE1;
+        }
+    } else {
         poll_joystick();
         js = PP.control - CONTROL_JOY_A;
-        if (joy[js].button[options.joy_button [js] [JBUTTON_FIRE1]].b)
-        {
-         select = 1;
-         move = 0;
-         bkey_wait [p] = 10;
-         bkey_wait_pressed [p] = -1;
+        if (joy[js].button[options.joy_button[js][JBUTTON_FIRE1]].b) {
+            select = 1;
+            move = 0;
+            bkey_wait[p] = 10;
+            bkey_wait_pressed[p] = -1;
         }
-        if (joy[js].stick[0].axis[1].pos < -MENU_SENSE)
-        {
-         move = -1;
-         bkey_wait [p] = 10;
-         bkey_wait_pressed [p] = -1;
+        if (joy[js].stick[0].axis[1].pos < -MENU_SENSE) {
+            move = -1;
+            bkey_wait[p] = 10;
+            bkey_wait_pressed[p] = -1;
         }
-        if (joy[js].stick[0].axis[1].pos > MENU_SENSE)
-        {
-         move = 1;
-         bkey_wait [p] = 10;
-         bkey_wait_pressed [p] = -1;
+        if (joy[js].stick[0].axis[1].pos > MENU_SENSE) {
+            move = 1;
+            bkey_wait[p] = 10;
+            bkey_wait_pressed[p] = -1;
         }
-        if (joy[js].stick[0].axis[0].pos < -MENU_SENSE)
-        {
-         hmove = -1;
-         bkey_wait [p] = 10;
-         bkey_wait_pressed [p] = -1;
+        if (joy[js].stick[0].axis[0].pos < -MENU_SENSE) {
+            hmove = -1;
+            bkey_wait[p] = 10;
+            bkey_wait_pressed[p] = -1;
         }
-        if (joy[js].stick[0].axis[0].pos > MENU_SENSE)
-        {
-         hmove = 1;
-         bkey_wait [p] = 10;
-         bkey_wait_pressed [p] = -1;
+        if (joy[js].stick[0].axis[0].pos > MENU_SENSE) {
+            hmove = 1;
+            bkey_wait[p] = 10;
+            bkey_wait_pressed[p] = -1;
         }
-      }
+    }
 
+    if (!select2) {
+        if (move == -1) {
+            do {
+                bover_menu_select[p]--;
+                if (bover_menu_select[p] < min) {
+                    bover_menu_select[p] = max;
+                }
+            } while (choosing == 1 && choose_valid(p, bover_menu_select[p]) != 2);
+            play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
+        }
+        if (move == 1) {
+            do {
+                bover_menu_select[p]++;
+                if (bover_menu_select[p] > max) {
+                    bover_menu_select[p] = min;
+                }
+            } while (choosing == 1 && choose_valid(p, bover_menu_select[p]) != 2);
+            play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
+        }
+    } else {
+        if (move == -1) {
+            bover_menu_select2[p]--;
+            if (bover_menu_select2[p] < min2) {
+                bover_menu_select2[p] = max2;
+            }
+            play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
+        }
 
- if (!select2)
- {
-  if (move == -1)
-  {
-   do
-   {
-    bover_menu_select [p] --;
-    if (bover_menu_select [p] < min)
-     bover_menu_select [p] = max;
-   }
-    while (choosing == 1 && choose_valid(p, bover_menu_select [p]) != 2);
-   play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
-  }
+        if (move == 1) {
+            bover_menu_select2[p]++;
+            if (bover_menu_select2[p] > max2) {
+                bover_menu_select2[p] = min2;
+            }
+            play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
+        }
+    }
 
-  if (move == 1)
-  {
-   do
-   {
-   bover_menu_select [p] ++;
-   if (bover_menu_select [p] > max)
-    bover_menu_select [p] = min;
-   }
-    while (choosing == 1 && choose_valid(p, bover_menu_select [p]) != 2);
-   play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
-  }
- }
-  else
-  {
-   if (move == -1)
-   {
-    bover_menu_select2 [p] --;
-    if (bover_menu_select2 [p] < min2)
-     bover_menu_select2 [p] = max2;
-    play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
-   }
+    if (select) {
+        return 1;//bover_menu_select [p];
+    }
 
-   if (move == 1)
-   {
-    bover_menu_select2 [p] ++;
-    if (bover_menu_select2 [p] > max2)
-     bover_menu_select2 [p] = min2;
-    play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
-   }
-  }
-/*
- if (horiz)
- {
-  if (hmove == -1)
-  {
-   bover_menu_select2 [p] --;
-   if (bover_menu_select2 [p] < hmin)
-    bover_menu_select2 [p] = hmax;
-  }
-
-  if (hmove == 1)
-  {
-   bover_menu_select2 [p] ++;
-   if (bover_menu_select2 [p] > hmax)
-    bover_menu_select2 [p] = hmin;
-  }
-
-  if (select)
-   return 1;// bover_menu_select [p] + (bover_menu_select2 [p] * 100);
-
- }
-*/
- if (select)
-  return 1;//bover_menu_select [p];
-
- return -1;
-
+    return -1;
 }
 
 void boverdisplay(void)
