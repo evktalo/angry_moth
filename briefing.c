@@ -39,7 +39,6 @@ extern RGB palet [256];
 extern volatile unsigned char ticked;
 extern BITMAP *display [3];
 extern FONT* small_font;
-//extern int message_lines;
 
 BITMAP* bsprite [2] [BSPRITES] [2];
 BITMAP* wisprite [WISPRITES];
@@ -118,106 +117,109 @@ int mod_list [MODS_LISTED];
 int br_variant_choices;
 int variant_list [2] [VARIANTS_LISTED];
 
-enum
-{
-BSHIP_NONE,
-BSHIP_OLD2,
-BSHIP_OLD3,
-BSHIP_FRIEND3,
-BSHIP_DROM,
-BSHIP_LINER,
-BSHIP_FIGHTER_FRIEND,
-BSHIP_FIGHTER_FSTRIKE,
-BSHIP_IBEX,
-BSHIP_AUROCHS,
-BSHIP_LACEWING,
-BSHIP_MONARCH,
-BSHIP_MOTH,
-BSHIP_TRIREME,
-BSHIP_END_FRIENDS,
+enum {
+    BSHIP_NONE,
+    BSHIP_OLD2,
+    BSHIP_OLD3,
+    BSHIP_FRIEND3,
+    BSHIP_DROM,
+    BSHIP_LINER,
+    BSHIP_FIGHTER_FRIEND,
+    BSHIP_FIGHTER_FSTRIKE,
+    BSHIP_IBEX,
+    BSHIP_AUROCHS,
+    BSHIP_LACEWING,
+    BSHIP_MONARCH,
+    BSHIP_MOTH,
+    BSHIP_TRIREME,
+    BSHIP_END_FRIENDS,
 
-BSHIP_FIGHTER,
-BSHIP_SCOUT2,
-BSHIP_BOMBER,
-BSHIP_SCOUT3,
-BSHIP_ESCOUT,
-BSHIP_ECARRIER,
-BSHIP_SCOUTCAR,
-BSHIP_FREIGHT,
-BSHIP_EBASE,
-BSHIP_EINT,
-BSHIP_UNKNOWN,
-NO_BSHIP_TYPES
-
+    BSHIP_FIGHTER,
+    BSHIP_SCOUT2,
+    BSHIP_BOMBER,
+    BSHIP_SCOUT3,
+    BSHIP_ESCOUT,
+    BSHIP_ECARRIER,
+    BSHIP_SCOUTCAR,
+    BSHIP_FREIGHT,
+    BSHIP_EBASE,
+    BSHIP_EINT,
+    BSHIP_UNKNOWN,
+    NO_BSHIP_TYPES
 };
 
-enum
-{BCONVOY_0, BCONVOY_1, BCONVOY_2,BCONVOY_3,BCONVOY_4,BCONVOY_5,BCONVOY_6,BCONVOY_7,BCONVOY_8,BCONVOYS};
-
-struct bshipstruct
-{
- int type;
- int side;
- int convoy;
- int x, y;
+enum {
+    BCONVOY_0,
+    BCONVOY_1,
+    BCONVOY_2,
+    BCONVOY_3,
+    BCONVOY_4,
+    BCONVOY_5,
+    BCONVOY_6,
+    BCONVOY_7,
+    BCONVOY_8,
+    BCONVOYS
 };
 
-struct bconvoystruct
-{
- int exists;
- int x;
- int y;
- int face;
- int x_speed;
- int y_speed;
- int goal_x;
- int goal_y;
- int move_settle;
+struct bshipstruct {
+    int type;
+    int side;
+    int convoy;
+    int x, y;
 };
 
-struct bselectstruct
-{
- int exists;
- int x;
- int y;
- int x1, y1, x2, y2;
- int x_offset, y_offset;
- int count;
+struct bconvoystruct {
+    int exists;
+    int x;
+    int y;
+    int face;
+    int x_speed;
+    int y_speed;
+    int goal_x;
+    int goal_y;
+    int move_settle;
 };
 
-struct bshipstruct bship [BSHIPS];
-struct bconvoystruct bconvoy [BCONVOYS];
-struct bselectstruct bselect [BSELECT];
+struct bselectstruct {
+    int exists;
+    int x;
+    int y;
+    int x1, y1, x2, y2;
+    int x_offset, y_offset;
+    int count;
+};
+
+struct bshipstruct bship[BSHIPS];
+struct bconvoystruct bconvoy[BCONVOYS];
+struct bselectstruct bselect[BSELECT];
 
 int map_mode;
 
-enum
-{
-MM_STARMAP,
-MM_TACTICAL
+enum {
+    MM_STARMAP,
+    MM_TACTICAL
 };
 
-enum
-{
-BSCRIPT_HEADER,
-BSCRIPT_STARMAP,
-BSCRIPT_TACTICAL,
-BSCRIPT_NEW_SHIP,
-BSCRIPT_NEW_CONVOY,
-BSCRIPT_MOVE,
-BSCRIPT_WAIT,
-BSCRIPT_HIT_FIRE,
-BSCRIPT_BMESSAGE, // creates a tbox. Can point to a convoy, or set cv to -1 for x/y value or -2 for no line.
-// BMESSAGE can be used for starmap
-BSCRIPT_SETTLE,
-BSCRIPT_SELECT, // tactical view only
-BSCRIPT_SELECT_SM, // tac or starmap - just uses x/y values and size, not a convoy
-BSCRIPT_CLEAR_MESSAGE,
-BSCRIPT_STARMAP_ZOOM,
-BSCRIPT_STARSELECT_SIDE,
-BSCRIPT_STARSELECT_SETTLED,
-BSCRIPT_MDATA, // adds a ship to mission data
-BSCRIPT_END
+enum {
+    BSCRIPT_HEADER,
+    BSCRIPT_STARMAP,
+    BSCRIPT_TACTICAL,
+    BSCRIPT_NEW_SHIP,
+    BSCRIPT_NEW_CONVOY,
+    BSCRIPT_MOVE,
+    BSCRIPT_WAIT,
+    BSCRIPT_HIT_FIRE,
+    BSCRIPT_BMESSAGE, // creates a tbox. Can point to a convoy, or set cv to -1 for x/y value or -2 for no line.
+    // BMESSAGE can be used for starmap
+    BSCRIPT_SETTLE,
+    BSCRIPT_SELECT, // tactical view only
+    BSCRIPT_SELECT_SM, // tac or starmap - just uses x/y values and size, not a convoy
+    BSCRIPT_CLEAR_MESSAGE,
+    BSCRIPT_STARMAP_ZOOM,
+    BSCRIPT_STARSELECT_SIDE,
+    BSCRIPT_STARSELECT_SETTLED,
+    BSCRIPT_MDATA, // adds a ship to mission data
+    BSCRIPT_END
 };
 
 #define BVARS 8
@@ -225,80 +227,71 @@ BSCRIPT_END
 #define LEFT 0
 #define RIGHT 1
 
-enum
-{
-BNEWSHIP_BCONVOY,
-BNEWSHIP_TYPE,
-BNEWSHIP_X,
-BNEWSHIP_Y
-};
-enum
-{
-BNEWCONVOY_CONVOY,
-BNEWCONVOY_X,
-BNEWCONVOY_Y,
-BNEWCONVOY_FACE
+enum {
+    BNEWSHIP_BCONVOY,
+    BNEWSHIP_TYPE,
+    BNEWSHIP_X,
+    BNEWSHIP_Y
 };
 
-enum
-{
-BMOVE_CONVOY,
-BMOVE_WAIT,
-BMOVE_X,
-BMOVE_Y,
-BMOVE_SPEED,
-BMOVE_FACE,
-BMOVE_SETTLE
+enum {
+    BNEWCONVOY_CONVOY,
+    BNEWCONVOY_X,
+    BNEWCONVOY_Y,
+    BNEWCONVOY_FACE
 };
 
-enum
-{
-BSELECT_CONVOY,
-BSELECT_X_OFFSET,
-BSELECT_Y_OFFSET
-};
-enum
-{
-BSELECT_SM_X,
-BSELECT_SM_Y,
-BSELECT_SM_SIZE
+enum {
+    BMOVE_CONVOY,
+    BMOVE_WAIT,
+    BMOVE_X,
+    BMOVE_Y,
+    BMOVE_SPEED,
+    BMOVE_FACE,
+    BMOVE_SETTLE
 };
 
-enum
-{
-BWAIT_TIME
-};
-enum
-{
-BMESSAGE_BMESSAGE,
-BMESSAGE_X,
-BMESSAGE_Y,
-BMESSAGE_W,
-BMESSAGE_X2,
-BMESSAGE_Y2,
-BMESSAGE_CONVOY
+enum {
+    BSELECT_CONVOY,
+    BSELECT_X_OFFSET,
+    BSELECT_Y_OFFSET
 };
 
-enum
-{
-BSTARMAPZOOM_X,
-BSTARMAPZOOM_Y,
-BSTARMAPZOOM_ZOOM,
+enum {
+    BSELECT_SM_X,
+    BSELECT_SM_Y,
+    BSELECT_SM_SIZE
 };
 
-enum
-{
-BSTARSELECT_SIDE
+enum {
+    BWAIT_TIME
 };
 
-enum
-{
-BMDATA_BTYPE,
-BMDATA_SIDE,
-BMDATA_NUMBER
+enum {
+    BMESSAGE_BMESSAGE,
+    BMESSAGE_X,
+    BMESSAGE_Y,
+    BMESSAGE_W,
+    BMESSAGE_X2,
+    BMESSAGE_Y2,
+    BMESSAGE_CONVOY
 };
 
-// BOX_W - 10
+enum {
+    BSTARMAPZOOM_X,
+    BSTARMAPZOOM_Y,
+    BSTARMAPZOOM_ZOOM,
+};
+
+enum {
+    BSTARSELECT_SIDE
+};
+
+enum {
+    BMDATA_BTYPE,
+    BMDATA_SIDE,
+    BMDATA_NUMBER
+};
 
 int tbox_exists;
 int tbox_x;
