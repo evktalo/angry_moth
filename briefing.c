@@ -305,90 +305,60 @@ int tbox_flash_in;
 int tbox_out;
 int tbox_flash_out;
 
-struct mdatastruct
-{
- int side;
- int number;
+struct mdatastruct {
+    int side;
+    int number;
 };
 
-struct mdatastruct mdata [NO_BSHIP_TYPES];
+struct mdatastruct mdata[NO_BSHIP_TYPES];
 
-
-struct briefingscript
-{
- int type;
- int var [BVARS];
+struct briefingscript {
+    int type;
+    int var[BVARS];
 };
 
-enum
-{
-BMSG_CANNON,
-BMSG_FIGHTER,
-BMSG_WPN1,
-BMSG_WPN2,
-BMSG_WPN3,
-BMSG_WPN4,
-BMSG_WPN5,
-BMSG_WPN6,
-BMSG_WPN7,
+enum {
+    BMSG_CANNON,
+    BMSG_FIGHTER,
+    BMSG_WPN1,
+    BMSG_WPN2,
+    BMSG_WPN3,
+    BMSG_WPN4,
+    BMSG_WPN5,
+    BMSG_WPN6,
+    BMSG_WPN7,
 
-BMSG_INTRO1,
-BMSG_INTRO2,
-BMSG_INTRO3,
-BMSG_INTRO4,
-BMSG_INTRO5,
-BMSG_INTRO6,
-BMSG_INTRO7,
+    BMSG_INTRO1,
+    BMSG_INTRO2,
+    BMSG_INTRO3,
+    BMSG_INTRO4,
+    BMSG_INTRO5,
+    BMSG_INTRO6,
+    BMSG_INTRO7,
 
-/*
-BMSG_M0_1,
-BMSG_M0_2,
-BMSG_M0_3,
-BMSG_M0_4,
-BMSG_M0_5,
-BMSG_M0_6,
-BMSG_M0_7,
-BMSG_M0_8,
-BMSG_M0_9,
-*/
+    BMSG_M1_1,
+    BMSG_M1_2,
+    BMSG_M1_3,
+    BMSG_M1_4,
+    BMSG_M1_5,
+    BMSG_M1_6,
 
-BMSG_M1_1,
-BMSG_M1_2,
-BMSG_M1_3,
-BMSG_M1_4,
-BMSG_M1_5,
-BMSG_M1_6,
+    BMSG_M2_1,
+    BMSG_M2_2,
+    BMSG_M2_3,
+    BMSG_M2_4,
+    BMSG_M2_5,
+    BMSG_M2_6,
 
-BMSG_M2_1,
-BMSG_M2_2,
-BMSG_M2_3,
-BMSG_M2_4,
-BMSG_M2_5,
-BMSG_M2_6,
+    BMSG_M3_1,
+    BMSG_M3_2,
+    BMSG_M3_3,
+    BMSG_M3_4,
+    BMSG_M3_5,
+    BMSG_M3_6,
+    BMSG_M3_7,
 
-
-//BMSG_M1_6,
-/*
-BMSG_M2_1,
-BMSG_M2_2,
-BMSG_M2_3,
-BMSG_M2_4,
-BMSG_M2_5,
-BMSG_M2_6,
-BMSG_M2_7,
-BMSG_M2_8,*/
-
-BMSG_M3_1,
-BMSG_M3_2,
-BMSG_M3_3,
-BMSG_M3_4,
-BMSG_M3_5,
-BMSG_M3_6,
-BMSG_M3_7,
-//BMSG_M3_7,
-//BMSG_M3_8,
-
-BMSGS
+    BMSGS
 };
 
 
@@ -496,8 +466,6 @@ struct msgstruct bmsg [BMSGS] =
 */
 // remember trailing space!!
 };
-
-
 
 #define BSCRIPTS 300
 #define POINT_TO_NOTHING -2
@@ -1106,21 +1074,6 @@ Stage 3!
 
 };
 
-
-
-/*
-char bmsg [BMSGS] [150] =
-{
- "Anti-fighter missile. Very effective against fighters. Lock on to target. ",
- "Anti-warship missile. Locks on to warships only. Powerful. ",
- "Torpedo. Most powerful weapon. ",
- "Rocket. ",
- "Hello everyone this is a $B test message $C to see how this msg thing works. $P Does it? $P  $P Let's find out! Also this is testing the small font. "
-
-// remember trailing space!!
-};
-*/
-
 int waiting;
 int waiting_for_fire;
 int briefing_pos;
@@ -1129,57 +1082,38 @@ char finished_wship_process;
 
 void finish_wship_process(void);
 
-enum
-{
-BOVER_MENU_START,
-BOVER_MENU_REPLAY,
-BOVER_MENU_DATA,
-BOVER_MENU_QUIT,
-BOVER_MENU_END
+enum {
+    BOVER_MENU_START,
+    BOVER_MENU_REPLAY,
+    BOVER_MENU_DATA,
+    BOVER_MENU_QUIT,
+    BOVER_MENU_END
 };
 
-/*
-#define BCOL_BACK (COL_F1 + TRANS_BLUE1)
-#define BCOL_SCREEN (COL_F1)
-#define BCOL_DARK (COL_STAR1)
-#define BCOL_EDGE (COL_F2)
-#define BCOL_TEXT (COL_F3 + TRANS_BLUE3)
-*/
 #define BCOL_BACK (COL_BOX1)
 #define BCOL_SCREEN (COL_BOX1)
 #define BCOL_DARK (COL_BOX0)
 #define BCOL_EDGE (COL_BOX2)
 #define BCOL_TEXT (COL_BOX4)
-//(COL_F6 + TRANS_BLUE3)
-
-
 #define EDGE 1
 
+enum {
+    CHOOSE_SHIP,
+    CHOOSE_VARIANT,
+    CHOOSE_MOD1,
+    CHOOSE_MOD2,
+    CHOOSE_MOD3,
+    CHOOSE_WEAPON1,
+    CHOOSE_WEAPON2,
+    CHOOSE_WEAPON3,
+    CHOOSE_ESCORT1,
+    CHOOSE_ESCORT2,
+    CHOOSE_WING1,
+    CHOOSE_WING2,
 
-enum
-{
-/*CHOOSE_CANNON,
-CHOOSE_WING1,
-CHOOSE_WEAPON1,
-CHOOSE_WEAPON2,
-*/
-CHOOSE_SHIP,
-CHOOSE_VARIANT,
-CHOOSE_MOD1,
-CHOOSE_MOD2,
-CHOOSE_MOD3,
-CHOOSE_WEAPON1,
-CHOOSE_WEAPON2,
-CHOOSE_WEAPON3,
-CHOOSE_ESCORT1,
-CHOOSE_ESCORT2,
-CHOOSE_WING1,
-CHOOSE_WING2,
-
-CHOOSE_LAUNCH,
-CHOOSE_REPLAY,
-CHOOSE_END
-
+    CHOOSE_LAUNCH,
+    CHOOSE_REPLAY,
+    CHOOSE_END
 };
 
 int wship_process_indicator;
