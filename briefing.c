@@ -1633,56 +1633,37 @@ int bover_flash_in;
 
 int briefing_over_menu(void)
 {
- bover_menu_select [0] = BOVER_MENU_START;
- bkey_wait [0] = 30;
- bkey_wait_pressed [0] = -1;
- int input_value = 0;
- bover_flash_in = 0;
+    bover_menu_select[0] = BOVER_MENU_START;
+    bkey_wait[0] = 30;
+    bkey_wait_pressed[0] = -1;
+    int input_value = 0;
+    bover_flash_in = 0;
 
- while (TRUE)
- {
+    while (TRUE) {
+        briefing_counter++;
+        if (bover_flash_in != -1) {
+            bover_flash_in++;
+        }
+        bdisplay();
+        rectfill(display[0], 250+EDGE, 575+EDGE, 550-EDGE, 595-EDGE, BCOL_DARK);
+        boverdisplay();
+        input_value = get_bover_input(0, BOVER_MENU_START, BOVER_MENU_END - 1, 0, 0, 0, 0);
+        if (input_value != -1) {
+            return bover_menu_select [0];
+        }
 
-  briefing_counter ++;
-  if (bover_flash_in != -1)
-   bover_flash_in ++;
+        if (finished_wship_process == 0) {
+            finished_wship_process = wship_process();
+            wship_process_indicator++;
+        }
 
-
-  bdisplay();
-  rectfill(display[0], 250+EDGE, 575+EDGE, 550-EDGE, 595-EDGE, BCOL_DARK);
-//  rectfill(display[0], 0, 579, 800, 600, BCOL_BACK); // to remove "press fire 1 etc" text
-  boverdisplay();
-//  if (bover_flash_in == -1)
-  input_value = get_bover_input(0, BOVER_MENU_START, BOVER_MENU_END - 1, 0, 0, 0, 0);
-  if (input_value != -1)
-   return bover_menu_select [0];
-
-/*   if (key [options.ckey [0] [CKEY_FIRE2]]
-    || (options.joystick_available [0] && joy[0].button[options.joy_button [0] [1]].b))
-    break;*/
-
-  if (finished_wship_process == 0)
-  {
-   finished_wship_process = wship_process();
-   wship_process_indicator ++;
-  }
-
-    while (ticked == 0)
-    {
-        rest(1);
+        while (ticked == 0) {
+            rest(1);
+        };
+        ticked = 0;
+        wship_process_progress();
+        blit(display[0], screen, 0, 0, 0, 0, 800, 600);
     };
-    ticked = 0;
-
-  wship_process_progress();
-
-//  vsync();
-  blit(display[0], screen, 0, 0, 0, 0, 800, 600);
-
-
-
- };
-
-// briefing_over_menu();
-
 }
 
 // "skip" is only used for the main selection, and currently only used
