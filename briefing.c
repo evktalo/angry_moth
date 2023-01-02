@@ -1051,113 +1051,81 @@ int briefing_loop(void)
 
 void bdisplay(void)
 {
+    int s, c;
 
- int s, c;
+    if (map_mode == MM_TACTICAL) {
+        clear_to_color(display [0], 0);
 
- if (map_mode == MM_TACTICAL)
- {
-  clear_to_color(display [0], 0);
+        rectfill(display[0], MAP_X-EDGE, MAP_Y-EDGE, MAP_X + MAP_W+EDGE, MAP_Y + MAP_H+EDGE, BCOL_EDGE);
+        rectfill(display[0], MAP_X, MAP_Y, MAP_X + MAP_W, MAP_Y + MAP_H, BCOL_DARK);
 
-  rectfill(display[0], MAP_X-EDGE, MAP_Y-EDGE, MAP_X + MAP_W+EDGE, MAP_Y + MAP_H+EDGE, BCOL_EDGE);
-  rectfill(display[0], MAP_X, MAP_Y, MAP_X + MAP_W, MAP_Y + MAP_H, BCOL_DARK);
+        rectfill(display[0], MAP_X, MAP_Y + 5, MAP_X + MAP_W, MAP_Y + 22, BCOL_EDGE);
+        textprintf_centre_ex(display[0], small_font, MAP_X + (MAP_W>>1), MAP_Y+7, BCOL_TEXT, -1, "Mission Briefing");
 
-  rectfill(display[0], MAP_X, MAP_Y + 5, MAP_X + MAP_W, MAP_Y + 22, BCOL_EDGE);
-  textprintf_centre_ex(display[0], small_font, MAP_X + (MAP_W>>1), MAP_Y+7, BCOL_TEXT, -1, "Mission Briefing");
+        for (s = 0; s < BSHIPS; s ++) {
+            if (bship[s].type == BSHIP_NONE) {
+                continue;
+            }
+            if (bconvoy[bship[s].convoy].face == RIGHT) {
+                draw_sprite(
+                    display[0],
+                    bsprite[bship[s].side][get_bsprite(bship[s].type)][0],
+                    MAP_X + (bconvoy[bship[s].convoy].x >> 10) + bship[s].x - 6,
+                    MAP_Y + (bconvoy[bship[s].convoy].y >> 10) + bship[s].y - 6
+                );
+            } else {
+                draw_sprite_h_flip(
+                    display[0],
+                    bsprite[bship[s].side][get_bsprite(bship[s].type)][0],
+                    MAP_X + (bconvoy[bship[s].convoy].x >> 10) - bship[s].x - 6,
+                    MAP_Y + (bconvoy[bship[s].convoy].y >> 10) - bship[s].y - 6
+                );
+            }
+        }
+    } else {
+        ssdisplay(); // map_mode == MM_STARMAP
+    }
 
-// int col;
-/*
- for (c = 0; c < BCONVOYS; c ++)
- {
-  if (bconvoy [c].exists == 0)
-   continue;
-  textprintf_ex(display[0], small_font, MAP_X + (bconvoy[c].x>>10), MAP_Y + (bconvoy[c].y>>10), -1, -1, "%i, %i", bconvoy[c].x>>10, bconvoy[c].y>>10);
- }*/
+    for (s = 0; s < BSELECT; s ++) {
+        if (bselect[s].exists == 0
+            || bselect[s].count <= 0
+        ) {
+            continue;
+        }
+        c = bselect[s].count*3 - 10 - 20;
+        if (c < 10) {
+            c = 10;
+        }
+        vline(display[0], bselect[s].x + bselect[s].x1 - c, bselect[s].y + bselect[s].y1 - c, bselect[s].y + bselect[s].y1 - c + 4, COL_F5 + TRANS_BLUE3);
+        hline(display[0], bselect[s].x + bselect[s].x1 - c, bselect[s].y + bselect[s].y1 - c, bselect[s].x + bselect[s].x1 - c + 4, COL_F5 + TRANS_BLUE3);
 
-  for (s = 0; s < BSHIPS; s ++)
-  {
-   if (bship[s].type == BSHIP_NONE)
-    continue;
-   if (bconvoy[bship[s].convoy].face == RIGHT)
-    draw_sprite(display[0], bsprite [bship[s].side] [get_bsprite(bship[s].type)] [0], MAP_X + (bconvoy[bship[s].convoy].x>>10) + bship[s].x - 6, MAP_Y + (bconvoy[bship[s].convoy].y>>10) + bship[s].y - 6);
-     else
-      draw_sprite_h_flip(display[0], bsprite [bship[s].side] [get_bsprite(bship[s].type)] [0], MAP_X + (bconvoy[bship[s].convoy].x>>10) - bship[s].x - 6, MAP_Y + (bconvoy[bship[s].convoy].y>>10) - bship[s].y - 6);
+        vline(display[0], bselect[s].x + bselect[s].x2 + c, bselect[s].y + bselect[s].y1 - c, bselect[s].y + bselect[s].y1 - c + 4, COL_F5 + TRANS_BLUE3);
+        hline(display[0], bselect[s].x + bselect[s].x2 + c, bselect[s].y + bselect[s].y1 - c, bselect[s].x + bselect[s].x2 + c - 4, COL_F5 + TRANS_BLUE3);
 
-//   circlefill(display[0], MAP_X + (bconvoy[bship[s].convoy].x>>10) + bship[s].x, MAP_Y + (bconvoy[bship[s].convoy].x>>10) + bship[s].y, 2, col);
-  }
+        vline(display[0], bselect[s].x + bselect[s].x1 - c, bselect[s].y + bselect[s].y2 + c, bselect[s].y + bselect[s].y2 + c - 4, COL_F5 + TRANS_BLUE3);
+        hline(display[0], bselect[s].x + bselect[s].x1 - c, bselect[s].y + bselect[s].y2 + c, bselect[s].x + bselect[s].x1 - c + 4, COL_F5 + TRANS_BLUE3);
 
- }
-  else
-   ssdisplay(); // map_mode == MM_STARMAP
+        vline(display[0], bselect[s].x + bselect[s].x2 + c, bselect[s].y + bselect[s].y2 + c, bselect[s].y + bselect[s].y2 + c - 4, COL_F5 + TRANS_BLUE3);
+        hline(display[0], bselect[s].x + bselect[s].x2 + c, bselect[s].y + bselect[s].y2 + c, bselect[s].x + bselect[s].x2 + c - 4, COL_F5 + TRANS_BLUE3);
+    }
 
-  for (s = 0; s < BSELECT; s ++)
-  {
-   if (bselect[s].exists == 0
-    || bselect[s].count <= 0)
-    continue;
-   c = bselect[s].count*3 - 10 - 20;
-   if (c < 10)
-    c = 10;
-   vline(display[0], bselect[s].x + bselect[s].x1 - c, bselect[s].y + bselect[s].y1 - c, bselect[s].y + bselect[s].y1 - c + 4, COL_F5 + TRANS_BLUE3);
-   hline(display[0], bselect[s].x + bselect[s].x1 - c, bselect[s].y + bselect[s].y1 - c, bselect[s].x + bselect[s].x1 - c + 4, COL_F5 + TRANS_BLUE3);
+    rectfill(display[0], 250, 575, 550, 595, BCOL_EDGE);
 
-   vline(display[0], bselect[s].x + bselect[s].x2 + c, bselect[s].y + bselect[s].y1 - c, bselect[s].y + bselect[s].y1 - c + 4, COL_F5 + TRANS_BLUE3);
-   hline(display[0], bselect[s].x + bselect[s].x2 + c, bselect[s].y + bselect[s].y1 - c, bselect[s].x + bselect[s].x2 + c - 4, COL_F5 + TRANS_BLUE3);
+    vline(display[0], MAP_X + MAP_W - 80, MAP_Y + MAP_H + 2, MAP_Y + MAP_H + 8, BCOL_EDGE);
+    hline(display[0], 320, MAP_Y + MAP_H + 8, MAP_X + MAP_W - 80, BCOL_EDGE);
+    vline(display[0], 320, MAP_Y + MAP_H + 8, 595 - EDGE, BCOL_EDGE);
 
-   vline(display[0], bselect[s].x + bselect[s].x1 - c, bselect[s].y + bselect[s].y2 + c, bselect[s].y + bselect[s].y2 + c - 4, COL_F5 + TRANS_BLUE3);
-   hline(display[0], bselect[s].x + bselect[s].x1 - c, bselect[s].y + bselect[s].y2 + c, bselect[s].x + bselect[s].x1 - c + 4, COL_F5 + TRANS_BLUE3);
+    if (tbox_exists) {
+        draw_tbox();
+    }
 
-   vline(display[0], bselect[s].x + bselect[s].x2 + c, bselect[s].y + bselect[s].y2 + c, bselect[s].y + bselect[s].y2 + c - 4, COL_F5 + TRANS_BLUE3);
-   hline(display[0], bselect[s].x + bselect[s].x2 + c, bselect[s].y + bselect[s].y2 + c, bselect[s].x + bselect[s].x2 + c - 4, COL_F5 + TRANS_BLUE3);
-/*
-   vline(display[0], MAP_X + bselect[s].x - bselect[s].x1 - c, MAP_Y + bselect[s].y - bselect[s].y1 - c, MAP_Y + bselect[s].y - bselect[s].y1 - c + 4, COL_F5 + TRANS_BLUE3);
-   hline(display[0], MAP_X + bselect[s].x - bselect[s].x1 - c, MAP_Y + bselect[s].y - bselect[s].y1 - c, MAP_X + bselect[s].x - bselect[s].x1 - c + 4, COL_F5 + TRANS_BLUE3);
-
-   vline(display[0], MAP_X + bselect[s].x + bselect[s].x2 + c, MAP_Y + bselect[s].y - bselect[s].y1 - c, MAP_Y + bselect[s].y - bselect[s].y1 - c + 4, COL_F5 + TRANS_BLUE3);
-   hline(display[0], MAP_X + bselect[s].x + bselect[s].x2 + c, MAP_Y + bselect[s].y - bselect[s].y1 - c, MAP_X + bselect[s].x + bselect[s].x2 + c - 4, COL_F5 + TRANS_BLUE3);
-
-   vline(display[0], MAP_X + bselect[s].x - bselect[s].x1 - c, MAP_Y + bselect[s].y + bselect[s].y2 + c, MAP_Y + bselect[s].y + bselect[s].y2 + c - 4, COL_F5 + TRANS_BLUE3);
-   hline(display[0], MAP_X + bselect[s].x - bselect[s].x1 - c, MAP_Y + bselect[s].y + bselect[s].y2 + c, MAP_X + bselect[s].x - bselect[s].x1 - c + 4, COL_F5 + TRANS_BLUE3);
-
-   vline(display[0], MAP_X + bselect[s].x + bselect[s].x2 + c, MAP_Y + bselect[s].y + bselect[s].y2 + c, MAP_Y + bselect[s].y + bselect[s].y2 + c - 4, COL_F5 + TRANS_BLUE3);
-   hline(display[0], MAP_X + bselect[s].x + bselect[s].x2 + c, MAP_Y + bselect[s].y + bselect[s].y2 + c, MAP_X + bselect[s].x + bselect[s].x2 + c - 4, COL_F5 + TRANS_BLUE3);
-*/
-//   textprintf_ex(display[0], small_font, MAP_X + (bselect[s].x) + 30, MAP_Y + (bselect[s].y), -1, -1, "%i, %i, %i, %i", bselect[s].x1, bselect[s].y1, bselect[s].x2,bselect[s].y2);
-
-  }
-
-
-/*
- rectfill(display[0], BOX_X-EDGE, BOX_Y-EDGE, BOX_X + BOX_W+EDGE, BOX_Y + BOX_H+EDGE, BCOL_EDGE);
- rectfill(display[0], BOX_X, BOX_Y, BOX_X + BOX_W, BOX_Y + BOX_H, BCOL_SCREEN);
-
- rectfill(display[0], BOX_X, BOX_Y + 5, BOX_X + BOX_W, MAP_Y + 35, BCOL_EDGE);
- textprintf_centre_ex(display[0], small_font, BOX_X+(BOX_W>>1), BOX_Y+8, BCOL_TEXT, -1, "Mission Briefing");
- textprintf_centre_ex(display[0], small_font, BOX_X+(BOX_W>>1), BOX_Y+20, BCOL_TEXT, -1, "Instructions");
-
- hline(display[0], MAP_X + MAP_W+1, MAP_Y + 100, BOX_X-9, BCOL_EDGE);
- vline(display[0], BOX_X - 9, MAP_Y + 100, MAP_Y + MAP_H - 100, BCOL_EDGE);
- hline(display[0], BOX_X - 9, MAP_Y + MAP_H - 100, BOX_X-1, BCOL_EDGE);
-*/
-// display_message(display[0], bline, BOX_X + 5, BOX_Y + 45);
-
- rectfill(display[0], 250, 575, 550, 595, BCOL_EDGE);
-
- vline(display[0], MAP_X + MAP_W - 80, MAP_Y + MAP_H + 2, MAP_Y + MAP_H + 8, BCOL_EDGE);
- hline(display[0], 320, MAP_Y + MAP_H + 8, MAP_X + MAP_W - 80, BCOL_EDGE);
- vline(display[0], 320, MAP_Y + MAP_H + 8, 595 - EDGE, BCOL_EDGE);
-
- if (tbox_exists)
-  draw_tbox();
-
- if (waiting_for_fire)
- {
-   rectfill(display[0], 250+EDGE, 575+EDGE, 550-EDGE, 595-EDGE, COL_BOX2);
-   textprintf_centre_ex(display[0], small_font, 400, 580, BCOL_TEXT, -1, "Press fire 1 to continue or fire 2 to skip");
-   draw_arrows(400, 580, 115, 2, briefing_counter);
- }
-  else
-   rectfill(display[0], 250+EDGE, 575+EDGE, 550-EDGE, 595-EDGE, BCOL_DARK);
-
+    if (waiting_for_fire) {
+        rectfill(display[0], 250+EDGE, 575+EDGE, 550-EDGE, 595-EDGE, COL_BOX2);
+        textprintf_centre_ex(display[0], small_font, 400, 580, BCOL_TEXT, -1, "Press fire 1 to continue or fire 2 to skip");
+        draw_arrows(400, 580, 115, 2, briefing_counter);
+    } else {
+        rectfill(display[0], 250+EDGE, 575+EDGE, 550-EDGE, 595-EDGE, BCOL_DARK);
+    }
 }
 
 int get_bsprite(int type)
