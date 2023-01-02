@@ -2217,30 +2217,11 @@ void choose_display(int finished1, int finished2)
    {
     rectfill(display[0], x, y, x + 200, y + 420, BCOL_SCREEN);
     rect(display[0], x, y, x + 200, y + 420, BCOL_EDGE);
-//    rectfill(display[0], x + 3, y + 3, x + 200 - 3, y + 420 - 3, BCOL_SCREEN);
     textprintf_centre_ex(display[0], small_font, x + 100, y + 100, BCOL_TEXT, -1, "waiting...");
     continue;
    }
 
-
-
-
   textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Angry Moth %i", p+1);
-/*
-  y += LSPACE1;
-  textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Command ship");
-  y += LSPACE2;
-  if (bover_menu_select [p] == CHOOSE_SHIP)
-  {
-   bover_box(x, y);
-//   weapon_box(p, BMSG_CANNON, x, WBOX_Y, x - 5, y + 6, -1);
-  }
-  print_ship_name(x + X_INDENT, y, COL_BOX3, PP.type);
-*/
-
-
-
-
 
    y += LSPACE2;
    if (bover_menu_select [p] == CHOOSE_SHIP)
@@ -2248,16 +2229,6 @@ void choose_display(int finished1, int finished2)
     display_ship_choices(p, x, y);
    }
    print_ship_name(x + X_INDENT, y, COL_BOX3, PP.type);
- // }
-
-
-
-
-
-
-
-
-
 
   y += LSPACE1;
   textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Variant");
@@ -2270,8 +2241,6 @@ void choose_display(int finished1, int finished2)
   }
    else
     print_variant_name(x + X_INDENT, y, COL_BOX3, PP.type, PP.variant);
-
-
 
   y += LSPACE1;
   textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Weapons");
@@ -2294,7 +2263,6 @@ void choose_display(int finished1, int finished2)
    if (bover_menu_select [p] == CHOOSE_WEAPON2 + i)
    {
      bover_box(x, y);
-//   weapon_box(p, BMSG_CANNON, x, WBOX_Y, x - 5, y + 6, -1);
    }
    if (PP.weapon_type [i] == WPN_NONE)
     textprintf_ex(display[0], small_font, x + X_INDENT, y, COL_BOX1, -1, "%i - None", i + 2);
@@ -2316,7 +2284,6 @@ void choose_display(int finished1, int finished2)
     {
      bover_box(x, y);
      display_ship_choices(p, x, y);
-//   weapon_box(p, BMSG_CANNON, x, WBOX_Y, x - 5, y + 6, -1);
     }
     print_ship_name(x + X_INDENT, y, COL_BOX3, player[0].escort_type [i]);
    }
@@ -2335,49 +2302,10 @@ void choose_display(int finished1, int finished2)
    {
      bover_box(x, y);
      display_wing_choices(p, x, y);
-//   weapon_box(p, BMSG_CANNON, x, WBOX_Y, x - 5, y + 6, -1);
    }
-//   textprintf_ex(display[0], small_font, x + X_INDENT, y, COL_BOX1, -1, "None");
     print_ship_name(x + X_INDENT, y, COL_BOX3, player[0].escort_type [PP.wing_type [i]]);
-//   textprintf_ex(display[0], small_font, x + X_INDENT, y, COL_BOX1, -1, "None");
   }
 
-
-
-/*
-  y += LSPACE1;
-  textprintf_ex(display[0], small_font, x, y, COL_BOX2, -1, "weapons");
-  for (w = 0; w < 2; w ++)
-  {
-   if (arena.players == 2 && w == 1)
-    break;
-   y += LSPACE2;
-   if (bover_menu_select [p] == CHOOSE_WEAPON1 + w)
-   {
-    bover_box(x, y);
-    rectfill(display[0], x + 140, y - 5, x + 300, y + 10 + WPNS * 20, COL_STAR1);
-    rect(display[0], x + 140, y - 5, x + 300, y + 10 + WPNS * 20, COL_BOX2);
-    for (w2 = 0; w2 < WPNS; w2 ++)
-    {
-//     if (bover_menu_select2 [p] == w2)//PP.weapon_type [w] == w2)
-     if ((selecting [p] == 0 && PP.weapon_type [w] == w2)
-     || (selecting [p] == 1 && bover_menu_select2 [p] == w2))
-     {
-      col = COL_BOX0;
-      if (selecting [p])
-       col = COL_BOX1;
-      rectfill(display[0], x + 140, y + 3 + (w2 * 20), x + 300, y + 20 + (w2 * 20), col);
-      rect(display[0], x + 140, y + 3 + (w2 * 20), x + 300, y + 20 + (w2 * 20), col + 1);
-      weapon_box(p, BMSG_WPN1 + w2, x, WBOX_Y, x + 301, y + 12 + (w2 * 20), 1);
-//      textprintf_ex(display[0], small_font, x + 145, y + 5 + (w2 * 20), COL_BOX3, -1, "<");
-//      textprintf_right_ex(display[0], small_font, x + 295, y + 5 + (w2 * 20), COL_BOX3, -1, ">");
-     }
-     print_weapon_name(x + 155, y + 5 + (w2 * 20), COL_BOX4, w2);
-    }
-   }
-   print_weapon_name(x + 20, y, COL_BOX4, PP.weapon_type [w]);
-  }
-*/
   y += LSPACE1;
   y += LSPACE1;
   if (bover_menu_select [p] == CHOOSE_LAUNCH)
@@ -2390,8 +2318,6 @@ void choose_display(int finished1, int finished2)
   textprintf_ex(display[0], small_font, x + X_INDENT - text_length(small_font, "<< "), y, COL_BOX4, -1, "<< replay briefing");
 
  }
-
-
 }
 
 // returns: 0 = not valid at all, 1 = can be seen but not selected, 2 = can be seen and selected
@@ -2431,14 +2357,10 @@ int choose_valid(int p, int ch)
    return 0;
   default: return 2;
  }
-
-
-
 }
 
 void display_ship_choices(int p, int x, int y)
 {
-
     int w2, col;
 
     bover_box(x, y);
@@ -2454,21 +2376,15 @@ void display_ship_choices(int p, int x, int y)
        col = COL_BOX1;
       rectfill(display[0], x + 140, y + 3 + (w2 * 20), x + 300, y + 20 + (w2 * 20), col);
       rect(display[0], x + 140, y + 3 + (w2 * 20), x + 300, y + 20 + (w2 * 20), col + 1);
-//      weapon_box(p, BMSG_WPN1 + w2, x, WBOX_Y, x + 301, y + 12 + (w2 * 20), 1);
-//      textprintf_ex(display[0], small_font, x + 145, y + 5 + (w2 * 20), COL_BOX3, -1, "<");
-//      textprintf_right_ex(display[0], small_font, x + 295, y + 5 + (w2 * 20), COL_BOX3, -1, ">");
      }
      print_ship_name(x + 155, y + 5 + (w2 * 20), COL_BOX3, ship_list [w2]);
     }
-
 }
-
 
 #define WING_CHOICES 2
 
 void display_wing_choices(int p, int x, int y)
 {
-
     int w2, col;
 
     bover_box(x, y);
@@ -2487,10 +2403,7 @@ void display_wing_choices(int p, int x, int y)
      }
      print_ship_name(x + 155, y + 5 + (w2 * 20), COL_BOX3, player [0].escort_type [w2]);
     }
-
 }
-
-
 
 void print_ship_name(int x, int y, int col, int type)
 {
@@ -2519,19 +2432,12 @@ void print_ship_name(int x, int y, int col, int type)
    textprintf_ex(display[0], small_font, x, y, col, -1, "Unknown");
    break;
  }
-
-
-
 }
-
-
 
 void display_variant_choices(int p, int x, int y)
 {
-
     int w2, col;
 
-//    bover_box(x, y);
     rectfill(display[0], x + 140, y - 5, x + 300, y + 10 + br_variant_choices * 20, COL_STAR1);
     rect(display[0], x + 140, y - 5, x + 300, y + 10 + br_variant_choices * 20, COL_BOX2);
     for (w2 = 0; w2 < br_variant_choices; w2 ++)
@@ -2544,15 +2450,10 @@ void display_variant_choices(int p, int x, int y)
        col = COL_BOX1;
       rectfill(display[0], x + 140, y + 3 + (w2 * 20), x + 300, y + 20 + (w2 * 20), col);
       rect(display[0], x + 140, y + 3 + (w2 * 20), x + 300, y + 20 + (w2 * 20), col + 1);
-//      weapon_box(p, BMSG_WPN1 + w2, x, WBOX_Y, x + 301, y + 12 + (w2 * 20), 1);
-//      textprintf_ex(display[0], small_font, x + 145, y + 5 + (w2 * 20), COL_BOX3, -1, "<");
-//      textprintf_right_ex(display[0], small_font, x + 295, y + 5 + (w2 * 20), COL_BOX3, -1, ">");
      }
      print_variant_name(x + 155, y + 5 + (w2 * 20), COL_BOX3, PP.type, variant_list [p] [w2]);
     }
-
 }
-
 
 void print_variant_name(int x, int y, int col, int type, int variant)
 {
@@ -2607,122 +2508,6 @@ void print_variant_name(int x, int y, int col, int type, int variant)
     }
 }
 
-
-/*
-
-
-void choose_display(int finished1, int finished2)
-{
-
- clear_to_color(display[0], BCOL_DARK);
-
- int p;
-
- int x, y, col;
- int w;
- int w2;
-
- clear_to_color(display[0], COL_BOX0);
-
-
- for (p = 0; p < arena.players; p ++)
- {
-
-  y = 130;
-
-  if (arena.players == 1)
-   x = 300;
-    else
-     x = 40 + p * 400;
-
- draw_sprite(display[0], player_sprite [0] [0].sprite, x + 100 - (player_sprite [0] [0].sprite->w / 2), 50);
- draw_sprite(display[0], fighter_sprite [FIGHTER_SPRITE_FRIEND_1] [0].sprite, x + 100 - 40 - (fighter_sprite [FIGHTER_SPRITE_FRIEND_1] [0].sprite->w / 2), 80);
- draw_sprite(display[0], fighter_sprite [FIGHTER_SPRITE_FRIEND_1] [0].sprite, x + 100 + 40 - (fighter_sprite [FIGHTER_SPRITE_FRIEND_1] [0].sprite->w / 2), 80);
-
-
-   if ((p == 0 && finished1)
-    || (p == 1 && finished2))
-   {
-    rectfill(display[0], x, y, x + 200, y + 420, BCOL_SCREEN);
-    rect(display[0], x, y, x + 200, y + 420, BCOL_EDGE);
-//    rectfill(display[0], x + 3, y + 3, x + 200 - 3, y + 420 - 3, BCOL_SCREEN);
-    textprintf_centre_ex(display[0], small_font, x + 100, y + 100, BCOL_TEXT, -1, "waiting...");
-    continue;
-   }
-
-
-  textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Angry Moth %i", p+1);
-
-  y += LSPACE1;
-  textprintf_ex(display[0], small_font, x, y, COL_BOX2, -1, "basic weapon");
-  y += LSPACE2;
-  if (bover_menu_select [p] == CHOOSE_CANNON)
-  {
-   bover_box(x, y);
-   weapon_box(p, BMSG_CANNON, x, WBOX_Y, x - 5, y + 6, -1);
-  }
-  textprintf_ex(display[0], small_font, x + 20, y, COL_BOX4, -1, "double autocannon");
-
-  y += LSPACE1;
-  textprintf_ex(display[0], small_font, x, y, COL_BOX2, -1, "squadron");
-  y += LSPACE2;
-  if (bover_menu_select [p] == CHOOSE_WING1)
-  {
-   bover_box(x, y);
-   weapon_box(p, BMSG_FIGHTER, x, WBOX_Y, x - 5, y + 6, -1);
-  }
-  textprintf_ex(display[0], small_font, x + 20, y, COL_BOX4, -1, "fighter");
-
-  y += LSPACE1;
-  textprintf_ex(display[0], small_font, x, y, COL_BOX2, -1, "weapons");
-  for (w = 0; w < 2; w ++)
-  {
-   if (arena.players == 2 && w == 1)
-    break;
-   y += LSPACE2;
-   if (bover_menu_select [p] == CHOOSE_WEAPON1 + w)
-   {
-    bover_box(x, y);
-    rectfill(display[0], x + 140, y - 5, x + 300, y + 10 + WPNS * 20, COL_STAR1);
-    rect(display[0], x + 140, y - 5, x + 300, y + 10 + WPNS * 20, COL_BOX2);
-    for (w2 = 0; w2 < WPNS; w2 ++)
-    {
-//     if (bover_menu_select2 [p] == w2)//PP.weapon_type [w] == w2)
-     if ((selecting [p] == 0 && PP.weapon_type [w] == w2)
-     || (selecting [p] == 1 && bover_menu_select2 [p] == w2))
-     {
-      col = COL_BOX0;
-      if (selecting [p])
-       col = COL_BOX1;
-      rectfill(display[0], x + 140, y + 3 + (w2 * 20), x + 300, y + 20 + (w2 * 20), col);
-      rect(display[0], x + 140, y + 3 + (w2 * 20), x + 300, y + 20 + (w2 * 20), col + 1);
-      weapon_box(p, BMSG_WPN1 + w2, x, WBOX_Y, x + 301, y + 12 + (w2 * 20), 1);
-//      textprintf_ex(display[0], small_font, x + 145, y + 5 + (w2 * 20), COL_BOX3, -1, "<");
-//      textprintf_right_ex(display[0], small_font, x + 295, y + 5 + (w2 * 20), COL_BOX3, -1, ">");
-     }
-     print_weapon_name(x + 155, y + 5 + (w2 * 20), COL_BOX4, w2);
-    }
-   }
-   print_weapon_name(x + 20, y, COL_BOX4, PP.weapon_type [w]);
-  }
-
-  y += LSPACE1;
-  if (bover_menu_select [p] == CHOOSE_LAUNCH)
-   bover_box(x, y);
-  textprintf_ex(display[0], small_font, x + 20, y, COL_BOX4, -1, "launch >>");
-
-  y += LSPACE1;
-  if (bover_menu_select [p] == CHOOSE_REPLAY)
-   bover_box(x, y);
-  textprintf_ex(display[0], small_font, x + 20 - text_length(small_font, "<< "), y, COL_BOX4, -1, "<< replay briefing");
-
- }
-
-
-}
-
-*/
-
 void bover_box(int x, int y)
 {
     rectfill(display[0], x - 5, y - 3, x + 150, y + 15, COL_BOX1);
@@ -2737,8 +2522,6 @@ void print_weapon_name(int x, int y, int col, int w, int number)
      textprintf_ex(display[0], small_font, x, y, col, -1, "%i - anti-fighter missile", number); break;
     case WPN_AWS_MISSILE:
      textprintf_ex(display[0], small_font, x, y, col, -1, "%i - anti-warship missile", number); break;
-//    case WPN_ROCKET1:
-//     textprintf_ex(display[0], small_font, x, y, col, -1, "rocket"); break;
     case WPN_ROCKET:
      textprintf_ex(display[0], small_font, x, y, col, -1, "%i - multi-rockets", number); break;
     case WPN_TORP:
@@ -2794,44 +2577,31 @@ void weapon_box(int p, int msg, int x, int y, int x1, int y1, int line_dir)
 
 void weapon_text(int x, int y, int w, int w2)
 {
+    int message_lines;
+    message_lines = generate_message(bmsg[BMSG_WPN1 + w2], WTBOX_X, 15, BCOL_TEXT, bline);
+    x += 60;
 
-  int message_lines;
-
-//  message_lines = generate_message(BMSG_WPN1 + w2, WTBOX_X, BCOL_TEXT, bline);
-  message_lines = generate_message(bmsg[BMSG_WPN1 + w2], WTBOX_X, 15, BCOL_TEXT, bline);
-
-//  if (w == 1)
-   x += 60;
-//    else
-//     x -= WTBOX_X + 10;
-
-  rectfill(display[0], x - 6, y - 6, x + WTBOX_X + 6, y + (message_lines*16) + 6, BCOL_EDGE);
-  rectfill(display[0], x - 3, y - 3, x + WTBOX_X + 3, y + (message_lines*16) + 3, BCOL_SCREEN);
-
-  display_message(display[0], bline, x, y);
-
+    rectfill(display[0], x - 6, y - 6, x + WTBOX_X + 6, y + (message_lines * 16) + 6, BCOL_EDGE);
+    rectfill(display[0], x - 3, y - 3, x + WTBOX_X + 3, y + (message_lines * 16) + 3, BCOL_SCREEN);
+    display_message(display[0], bline, x, y);
 }
-
 
 #define BR_ROWS 30
 
-enum
-{
-BR_ROW_OURS_TITLE,
-BR_ROW_OUR_SHIP,
-BR_ROW_AM,
-BR_ROW_ENEMY_TITLE,
-BR_ROW_ENEMY_SHIP,
-BR_ROW_END
-
+enum {
+    BR_ROW_OURS_TITLE,
+    BR_ROW_OUR_SHIP,
+    BR_ROW_AM,
+    BR_ROW_ENEMY_TITLE,
+    BR_ROW_ENEMY_SHIP,
+    BR_ROW_END
 };
 
-int br_row [BR_ROWS];
-int br_row_val [BR_ROWS];
+int br_row[BR_ROWS];
+int br_row_val[BR_ROWS];
 
 void battle_report_display(int row, int flash, int space);
 void assemble_br_rows(void);
-
 
 void battle_report(void)
 {
@@ -2870,14 +2640,10 @@ void battle_report(void)
 
   ticked = 0;
 
-
-
   if (finished && key [KEY_SPACE])
    break;
  };
-
 }
-
 
 void battle_report_display(int row, int flash, int space)
 {
@@ -2895,7 +2661,6 @@ void battle_report_display(int row, int flash, int space)
     int textcol = COL_BOX4;
     int y = 100;
     int col;
-    // int x1 = 0, x2 = 13;
     char str [350];
     int i;
     int col2;
@@ -3021,7 +2786,6 @@ int get_rank(int lost, int r2, int r3, int r4, int r5)
 
 }
 
-
 // returns % of forces lost (each ship is given a value)
 int loss_proportion(int a)
 {
@@ -3106,14 +2870,11 @@ void report_text(int y)
      strcat(rmsg.text, " The investigation had only just started when the task force was almost destroyed in a surprise attack by the Federation Starfleet. ");
      strcat(rmsg.text, " $P $P Whatever happened, the Federation's attack on starships under our protection, in one of our systems, was an act of war. We must prepare for further aggression. ");
 
-//     strcat(rmsg.text, " $P $P Gazer 1 Captain made the difficult decision to engage with the aggressive force of FSF ships, but that was all that could have been done in the circumstances. ");
-
      if (arena.srecord [SREC_DESTROYED] [TEAM_FRIEND] [SHIP_FRIEND3] == 0)
       strcat(rmsg.text, " $P $P The Imperial warships (TRIREME heavy cruisers) will fly alongside the CTBR until their mission is complete. We are working on repairing the damage they have sustained. ");
        else
         strcat(rmsg.text, " $P $P The surviving Imperial warship (a TRIREME heavy cruiser) will fly alongside the CTBR until its mission is complete. We are working on integrating it into our fleet. ");
 
-//     strcat(rmsg.text, " $P $P We may be in for a wild ride here. I only hope that we are ready for what happens next. ");
    }
     else
     {
@@ -3124,30 +2885,6 @@ void report_text(int y)
 
    break;
 
-/*
-  case 1:
-   strcpy(rmsg.text, " This does not look good. ");
-   if (arena.srecord [SREC_DESTROYED] [TEAM_FRIEND] [SHIP_FRIEND3] < 2)
-   {
-     strcat(rmsg.text, " $P $P We have had a chance to debrief the surrendering CTBR officers. They claim to be the last survivors of a massive, unexplained surprise attack that destroyed the rest of the Commonwealth's 2nd Fleet. ");
-     strcat(rmsg.text, " We have been unable to open communications with either side and their diplomatic representatives claim to know nothing, but based on what we have seen we may not be able to avoid being drawn into this war. ");
-     strcat(rmsg.text, " $P $P Alpha Captain made the difficult decision to engage with the aggressive force of FSF ships, but that was all that could have been done in the circumstances. It is a testament to the skills of our fighter pilots that the FSF ships were unable to complete their mission. ");
-
-     if (arena.srecord [SREC_DESTROYED] [TEAM_FRIEND] [SHIP_FRIEND3] == 0)
-      strcat(rmsg.text, " $P $P The crews of the CTBR ships (TRIREME heavy cruisers) have agreed to fly alongside the OCSF until they can return to Commonwealth space. We are working on repairing their ships. ");
-       else
-        strcat(rmsg.text, " $P $P The crew of the surviving CTBR ship (a TRIREME heavy cruiser) has agreed to fly alongside the OCSF until they can return to Commonwealth space. We are working on repairing their ship. ");
-
-     strcat(rmsg.text, " $P $P We may be in for the long haul here. I only hope that we are ready for what happens next. ");
-   }
-    else
-    {
-     strcat(rmsg.text, " $P $P It seems that the Earth Federation has declared war on the ... Commonwealth, although we have no idea why. We have been unable to open communications with either side and their diplomatic representatives claim to know nothing. ");
-     strcat(rmsg.text, " It looks like the Outer Colonies will be drawn into this war as well.");
-     strcat(rmsg.text, " $P $P Alpha Captain made the difficult decision to engage with an aggressive force of FSF ships in one of our systems, but that was all that could have been done in the circumstances. It is unfortunate that the CTBR cruisers could not be saved, but the Federation forces were just too strong. ");
-     strcat(rmsg.text, " $P $P We may be in for the long haul here. I only hope that we are ready for what happens next. ");
-    }
-   break;*/
   case 2:
    strcpy(rmsg.text, " It's unfortunate that our attempt to contact Commonwealth forces apparently coincided with a major Federation offensive. $P $P");
    flost = loss_proportion(TEAM_FRIEND);
@@ -3193,109 +2930,13 @@ void report_text(int y)
    default:
    case 0: strcpy(rmsg.text, " . "); break;
   }
-  /*
-   strcpy(rmsg.text, " This does not look good. ");
-   if (arena.srecord [SREC_DESTROYED] [TEAM_ENEMY] [SHIP_FREIGHT] < 2)
-   {
-     strcat(rmsg.text, " $P $P We have had a chance to debrief the surrendering CTBR officers. They claim to be the last survivors of a massive, unexplained surprise attack that destroyed the rest of the Commonwealth's 2nd Fleet. ");
-     strcat(rmsg.text, " We have been unable to open communications with either side and their diplomatic representatives claim to know nothing, but based on what we have seen we may not be able to avoid being drawn into this war. ");
-     strcat(rmsg.text, " $P $P Alpha Captain made the difficult decision to engage with the aggressive force of FSF ships, but that was all that could have been done in the circumstances. It is a testament to the skills of our fighter pilots that the FSF ships were unable to complete their mission. ");
-
-     if (arena.srecord [SREC_DESTROYED] [TEAM_FRIEND] [SHIP_FRIEND3] == 0)
-      strcat(rmsg.text, " $P $P The crews of the CTBR ships (TRIREME heavy cruisers) have agreed to fly alongside the OCSF until they can return to Commonwealth space. We are working on repairing their ships. ");
-       else
-        strcat(rmsg.text, " $P $P The crew of the surviving CTBR ship (a TRIREME heavy cruiser) has agreed to fly alongside the OCSF until they can return to Commonwealth space. We are working on repairing their ship. ");
-
-     strcat(rmsg.text, " $P $P We may be in for the long haul here. I only hope that we are ready for what happens next. ");
-   }
-    else
-    {
-     strcat(rmsg.text, " $P $P It seems that the Earth Federation has declared war on the ... Commonwealth, although we have no idea why. We have been unable to open communications with either side and their diplomatic representatives claim to know nothing. ");
-     strcat(rmsg.text, " It looks like the Outer Colonies will be drawn into this war as well.");
-     strcat(rmsg.text, " $P $P Alpha Captain made the difficult decision to engage with an aggressive force of FSF ships in one of our systems, but that was all that could have been done in the circumstances. It is unfortunate that the CTBR cruisers could not be saved, but the Federation forces were just too strong. ");
-     strcat(rmsg.text, " $P $P We may be in for the long haul here. I only hope that we are ready for what happens next. ");
-    }*/
    break;
-/*  case 1:
-// only relevant consideration here is flost as all enemies must be destroyed to finish mission
-   flost = loss_proportion(TEAM_FRIEND);
-   lost_rank = get_rank(flost, 30, 50, 70, 80);
-   switch(lost_rank)
-   {
-
-    case 0:
-     strcpy(rmsg.text, " The mission was an absolute success. Enemy forces were annihilated, with no losses on our side. Well done! "); break;
-    case 1:
-     strcpy(rmsg.text, " The mission was a great success. Enemy forces were annihilated, with only minor losses on our side. Well done! "); break;
-    case 2:
-     strcpy(rmsg.text, " The mission was successful. Although we lost a number of ships, the enemy lost far more. "); break;
-    case 3:
-     strcpy(rmsg.text, " The mission was successful. Although we lost several ships, the enemy force was destroyed. "); break;
-    case 4:
-     strcpy(rmsg.text, " We lost a number of our ships, but the enemy force was destroyed. Overall, a success. "); break;
-    case 5:
-     strcpy(rmsg.text, " Most of our ships were destroyed, but at least we stopped the enemy force getting through. "); break;
-   }
-
-   break;*/
-   /*
-  case 3:
-   strcpy(rmsg.text, "The primary objective - destroying the enemy base - was achieved");
-   flost = loss_proportion(TEAM_FRIEND);
-   lost_rank = get_rank(flost, 30, 50, 65, 80);
-   var = 1; // is the first message good or bad? (ie how bad were friendly losses?)
-   switch(lost_rank)
-   {
-    case 0:
-     strcat(rmsg.text, " with no losses at all on our side - incredible! "); break; // This is very unlikely to ever happen
-    case 1:
-     strcat(rmsg.text, " with only light losses - excellent work! "); break;
-    case 2:
-     strcat(rmsg.text, " with moderate losses - not bad for such a risky operation. "); break;
-    case 3:
-     strcat(rmsg.text, ". Several OCSF ships were lost - but we expected worse. ");
-     var = -1;
-     break;
-    case 4:
-     strcat(rmsg.text, ". Our losses were severe - but we got the job done. ");
-     var = -1;
-     break;
-    case 5:
-     strcat(rmsg.text, ", although at a heavy cost in OCSF ships. ");
-     var = -1;
-     break;
-   }
-   flost = loss_proportion(TEAM_ENEMY);
-   lost_rank = get_rank(flost, 40, 60, 80, 100);
-   var = 1; // is the first message good or bad? (ie how bad were friendly losses?)
-   switch(lost_rank)
-   {
-    case 2:
-     strcat(rmsg.text, "We also took out a reasonable number of enemy ships. "); break;
-    case 3:
-     strcat(rmsg.text, "We also inflicted heavy losses on the enemy. ");
-     break;
-    case 4:
-     strcat(rmsg.text, "Almost the entire enemy fleet was destroyed as well. ");
-     break;
-    case 5:
-     strcat(rmsg.text, "All enemy ships were destroyed - this sector should be safe for now. ");
-     break;
-   }
-   break;
-*/
-
  }
 
   generate_message(rmsg, 500, 15, BCOL_TEXT, bline);
 
   display_message(display[0], bline, 130, y);
-
 }
-
-
-
-
 
 void assemble_br_rows(void)
 {
@@ -3337,10 +2978,6 @@ void assemble_br_rows(void)
  }
 
  br_row [r] = BR_ROW_END;
-// r ++;
-
-// return r;
-
 }
 
 
@@ -3425,9 +3062,6 @@ void assign_star_settled(int s, int x, int y, int rad)
 
 }
 
-
-
-
 void ssdisplay(void)
 {
 
@@ -3451,8 +3085,6 @@ void ssdisplay(void)
    case SS_YELLOW: col = COL_E6 + TRANS_RED4; break;
   }
 // to work out zoom, first we work out how far the star is from the zoom focus:
-//  x = starzoom_x - sstar[s].x;
-//  y = starzoom_y - sstar[s].y;
   x = sstar[s].x - starzoom_x;
   y = sstar[s].y - starzoom_y;
 // then multiply that by the zoom level:
@@ -3487,9 +3119,6 @@ void ssdisplay(void)
    putpixel(display[0], x+2, y+2, col);
    putpixel(display[0], x+1, y+2, col);
    putpixel(display[0], x+2, y+1, col);
-
-//   vline(display[0], x-3,y-2,y+2, col);
-//   vline(display[0], x+3,y-2,y+2, col);
   }
 
 
@@ -3507,49 +3136,15 @@ void ssdisplay(void)
 
   }
 
-// textprintf_centre_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "%i", col);//" %i %i  (%i, %i)  %i", starzoom, zoom_target, starzoom_x, starzoom_y, zoom_move_speed);
  continue;
-/*
-  switch(sstar[s].side)
-  {
-   case SSIDE_OC: col = COL_BOX4; col2 = COL_BOX3; break;
-   case SSIDE_FED: col = COL_E1 + TRANS_RED2; col2 = COL_E1 + TRANS_RED1; break;
-   case SSIDE_IND: col = TRANS_YELLOW4; col2 = TRANS_RED3; break;
-   case SSIDE_CWLTH: col = COL_E1 + TRANS_BLUE2; col2 = COL_E1 + TRANS_BLUE1; break;
-  }
-
-//  if (starzoom > )
-//  circle(display[0], x, y, 2, col);
-  putpixel(display[0], x-1, y, col2);
-  putpixel(display[0], x+1, y, col2);
-  putpixel(display[0], x, y-1, col2);
-  putpixel(display[0], x, y+1, col2);
-
-  if (sstar[s].old_x != -1000)
-   line(display[0], x, y, sstar[s].old_x, sstar[s].old_y, col);
-  sstar[s].old_x = x;
-  sstar[s].old_y = y;
-  putpixel(display[0], x, y, col);
-  if (starselect_side == sstar[s].side)
-  {
-   vline(display[0], x-3,y-2,y+2, col);
-   vline(display[0], x+3,y-2,y+2, col);
-  }*/
  }
 
  rectfill(display[0], MAP_X, MAP_Y + 5, MAP_X + MAP_W, MAP_Y + 22, BCOL_EDGE);
- textprintf_centre_ex(display[0], small_font, MAP_X + (MAP_W>>1), MAP_Y+7, BCOL_TEXT, -1, "Human Space");//" %i %i  (%i, %i)  %i", starzoom, zoom_target, starzoom_x, starzoom_y, zoom_move_speed);
-
-// vsync();
-// blit(display[0], screen, 0, 0, 0, 0, 800, 600);
-
+ textprintf_centre_ex(display[0], small_font, MAP_X + (MAP_W>>1), MAP_Y+7, BCOL_TEXT, -1, "Human Space");
 }
-
-
 
 void run_starmap(void)
 {
-
  if (starzoom < zoom_target + 41 && starzoom > zoom_target - 41)
   starzoom = zoom_target;
 
@@ -3569,23 +3164,4 @@ void run_starmap(void)
    starzoom_x -= fxpart(angle, zoom_move_speed);
    starzoom_y -= fypart(angle, zoom_move_speed);
   }
-
-/*
- if (starzoom_x < zoom_x_target + 4 && starzoom_x > zoom_x_target - 4)
-  starzoom_x = zoom_x_target;
- if (starzoom_x > zoom_x_target)
-  starzoom_x -= 3;
- if (starzoom_x < zoom_x_target)
-  starzoom_x += 3;
-
- if (starzoom_y < zoom_y_target + 4 && starzoom_y > zoom_y_target - 4)
-  starzoom_y = zoom_y_target;
- if (starzoom_y > zoom_y_target)
-  starzoom_y -= 3;
- if (starzoom_y < zoom_y_target)
-  starzoom_y += 3;
-*/
-
 }
-
-
