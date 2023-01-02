@@ -1808,68 +1808,70 @@ int get_bover_input(int p, int min, int max, int select2, int min2, int max2, in
 
 void boverdisplay(void)
 {
+    //  leave map part of screen untouched
 
-// clear_to_color(display [0], COL_STAR1);
-//  leave map part of screen untouched
+    int col = COL_BOX4;
+    col -= (bover_flash_in >> 1);
+    if (col < COL_BOX0) {
+        col = COL_BOX0;
+        bover_flash_in = -1;
+    }
 
- int col = COL_BOX4;
- col -= (bover_flash_in >> 1);
- if (col < COL_BOX0)
- {
-  col = COL_BOX0;
-  bover_flash_in = -1;
- }
+    if (bover_flash_in == -1) {
+        col = COL_BOX0;
+    }
 
- if (bover_flash_in == -1)
-  col = COL_BOX0;
+    int col2 = col + 1;
+    if (col2 > COL_BOX4) {
+        col2 = COL_BOX4;
+    }
 
- int col2 = col + 1;
- if (col2 > COL_BOX4)
-  col2 = COL_BOX4;
+    int col3 = col + 2;
+    if (col3 > COL_BOX4) {
+        col3 = COL_BOX4;
+    }
 
- int col3 = col + 2;
- if (col3 > COL_BOX4)
-  col3 = COL_BOX4;
+    rectfill(display[0], BOX_X-EDGE, BOX_Y-EDGE, BOX_X + BOX_W+EDGE, BOX_Y + BOX_H+EDGE, col2);
+    rectfill(display[0], BOX_X, BOX_Y, BOX_X + BOX_W, BOX_Y + BOX_H, col);
 
+    int y = BOX_Y + 10;
 
- rectfill(display[0], BOX_X-EDGE, BOX_Y-EDGE, BOX_X + BOX_W+EDGE, BOX_Y + BOX_H+EDGE, col2);
- rectfill(display[0], BOX_X, BOX_Y, BOX_X + BOX_W, BOX_Y + BOX_H, col);
+    int i;
+    int side = TEAM_FRIEND;
 
-// rectfill(display[0], BOX_X + 5, BOX_Y + (BOX_H>>1) - 30 + (30*bover_menu_select [0]), BOX_X + BOX_W - 5, BOX_Y + (BOX_H>>1) - 5 + (30*bover_menu_select [0]), COL_F1 + TRANS_BLUE1);
-// rect(display[0], BOX_X + 5, BOX_Y + (BOX_H>>1) - 30 + (30*bover_menu_select [0]), BOX_X + BOX_W - 5, BOX_Y + (BOX_H>>1) - 5 + (30*bover_menu_select [0]), COL_F2 + TRANS_BLUE2);
+    for (i = 0; i < NO_BSHIP_TYPES; i ++) {
+        if (mdata[i].number > 0) {
+            if (mdata[i].side != side) {
+                y += 30;
+            }
+            display_mdata(BOX_X + 5, y, i);
+            y += 20;
+        }
+    }
 
- int y = BOX_Y + 10;
+    if (col < COL_BOX4) {
+        y = 400;
+        rectfill(
+            display[0], BOX_X + 5,
+            y - 5 + (30 * bover_menu_select[0]),
+            BOX_X + BOX_W - 5,
+            y + 20 + (30 * bover_menu_select[0]),
+            col2
+        );
+        rect(
+            display[0],
+            BOX_X + 5,
+            y - 5 + (30 * bover_menu_select[0]),
+            BOX_X + BOX_W - 5,
+            y + 20 + (30 * bover_menu_select[0]),
+            col3
+        );
 
- int i;
- int side = TEAM_FRIEND;
-
- for (i = 0; i < NO_BSHIP_TYPES; i ++)
- {
-  if (mdata[i].number > 0)
-  {
-   if (mdata[i].side != side) // side change!
-   {
-    y += 30;
-   }
-   display_mdata(BOX_X + 5, y, i);
-   y += 20;
-  }
- }
-
- if (col < COL_BOX4)
- {
-
- y = 400;
-
- rectfill(display[0], BOX_X + 5, y - 5 + (30*bover_menu_select [0]), BOX_X + BOX_W - 5, y + 20 + (30*bover_menu_select [0]), col2);
- rect(display[0], BOX_X + 5, y - 5 + (30*bover_menu_select [0]), BOX_X + BOX_W - 5, y + 20 + (30*bover_menu_select [0]), col3);
-
- textprintf_centre_ex(display[0], small_font, BOX_X + (BOX_W>>1), y, BCOL_TEXT, -1, "prepare to launch >>>");
- textprintf_centre_ex(display[0], small_font, BOX_X + (BOX_W>>1), y + 30, BCOL_TEXT, -1, "replay briefing");
- textprintf_centre_ex(display[0], small_font, BOX_X + (BOX_W>>1), y + 60, BCOL_TEXT, -1, "mission data");
- textprintf_centre_ex(display[0], small_font, BOX_X + (BOX_W>>1), y + 90, BCOL_TEXT, -1, "quit");
- }
-
+        textprintf_centre_ex(display[0], small_font, BOX_X + (BOX_W >> 1), y, BCOL_TEXT, -1, "prepare to launch >>>");
+        textprintf_centre_ex(display[0], small_font, BOX_X + (BOX_W >> 1), y + 30, BCOL_TEXT, -1, "replay briefing");
+        textprintf_centre_ex(display[0], small_font, BOX_X + (BOX_W >> 1), y + 60, BCOL_TEXT, -1, "mission data");
+        textprintf_centre_ex(display[0], small_font, BOX_X + (BOX_W >> 1), y + 90, BCOL_TEXT, -1, "quit");
+    }
 }
 
 void display_mdata(int x, int y, int btype)
