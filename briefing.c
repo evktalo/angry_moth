@@ -1578,68 +1578,51 @@ int check_settled(void)
 
 void check_for_fire(void)
 {
+    int p, js, kb;
 
- int p, js, kb;
-
-  if (waiting_for_fire == 1)
-  {
-   for (p = 0; p < 1; p ++)
-   {
-    if (p == 1 && arena.players == 1)
-     continue;
-    if (PP.control == CONTROL_KEY_A
-     || PP.control == CONTROL_KEY_B)
-    {
-     if (key [options.ckey [PP.control] [CKEY_FIRE1]])
-     {
-      waiting_for_fire = 0;
-      play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
-     }
+    if (waiting_for_fire == 1) {
+        for (p = 0; p < 1; p ++) {
+            if (p == 1 && arena.players == 1) {
+                continue;
+            }
+            if (PP.control == CONTROL_KEY_A
+                || PP.control == CONTROL_KEY_B
+            ) {
+                if (key[options.ckey[PP.control][CKEY_FIRE1]]) {
+                    waiting_for_fire = 0;
+                    play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
+                }
+            } else {
+                poll_joystick();
+                js = PP.control - CONTROL_JOY_A;
+                if (joy[js].button[options.joy_button [js] [JBUTTON_FIRE1]].b) {
+                    waiting_for_fire = 0;
+                    play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
+                }
+            }
+        }
+    } else {
+        for (p = 0; p < 1; p ++) {
+            if (p == 1 && arena.players == 1) {
+                continue;
+            }
+            if (PP.control == CONTROL_KEY_A
+                || PP.control == CONTROL_KEY_B
+            ) {
+                kb = PP.control;
+                if (!key [options.ckey [kb] [CKEY_FIRE1]]) {
+                    waiting_for_fire = 1;
+                }
+            } else {
+                poll_joystick();
+                js = PP.control - CONTROL_JOY_A;
+                if (!joy[js].button[options.joy_button[js][JBUTTON_FIRE1]].b) {
+                    waiting_for_fire = 1;
+                }
+            }
+        }
     }
-     else
-     {
-       poll_joystick();
-       js = PP.control - CONTROL_JOY_A;
-       if (joy[js].button[options.joy_button [js] [JBUTTON_FIRE1]].b)
-       {
-        waiting_for_fire = 0;
-        play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
-       }
-     }
-   }
-/*   if (key [KEY_SPACE] || key [KEY_ENTER] || key [KEY_ENTER_PAD] || key [KEY_Z] || key [options.ckey [0] [CKEY_FIRE1]])
-    waiting_for_fire = 0;
-   if (options.joystick_available [0] && joy[0].button[options.joy_button [0] [0]].b)
-    waiting_for_fire = 0;*/
-  }
-   else
-   {
-    for (p = 0; p < 1; p ++)
-    {
-     if (p == 1 && arena.players == 1)
-      continue;
-     if (PP.control == CONTROL_KEY_A
-      || PP.control == CONTROL_KEY_B)
-     {
-      kb = PP.control;
-      if (!key [options.ckey [kb] [CKEY_FIRE1]])
-       waiting_for_fire = 1;
-     }
-      else
-      {
-        poll_joystick();
-        js = PP.control - CONTROL_JOY_A;
-        if (!joy[js].button[options.joy_button [js] [JBUTTON_FIRE1]].b)
-         waiting_for_fire = 1;
-      }
-    }
-/*    if (!key [KEY_SPACE] && !key [KEY_ENTER] && !key [KEY_ENTER_PAD] && !key [KEY_Z] && !key [options.ckey [0] [CKEY_FIRE1]]
-     && (!options.joystick_available [0] || !joy[0].button[options.joy_button [0] [0]].b))
-      waiting_for_fire = 1;*/
-   }
-
 }
-
 
 int bover_menu_select [2];
 int bover_menu_select2 [2];
@@ -1650,9 +1633,6 @@ int bover_flash_in;
 
 int briefing_over_menu(void)
 {
-
-
-
  bover_menu_select [0] = BOVER_MENU_START;
  bkey_wait [0] = 30;
  bkey_wait_pressed [0] = -1;
