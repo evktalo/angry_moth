@@ -926,8 +926,13 @@ int mission_briefing(void)
             if (pressing_a_key(0, CKEY_FIRE2, JBUTTON_FIRE2)) {
                 finished = 1;
                 while (bscript[briefing_pos].type != BSCRIPT_END) {
-                    if (bscript[briefing_pos].type == BSCRIPT_MDATA)
-                        add_mdata(bscript[briefing_pos].var[BMDATA_BTYPE], bscript[briefing_pos].var[BMDATA_SIDE], bscript[briefing_pos].var[BMDATA_NUMBER]);
+                    if (bscript[briefing_pos].type == BSCRIPT_MDATA) {
+                        add_mdata(
+                            bscript[briefing_pos].var[BMDATA_BTYPE],
+                            bscript[briefing_pos].var[BMDATA_SIDE],
+                            bscript[briefing_pos].var[BMDATA_NUMBER]
+                        );
+                    }
                     briefing_pos ++;
                 };
             }
