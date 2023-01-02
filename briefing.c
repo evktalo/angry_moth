@@ -1432,100 +1432,88 @@ void create_tbox(int msg, int x, int y, int w, int x2, int y2, int cv)
 
 void draw_tbox(void)
 {
+    int w, h;
+    int col = COL_BOX4;
 
- int w, h;
- int col = COL_BOX4;
-
-
- if (tbox_x2 != tbox_x || tbox_y2 != tbox_y)
- {
-  if (tbox_x2 < tbox_x - tbox_w - 10)
-  {
-   hline(display[0], tbox_x, tbox_y, tbox_x - tbox_w - 10, col);
-   vline(display[0], tbox_x - tbox_w - 10, tbox_y, tbox_y2, col);
-   hline(display[0], tbox_x - tbox_w - 10, tbox_y2, tbox_x2, col);
-  }
-   else
-   {
-    if (tbox_x2 > tbox_x + tbox_w + 10)
-    {
-     hline(display[0], tbox_x, tbox_y, tbox_x + tbox_w + 10, col);
-     vline(display[0], tbox_x + tbox_w + 10, tbox_y, tbox_y2, col);
-     hline(display[0], tbox_x + tbox_w + 10, tbox_y2, tbox_x2, col);
+    if (tbox_x2 != tbox_x || tbox_y2 != tbox_y) {
+        if (tbox_x2 < tbox_x - tbox_w - 10) {
+            hline(display[0], tbox_x, tbox_y, tbox_x - tbox_w - 10, col);
+            vline(display[0], tbox_x - tbox_w - 10, tbox_y, tbox_y2, col);
+            hline(display[0], tbox_x - tbox_w - 10, tbox_y2, tbox_x2, col);
+        } else {
+            if (tbox_x2 > tbox_x + tbox_w + 10) {
+                hline(display[0], tbox_x, tbox_y, tbox_x + tbox_w + 10, col);
+                vline(display[0], tbox_x + tbox_w + 10, tbox_y, tbox_y2, col);
+                hline(display[0], tbox_x + tbox_w + 10, tbox_y2, tbox_x2, col);
+            } else {
+                if (tbox_y2 < tbox_y) {
+                    vline(display[0], tbox_x, tbox_y, tbox_y - tbox_h - 10, col);
+                    hline(display[0], tbox_x, tbox_y - tbox_h - 10, tbox_x2, col);
+                    vline(display[0], tbox_x2, tbox_y - tbox_h - 10, tbox_y2, col);
+                } else {
+                    vline(display[0], tbox_x, tbox_y, tbox_y + tbox_h + 10, col);
+                    hline(display[0], tbox_x, tbox_y + tbox_h + 10, tbox_x2, col);
+                    vline(display[0], tbox_x2, tbox_y + tbox_h + 10, tbox_y2, col);
+                }
+            }
+        }
     }
-     else
-     {
-      if (tbox_y2 < tbox_y)
-      {
-       vline(display[0], tbox_x, tbox_y, tbox_y - tbox_h - 10, col);
-       hline(display[0], tbox_x, tbox_y - tbox_h - 10, tbox_x2, col);
-       vline(display[0], tbox_x2, tbox_y - tbox_h - 10, tbox_y2, col);
-      }
-       else
-       {
-        vline(display[0], tbox_x, tbox_y, tbox_y + tbox_h + 10, col);
-        hline(display[0], tbox_x, tbox_y + tbox_h + 10, tbox_x2, col);
-        vline(display[0], tbox_x2, tbox_y + tbox_h + 10, tbox_y2, col);
-       }
-     }
+
+    if (tbox_in > 0) {
+        w = tbox_w - tbox_in;
+        if (w < 0) {
+            w = 0;
+        }
+        h = tbox_h - tbox_in;
+        if (h < 0) {
+            h = 0;
+        }
+        rectfill(display[0], tbox_x - w, tbox_y - h, tbox_x + w, tbox_y + h, COL_BOX4);
+        return;
     }
-  }
 
+    if (tbox_out > 0) {
+        w = tbox_out;
+        if (w > tbox_w) {
+            w = tbox_w;
+        }
+        h = tbox_out;
+        if (h > tbox_h) {
+            h = tbox_h;
+        }
+        rectfill(display[0], tbox_x - w, tbox_y - h, tbox_x + w, tbox_y + h, COL_BOX4);
+        return;
+    }
 
- if (tbox_in > 0)
- {
-  w = tbox_w - tbox_in;
-  if (w < 0)
-   w = 0;
-  h = tbox_h - tbox_in;
-  if (h < 0)
-   h = 0;
-  rectfill(display[0], tbox_x - w, tbox_y - h, tbox_x + w, tbox_y + h, COL_BOX4);
-  return;
- }
+    col = COL_BOX1;
 
- if (tbox_out > 0)
- {
-   w = tbox_out;
-   if (w > tbox_w)
-    w = tbox_w;
-   h = tbox_out;
-   if (h > tbox_h)
-    h = tbox_h;
-   rectfill(display[0], tbox_x - w, tbox_y - h, tbox_x + w, tbox_y + h, COL_BOX4);
-   return;
- }
+    if (tbox_flash_in > 0) {
+        col = COL_BOX1 + tbox_flash_in / 5;
+        if (col > COL_BOX4) {
+            col = COL_BOX4;
+        }
+    }
 
- col = COL_BOX1;
+    if (tbox_flash_out > 0) {
+        col = COL_BOX4 - (tbox_flash_out / 5);
+        if (col < COL_BOX1) {
+            col = COL_BOX1;
+        }
+    }
 
- if (tbox_flash_in > 0)
- {
-  col = COL_BOX1 + tbox_flash_in / 5;
-  if (col > COL_BOX4)
-   col = COL_BOX4;
- }
+    rectfill(display[0], tbox_x - tbox_w, tbox_y - tbox_h, tbox_x + tbox_w, tbox_y + tbox_h, col);
+    col++;
 
- if (tbox_flash_out > 0)
- {
-  col = COL_BOX4 - (tbox_flash_out / 5);
-  if (col < COL_BOX1)
-   col = COL_BOX1;
- }
+    if (col > COL_BOX4) {
+        col = COL_BOX4;
+    }
 
- rectfill(display[0], tbox_x - tbox_w, tbox_y - tbox_h, tbox_x + tbox_w, tbox_y + tbox_h, col);
- col ++;
- if (col > COL_BOX4)
-  col = COL_BOX4;
- rect(display[0], tbox_x - tbox_w, tbox_y - tbox_h, tbox_x + tbox_w, tbox_y + tbox_h, col);
-
- display_message(display[0], bline, tbox_x - tbox_w + 6, tbox_y - tbox_h + 6);
-
-
+    rect(display[0], tbox_x - tbox_w, tbox_y - tbox_h, tbox_x + tbox_w, tbox_y + tbox_h, col);
+    display_message(display[0], bline, tbox_x - tbox_w + 6, tbox_y - tbox_h + 6);
 }
 
 void run_tbox(void)
 {
-
     if (tbox_in > 0) {
         tbox_in -= 10;
         if (tbox_in <= 0) {
