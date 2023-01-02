@@ -1988,357 +1988,169 @@ char ask_bover_quit(void)
 
 void draw_arrows(int x, int y, int w, int basecol, int counter)
 {
+    int i, col;
 
- int i, col;
-
-  for (i = 0; i < 4; i ++)
-  {
-   col = ((counter + i * 8)/8)%4;
-   switch(basecol)
-   {
-    case 0:
-     switch(col)
-     {
-      case 3: col = COL_EBOX1; break;
-      case 2: col = COL_EBOX2; break;
-      case 1: col = COL_EBOX3; break;
-      case 0: col = COL_EBOX4; break;
-     }
-     break;
-    case 2:
-     switch(col)
-     {
-      case 3: col = COL_BOX1; break;
-      case 2: col = COL_BOX2; break;
-      case 1: col = COL_BOX3; break;
-      case 0: col = COL_BOX4; break;
-     }
-     break;
-   }
-   textprintf_centre_ex(display[0], small_font, x - w - i*3, y, col, -1, ">");
-   textprintf_centre_ex(display[0], small_font, x + w + i*3, y, col, -1, "<");
-  }
-
-
+    for (i = 0; i < 4; i ++) {
+        col = ((counter + i * 8) / 8) % 4;
+        switch(basecol) {
+            case 0:
+                switch(col) {
+                    case 3: col = COL_EBOX1; break;
+                    case 2: col = COL_EBOX2; break;
+                    case 1: col = COL_EBOX3; break;
+                    case 0: col = COL_EBOX4; break;
+                }
+                break;
+            case 2:
+                switch(col) {
+                    case 3: col = COL_BOX1; break;
+                    case 2: col = COL_BOX2; break;
+                    case 1: col = COL_BOX3; break;
+                    case 0: col = COL_BOX4; break;
+                }
+                break;
+        }
+        textprintf_centre_ex(display[0], small_font, x - w - i * 3, y, col, -1, ">");
+        textprintf_centre_ex(display[0], small_font, x + w + i * 3, y, col, -1, "<");
+    }
 }
-
-//#define WPNS 7
-
 
 void bover_box(int x, int y);
 
 int choose_weapons(void)
 {
+    char finished[2] = {0,0};
+    int ret1;
+    int w, p;
 
-// char ckey_wait [2] = {10, 10};
-/* player[0].weapon_type [0] = WPN_AF_MISSILE;
- player[0].weapon_type [1] = WPN_AWS_MISSILE;
- player[1].weapon_type [0] = WPN_AF_MISSILE;
- player[1].weapon_type [1] = WPN_AWS_MISSILE;
+    bover_menu_select[0] = CHOOSE_LAUNCH;
+    bover_menu_select2[0] = 0;
+    bover_menu_select[1] = CHOOSE_LAUNCH;
+    bover_menu_select2[1] = 0;
+    selecting[0] = 0;
+    selecting[1] = 0;
 
- if (arena.players == 2)
- {
-  player[0].weapon_type [1] = WPN_NONE;
-  player[1].weapon_type [0] = WPN_AWS_MISSILE;
-  player[1].weapon_type [1] = WPN_NONE;
- }
-*/
- char finished [2] = {0,0};
- int ret1;
-// int wpn_swap;
- int w, p;
+    int choices2 = br_ship_choices - 1; // This is updated if not choosing ships - see the switch just below
 
- bover_menu_select [0] = CHOOSE_LAUNCH;
- bover_menu_select2 [0] = 0;
- bover_menu_select [1] = CHOOSE_LAUNCH;
- bover_menu_select2 [1] = 0;
- selecting [0] = 0;
- selecting [1] = 0;
-
- int choices2 = br_ship_choices - 1; // This is updated if not choosing ships - see the switch just below
-
- do
- {
-
-  briefing_counter ++;
-
-
-    choose_display(finished [0], finished [1]);
-
-
-   for (p = 0; p < 2; p ++)
-   {
-
-    if (finished [p] != 0)
-     continue;
-
-    if (p == 1 && arena.players != 2)
-     continue;
-//    {
-//     if (arena.players == 1)
-//        )
-
-       switch(bover_menu_select [p])
-       {
-           case CHOOSE_SHIP:
-           case CHOOSE_ESCORT1:
-           case CHOOSE_ESCORT2:
-            choices2 = br_ship_choices - 1;
-            break;
-           case CHOOSE_WING1:
-           case CHOOSE_WING2:
-            choices2 = 1; // actually means 2
-            break;
-           case CHOOSE_VARIANT:
-            choices2 = br_variant_choices - 1;
-            break;
-       }
-
-      ret1 = get_bover_input(p, 0, CHOOSE_REPLAY, selecting [p], 0, choices2, 1);
-// was this one
-
-//       else
-//        ret1 = get_bover_input(0, 0, CHOOSE_REPLAY, selecting [0], 0, WPNS - 1, CHOOSE_WEAPON2);
-     if (ret1 != -1)
-     {
-      if (bover_menu_select [p] == CHOOSE_REPLAY)
-       return 0;
-      if (bover_menu_select [p] == CHOOSE_LAUNCH)
-      {
-       finished [p] = 1;
-       play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-      }
-       else
-       {
-        if (bover_menu_select [p] == CHOOSE_SHIP)
-         {
-          if (selecting [p])
-          {
-           PP.type = ship_list [bover_menu_select2 [p]];
-           set_player_ship_type(p, PP.type, CVAR_NONE);
-           selecting [p] = 0;
-           play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-          }
-           else
-            {
-             selecting [p] = 1;
-             bover_menu_select2 [p] = 0; //player[0].weapon_type [bover_menu_select [0] - CHOOSE_WEAPON1];
-             while (PP.type != ship_list [bover_menu_select2 [p]])
-             {
-              bover_menu_select2 [p]++;
-             }
-             play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+    do {
+        briefing_counter ++;
+        choose_display(finished[0], finished[1]);
+        for (p = 0; p < 2; p ++) {
+            if (finished[p] != 0) {
+                continue;
             }
-         }
-
-        if (bover_menu_select [p] == CHOOSE_VARIANT)
-         {
-          if (selecting [p])
-          {
-           PP.variant = variant_list [p] [bover_menu_select2 [p]];
-           set_player_ship_type(p, PP.type, PP.variant);
-           selecting [p] = 0;
-           play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-          }
-           else
-            {
-             selecting [p] = 1;
-             bover_menu_select2 [p] = 0; //player[0].weapon_type [bover_menu_select [0] - CHOOSE_WEAPON1];
-             while (PP.variant != variant_list [p] [bover_menu_select2 [p]])
-             {
-              bover_menu_select2 [p]++;
-             }
-             play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+            if (p == 1 && arena.players != 2) {
+                continue;
             }
-         }
 
-
-// Only player 0 has CHOOSE_ESCORT entries: (they aren't valid for p2)
-        if (bover_menu_select [p] == CHOOSE_ESCORT1
-         || bover_menu_select [p] == CHOOSE_ESCORT2)
-         {
-          w = bover_menu_select [p] - CHOOSE_ESCORT1; // will be 0 or 1
-          if (selecting [p])
-          {
-           PP.escort_type [w] = ship_list [bover_menu_select2 [p]];
-           selecting [p] = 0;
-           play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-          }
-           else
-            {
-             selecting [p] = 1;
-             bover_menu_select2 [p] = 0; //player[0].weapon_type [bover_menu_select [0] - CHOOSE_WEAPON1];
-             while (PP.escort_type [w] != ship_list [bover_menu_select2 [p]])
-             {
-              bover_menu_select2 [p]++;
-             }
-             play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+            switch (bover_menu_select[p]) {
+                case CHOOSE_SHIP:
+                case CHOOSE_ESCORT1:
+                case CHOOSE_ESCORT2:
+                    choices2 = br_ship_choices - 1;
+                    break;
+                case CHOOSE_WING1:
+                case CHOOSE_WING2:
+                    choices2 = 1; // actually means 2
+                    break;
+                case CHOOSE_VARIANT:
+                    choices2 = br_variant_choices - 1;
+                    break;
             }
-         }
+            ret1 = get_bover_input(p, 0, CHOOSE_REPLAY, selecting[p], 0, choices2, 1);
 
-        if (bover_menu_select [p] == CHOOSE_WING1
-         || bover_menu_select [p] == CHOOSE_WING2)
-         {
-          w = bover_menu_select [p] - CHOOSE_WING1; // will be 0 or 1
-          if (selecting [p])
-          {
-           PP.wing_type [w] = bover_menu_select2 [p];
-           selecting [p] = 0;
-           play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-          }
-           else
-            {
-             selecting [p] = 1;
-             bover_menu_select2 [p] = PP.wing_type [w];
-             play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+            if (ret1 != -1) {
+                if (bover_menu_select[p] == CHOOSE_REPLAY) {
+                    return 0;
+                }
+                if (bover_menu_select[p] == CHOOSE_LAUNCH) {
+                    finished[p] = 1;
+                    play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                } else {
+                    if (bover_menu_select[p] == CHOOSE_SHIP) {
+                        if (selecting[p]) {
+                            PP.type = ship_list [bover_menu_select2[p]];
+                            set_player_ship_type(p, PP.type, CVAR_NONE);
+                            selecting[p] = 0;
+                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                        } else {
+                            selecting[p] = 1;
+                            bover_menu_select2[p] = 0;
+                            while (PP.type != ship_list[bover_menu_select2[p]]) {
+                                bover_menu_select2[p]++;
+                            }
+                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                        }
+                    }
+                    if (bover_menu_select[p] == CHOOSE_VARIANT) {
+                        if (selecting[p]) {
+                            PP.variant = variant_list[p][bover_menu_select2[p]];
+                            set_player_ship_type(p, PP.type, PP.variant);
+                            selecting[p] = 0;
+                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                        } else {
+                            selecting[p] = 1;
+                            bover_menu_select2[p] = 0;
+                            while (PP.variant != variant_list[p][bover_menu_select2[p]]) {
+                                bover_menu_select2[p]++;
+                            }
+                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                        }
+                    }
+                    if (bover_menu_select[p] == CHOOSE_ESCORT1
+                        || bover_menu_select [p] == CHOOSE_ESCORT2
+                    ) {
+                        w = bover_menu_select[p] - CHOOSE_ESCORT1; // will be 0 or 1
+                        if (selecting[p]) {
+                            PP.escort_type[w] = ship_list[bover_menu_select2[p]];
+                            selecting[p] = 0;
+                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                        } else {
+                            selecting[p] = 1;
+                            bover_menu_select2[p] = 0;
+                            while (PP.escort_type[w] != ship_list[bover_menu_select2[p]]) {
+                                bover_menu_select2[p]++;
+                            }
+                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                        }
+                    }
+                    if (bover_menu_select[p] == CHOOSE_WING1
+                        || bover_menu_select[p] == CHOOSE_WING2
+                    ) {
+                        w = bover_menu_select[p] - CHOOSE_WING1; // will be 0 or 1
+                        if (selecting[p]) {
+                            PP.wing_type[w] = bover_menu_select2[p];
+                            selecting[p] = 0;
+                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                        } else {
+                            selecting[p] = 1;
+                            bover_menu_select2[p] = PP.wing_type[w];
+                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                        }
+                    }
+                }
             }
-         }
+        }
 
-       }
-     }
+        if (finished[0] == 1 && (arena.players == 1 || finished[1] == 1)) {
+            return 1;
+        }
+        if (finished_wship_process == 0) {
+            finished_wship_process = wship_process();
+            wship_process_indicator ++;
+        }
 
- }
+        while (ticked == 0) {
+            rest(1);
+        };
 
-/*
-    if (finished [0] == 0)
-    {
-//     if (arena.players == 1)
+        ticked = 0;
 
+        wship_process_progress();
 
-      ret1 = get_bover_input(0, 0, CHOOSE_REPLAY, selecting [0], 0, br_ship_choices-1, 1);
-// was this one
-
-//       else
-//        ret1 = get_bover_input(0, 0, CHOOSE_REPLAY, selecting [0], 0, WPNS - 1, CHOOSE_WEAPON2);
-     if (ret1 != -1)
-     {
-      if (bover_menu_select [0] == CHOOSE_REPLAY)
-       return 0;
-      if (bover_menu_select [0] == CHOOSE_LAUNCH)
-      {
-       finished [0] = 1;
-       play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-      }
-       else
-       {
-        if (bover_menu_select [0] == CHOOSE_SHIP)
-         {
-          if (selecting [0])
-          {
-           player[0].type = ship_list [bover_menu_select2 [0]];
-           set_player_ship_type(0, player[0].type);
-           selecting [0] = 0;
-           play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-          }
-           else
-            {
-             selecting [0] = 1;
-             bover_menu_select2 [0] = 0; //player[0].weapon_type [bover_menu_select [0] - CHOOSE_WEAPON1];
-             while (player[0].type != ship_list [bover_menu_select2 [0]])
-             {
-              bover_menu_select2 [0]++;
-             }
-             play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-            }
-         }
-
-// Escorts only need to be done for p == 0 as only player 1 can set them:
-        if (bover_menu_select [0] == CHOOSE_ESCORT1
-         || bover_menu_select [0] == CHOOSE_ESCORT2)
-         {
-          w = bover_menu_select [0] - CHOOSE_ESCORT1; // will be 0 or 1
-          if (selecting [0])
-          {
-           player[0].escort_type [w] = ship_list [bover_menu_select2 [0]];
-           selecting [0] = 0;
-           play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-          }
-           else
-            {
-             selecting [0] = 1;
-             bover_menu_select2 [0] = 0; //player[0].weapon_type [bover_menu_select [0] - CHOOSE_WEAPON1];
-             while (player[0].escort_type [w] != ship_list [bover_menu_select2 [0]])
-             {
-              bover_menu_select2 [0]++;
-             }
-             play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-            }
-         }
-
-
-       }
-     }
-    }
-
-    if (arena.players == 2 && finished [1] == 0)
-    {
-     ret1 = get_bover_input(1, 0, CHOOSE_REPLAY, selecting [1], 0, WPNS - 1, 1);
-//     ret1 = get_bover_input(1, 0, CHOOSE_REPLAY, selecting [1], 0, WPNS - 1, -1);
-     if (ret1 != -1)
-     {
-      if (bover_menu_select [1] == CHOOSE_REPLAY)
-       return 0;
-      if (bover_menu_select [1] == CHOOSE_LAUNCH)
-      {
-       finished [1] = 1;
-      }
-       else
-       {
-        if (bover_menu_select [1] == CHOOSE_WEAPON1
-         || bover_menu_select [1] == CHOOSE_WEAPON2)
-         {
-          if (selecting [1])
-          {
-           w = bover_menu_select [1] - CHOOSE_WEAPON1;
-           if (player[1].weapon_type [w^1] == bover_menu_select2 [1])
-           {
-            player[1].weapon_type [w^1] = player[1].weapon_type [w];
-           }
-           player[1].weapon_type [w] = bover_menu_select2 [1];
-           selecting [1] = 0;
-           play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-          }
-           else
-            {
-             selecting [1] = 1;
-             bover_menu_select2 [1] = player[1].weapon_type [bover_menu_select [1] - CHOOSE_WEAPON1];
-             play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-            }
-         }
-
-       }
-     }
-    }
-*/
-    if (finished [0] == 1 && (arena.players == 1 || finished [1] == 1))
-     return 1;
-
-
-
-  if (finished_wship_process == 0)
-  {
-   finished_wship_process = wship_process();
-   wship_process_indicator ++;
-  }
-
-    while (ticked == 0)
-    {
-        rest(1);
-    };
-
-    ticked = 0;
-
-  wship_process_progress();
-
-//  vsync();
-  blit(display[0], screen, 0, 0, 0, 0, 800, 600);
-
- } while (TRUE);
-
-
-
+        blit(display[0], screen, 0, 0, 0, 0, 800, 600);
+    } while (TRUE);
 }
-
 
 #define LSPACE1 30
 #define LSPACE2 17
