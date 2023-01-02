@@ -1,5 +1,6 @@
 #include <string.h>
 #include <math.h>
+#include <stdbool.h>
 
 #include "config.h"
 
@@ -908,8 +909,8 @@ int mission_briefing(void)
     }
 
     int menu_return = -1;
-    char replay = 0;
-    char finished = 0;
+    bool replay = 0;
+    bool finished = 0;
 
     do {
         replay = 0;
@@ -925,54 +926,48 @@ int mission_briefing(void)
             if (pressing_a_key(0, CKEY_FIRE2, JBUTTON_FIRE2)) {
                 finished = 1;
                 while (bscript[briefing_pos].type != BSCRIPT_END) {
-                    if (bscript[briefing_pos].type == BSCRIPT_MDATA) {
-                        add_mdata(
-                            bscript[briefing_pos].var[BMDATA_BTYPE],
-                            bscript[briefing_pos].var[BMDATA_SIDE],
-                            bscript[briefing_pos].var[BMDATA_NUMBER]
-                        );
-                    }
+                    if (bscript[briefing_pos].type == BSCRIPT_MDATA)
+                        add_mdata(bscript[briefing_pos].var[BMDATA_BTYPE], bscript[briefing_pos].var[BMDATA_SIDE], bscript[briefing_pos].var[BMDATA_NUMBER]);
                     briefing_pos ++;
                 };
             }
+        }
 
-            if (finished == 1) {
-                finished = 0;
-                bkey_wait [0] = 10;
-                play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
-                do {
-                    menu_return = briefing_over_menu();
-                    switch(menu_return) {
-                        case BOVER_MENU_START:
-                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-                            menu_return = choose_weapons();
-                            if (menu_return == 0) {
-                                init_mission_briefing();
-                                replay = 1;
-                                break;
-                            }
-                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-                            finish_wship_process();
-                            return 1;
-                        case BOVER_MENU_REPLAY:
+        if (finished == 1) {
+            finished = 0;
+            bkey_wait [0] = 10;
+            play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
+            do {
+                menu_return = briefing_over_menu();
+                switch(menu_return) {
+                    case BOVER_MENU_START:
+                        play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                        menu_return = choose_weapons();
+                        if (menu_return == 0) {
                             init_mission_briefing();
                             replay = 1;
-                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
                             break;
-                        case BOVER_MENU_DATA:
-                            // TODO data
-                            break;
-                        case BOVER_MENU_QUIT:
-                            if (ask_bover_quit()) {
-                                play_basicwfv(WAV_SELECT0, FREQ_BSELECT2, VOL_BSELECT1);
-                                finish_wship_process();
-                                return 0;
-                            }
-                            break;
-                    }
-                } while (replay == 0);
-            }
-
+                        }
+                        play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                        finish_wship_process();
+                        return 1;
+                    case BOVER_MENU_REPLAY:
+                        init_mission_briefing();
+                        replay = 1;
+                        play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                        break;
+                    case BOVER_MENU_DATA:
+                        // NOT DONE
+                        break;
+                    case BOVER_MENU_QUIT:
+                        if (ask_bover_quit()) {
+                            play_basicwfv(WAV_SELECT0, FREQ_BSELECT2, VOL_BSELECT1);
+                            finish_wship_process();
+                            return 0;
+                        }
+                        break;
+                }
+            } while (replay == 0);
         }
     } while (TRUE);
 
