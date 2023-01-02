@@ -896,97 +896,88 @@ void wship_process_progress(void)
 
 int mission_briefing(void)
 {
+    init_mission_briefing();
 
- init_mission_briefing();
+    wship_process_indicator_max = pre_briefing_wship_sprite_check();
+    wship_process_indicator = 0;
+    start_making_new_wships();
+    finished_wship_process = 0;
 
- wship_process_indicator_max = pre_briefing_wship_sprite_check();
- wship_process_indicator = 0;
-// pre_briefing_wship_sprite_check();
- start_making_new_wships();
- finished_wship_process = 0;
+    if (wship_process_indicator_max == 0) {
+        finished_wship_process = 1; // nothing to process
+    }
 
- if (wship_process_indicator_max == 0)
-  finished_wship_process = 1; // nothing to process
+    int menu_return = -1;
+    char replay = 0;
+    char finished = 0;
 
- int menu_return = -1;
- char replay = 0;
- char finished = 0;
+    do {
+        replay = 0;
 
- do
- {
+        if (briefing_loop() == 1) {
+            finish_wship_process();
+            return 0; // must have quit
+        }
 
-  replay = 0;
+        if (bscript[briefing_pos].type == BSCRIPT_END) {
+            finished = 1;
+        } else {
+            if (pressing_a_key(0, CKEY_FIRE2, JBUTTON_FIRE2)) {
+                finished = 1;
+                while (bscript[briefing_pos].type != BSCRIPT_END) {
+                    if (bscript[briefing_pos].type == BSCRIPT_MDATA) {
+                        add_mdata(
+                            bscript[briefing_pos].var[BMDATA_BTYPE],
+                            bscript[briefing_pos].var[BMDATA_SIDE],
+                            bscript[briefing_pos].var[BMDATA_NUMBER]
+                        );
+                    }
+                    briefing_pos ++;
+                };
+            }
 
-  if (briefing_loop() == 1)
-  {
-   finish_wship_process();
-   return 0; // must have quit
-  }
+            if (finished == 1) {
+                finished = 0;
+                bkey_wait [0] = 10;
+                play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
+                do {
+                    menu_return = briefing_over_menu();
+                    switch(menu_return) {
+                        case BOVER_MENU_START:
+                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                            menu_return = choose_weapons();
+                            if (menu_return == 0) {
+                                init_mission_briefing();
+                                replay = 1;
+                                break;
+                            }
+                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                            finish_wship_process();
+                            return 1;
+                        case BOVER_MENU_REPLAY:
+                            init_mission_briefing();
+                            replay = 1;
+                            play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
+                            break;
+                        case BOVER_MENU_DATA:
+                            // TODO data
+                            break;
+                        case BOVER_MENU_QUIT:
+                            if (ask_bover_quit()) {
+                                play_basicwfv(WAV_SELECT0, FREQ_BSELECT2, VOL_BSELECT1);
+                                finish_wship_process();
+                                return 0;
+                            }
+                            break;
+                    }
+                } while (replay == 0);
+            }
 
-  if (bscript[briefing_pos].type == BSCRIPT_END)
-   finished = 1;
-    else
-     if (pressing_a_key(0, CKEY_FIRE2, JBUTTON_FIRE2))
-     {
-      finished = 1;
-      while (bscript[briefing_pos].type != BSCRIPT_END)
-      {
-       if (bscript[briefing_pos].type == BSCRIPT_MDATA)
-        add_mdata(bscript[briefing_pos].var[BMDATA_BTYPE], bscript[briefing_pos].var[BMDATA_SIDE], bscript[briefing_pos].var[BMDATA_NUMBER]);
-       briefing_pos ++;
-      };
-     }
+        }
+    } while (TRUE);
 
-    if (finished == 1)
-    {
-     finished = 0;
-     bkey_wait [0] = 10;
-     play_basicwfv(WAV_SELECT0, FREQ_BSELECT, VOL_BSELECT1);
-//   || options.joystick_available [0] && joy[0].button[options.joy_button [0] [1]].b))
-    do
-    {
-     menu_return = briefing_over_menu();
-     switch(menu_return)
-     {
-      case BOVER_MENU_START:
-       play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-       menu_return = choose_weapons();
-       if (menu_return == 0)
-       {
-        init_mission_briefing();
-        replay = 1;
-        break;
-       }
-       play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-       finish_wship_process();
-       return 1;
-      case BOVER_MENU_REPLAY:
-       init_mission_briefing();
-       replay = 1;
-       play_basicwfv(WAV_SELECT1, FREQ_BSELECT1, VOL_BSELECT1);
-       break;
-      case BOVER_MENU_DATA:
-// data
-       break;
-      case BOVER_MENU_QUIT:
-       if (ask_bover_quit())
-       {
-        play_basicwfv(WAV_SELECT0, FREQ_BSELECT2, VOL_BSELECT1);
-        finish_wship_process();
-        return 0;
-       }
-       break;
-
-     }
-    } while (replay == 0);
-   }
-
-
- } while (TRUE);
-
- finish_wship_process();
- return 1;
-
+    finish_wship_process();
+    return 1;
 }
 
 int briefing_loop(void)
