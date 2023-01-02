@@ -718,17 +718,14 @@ int wship_process_indicator_max;
 void wship_process_progress(void);
 void set_player_ship_type(int p, int type, int variant);
 
-int fighter_ship [NO_FF] [2] =
-{
-{FF_NONE, SHIP_NONE},
-{FF_SANDFLY, SHIP_FIGHTER_FRIEND},
-//{FF_RAM, SHIP_FSTRIKE},
-//{FF_LACEWING, SHIP_LACEWING},
-{FF_MONARCH, SHIP_MONARCH},
-{FF_IBEX, SHIP_IBEX},
-{FF_AUROCHS, SHIP_AUROCHS},
-};
 // order must match order of FFs. So I don't know why I bothered to have the first entry here.
+int fighter_ship[NO_FF][2] = {
+    {FF_NONE, SHIP_NONE},
+    {FF_SANDFLY, SHIP_FIGHTER_FRIEND},
+    {FF_MONARCH, SHIP_MONARCH},
+    {FF_IBEX, SHIP_IBEX},
+    {FF_AUROCHS, SHIP_AUROCHS},
+};
 
 void init_mission_briefing(void)
 {
@@ -1050,97 +1047,54 @@ int mission_briefing(void)
 
 int briefing_loop(void)
 {
-
-  if (key[KEY_ESC])
-  {
-   return ask_bover_quit();
-  }
-
-  briefing_counter ++;
-
-  if (map_mode == MM_TACTICAL)
-   run_bconvoys();
-
-  run_bselects();
-
-  run_starmap();
-
-/*  if (tbox_exists)
-  {
-   run_tbox();
-   if (tbox_in <= 0
-    && tbox_flash_out <= 0
-    && tbox_out <= 0)
-    {
-       check_for_fire();
-       if (waiting_for_fire == 0)
-        tbox_flash_out = 20;
+    if (key[KEY_ESC]) {
+        return ask_bover_quit();
     }
-  }*/
-  if (tbox_exists)
-  {
-   run_tbox();
-/*   if (tbox_in <= 0
-    && tbox_flash_out <= 0
-    && tbox_out <= 0)
-    {
-       check_for_fire();
-       if (waiting_for_fire == 0)
-        tbox_flash_out = 20;
-    }*/
-  }
-//   else
-   {
-    if (bscript[briefing_pos].type == BSCRIPT_SETTLE)
-    {
-     if (check_settled() == 0)
-      waiting = 1;
+    briefing_counter ++;
+
+    if (map_mode == MM_TACTICAL) {
+        run_bconvoys();
+    }
+
+    run_bselects();
+    run_starmap();
+
+    if (tbox_exists) {
+        run_tbox();
+    }
+
+    if (bscript[briefing_pos].type == BSCRIPT_SETTLE) {
+        if (check_settled() == 0) {
+            waiting = 1;
+        }
     } // wait for all convoys to stop moving
 
-    if (waiting > 0)
-    {
-     waiting --;
+    if (waiting > 0) {
+        waiting--;
+    } else {
+        if (waiting_for_fire > 0) {
+            check_for_fire();
+        } else {
+            run_bscripts();
+        }
     }
-     else
-     {
-      if (waiting_for_fire > 0)
-      {
-       check_for_fire();
-      }
-       else
-       {
-        run_bscripts();
-       }
-     }
-   }
 
-//  if (key [KEY_ESC])
-//   exit(5);
+    bdisplay();
+    wship_process_progress();
 
-  bdisplay();
-  wship_process_progress();
+    blit(display[0], screen, 0, 0, 0, 0, 800, 600);
 
-//  vsync();
-  blit(display[0], screen, 0, 0, 0, 0, 800, 600);
+    if (finished_wship_process == 0) {
+        finished_wship_process = wship_process();
+        wship_process_indicator++;
+    }
 
-  if (finished_wship_process == 0)
-  {
-   finished_wship_process = wship_process();
-   wship_process_indicator ++;
-  }
-
-    while (ticked == 0)
-    {
-      rest(1);
-//        thing ++;
+    while (ticked == 0) {
+        rest(1);
     };
     ticked = 0;
-
-
- return 0;
-
+    return 0;
 }
-
 
 #define MAP_X 10
 #define MAP_Y 10
