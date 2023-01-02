@@ -1877,14 +1877,14 @@ void boverdisplay(void)
 void display_mdata(int x, int y, int btype)
 {
     if (mdata[btype].side == TEAM_FRIEND) {
-        draw_sprite(display[0], bsprite [mdata[btype].side] [get_bsprite(btype)] [0], x, y);
+        draw_sprite(display[0], bsprite[mdata[btype].side][get_bsprite(btype)][0], x, y);
     } else {
-        draw_sprite_h_flip(display[0], bsprite [mdata[btype].side] [get_bsprite(btype)] [0], x, y);
+        draw_sprite_h_flip(display[0], bsprite[mdata[btype].side][get_bsprite(btype)][0], x, y);
     }
 
     textprintf_ex(display[0], small_font, x + 15, y, BCOL_TEXT, -1, "(%i)", mdata[btype].number);
 
-    char sname [30];
+    char sname[30];
 
     switch(btype) {
         case BSHIP_OLD2: strcpy(sname, "CTBR-LC SUNSHARK"); break;
@@ -1914,99 +1914,76 @@ void display_mdata(int x, int y, int btype)
     textprintf_ex(display[0], small_font, x + 35, y, BCOL_TEXT, -1, "%s", sname);
 }
 
-
 int pressing_a_key(int p, int ckeyp, int cbuttonp)
 {
-
     int kb;
 
     if (PP.control == CONTROL_KEY_A
-     || PP.control == CONTROL_KEY_B)
-    {
+     || PP.control == CONTROL_KEY_B
+    ) {
         kb = PP.control;
-        if (key [options.ckey [kb] [ckeyp]])
-         return 1;
-          else
+        if (key[options.ckey[kb][ckeyp]]) {
+            return 1;
+        } else {
            return 0;
+        }
     }
 
     int js = PP.control - CONTROL_JOY_A;
 
     poll_joystick();
 
-    if (joy[js].button[options.joy_button [js] [cbuttonp]].b)
-     return 1;
+    if (joy[js].button[options.joy_button[js][cbuttonp]].b) {
+        return 1;
+    }
 
     return 0;
-
 }
 
 char ask_bover_quit(void)
 {
- vsync();
- rectfill(display[0], 250, 200, 550, 310, TRANS_RED1);
- rect(display[0], 250, 200, 550, 310, COL_EBOX3);
- textprintf_centre_ex(display[0], small_font, 400, 230, COL_EBOX4, -1, "QUIT GAME?");
- textprintf_centre_ex(display[0], small_font, 400, 260, COL_EBOX3, -1, "press 'Y' to quit to main menu");
- textprintf_centre_ex(display[0], small_font, 400, 275, COL_EBOX3, -1, "or 'N' to play on");
+    vsync();
+    rectfill(display[0], 250, 200, 550, 310, TRANS_RED1);
+    rect(display[0], 250, 200, 550, 310, COL_EBOX3);
+    textprintf_centre_ex(display[0], small_font, 400, 230, COL_EBOX4, -1, "QUIT GAME?");
+    textprintf_centre_ex(display[0], small_font, 400, 260, COL_EBOX3, -1, "press 'Y' to quit to main menu");
+    textprintf_centre_ex(display[0], small_font, 400, 275, COL_EBOX3, -1, "or 'N' to play on");
 
- wship_process_progress();
+    wship_process_progress();
 
- blit(display[0], screen, 0, 0, 0, 0, 800, 600);
+    blit(display[0], screen, 0, 0, 0, 0, 800, 600);
 
- bkey_wait [0] = 10; // for when it returns
+    bkey_wait[0] = 10; // for when it returns
 
- unsigned char pc = 0;
+    unsigned char pc = 0;
 
- do
- {
-    pc ++;
-    pc &= 255;
+    do {
+        pc ++;
+        pc &= 255;
 
-    if (key [KEY_Y])
-     return 1;
-    if (key [KEY_N])
-    {
-     play_basicwfv(WAV_SELECT0, FREQ_BSELECT2, VOL_BSELECT1);
-     return 0;
-    }
+        if (key [KEY_Y]) {
+            return 1;
+        }
+        if (key [KEY_N]) {
+            play_basicwfv(WAV_SELECT0, FREQ_BSELECT2, VOL_BSELECT1);
+            return 0;
+        }
 
-  if (finished_wship_process == 0)
-  {
-   finished_wship_process = wship_process();
-   wship_process_indicator ++;
-  }
+        if (finished_wship_process == 0) {
+            finished_wship_process = wship_process();
+            wship_process_indicator++;
+        }
 
-    while (ticked == 0)
-    {
-        rest(1);
-    };
+        while (ticked == 0) {
+            rest(1);
+        };
 
-    ticked = 0;
+        ticked = 0;
 
-/*
-  for (i = 0; i < 4; i ++)
-  {
-   col = ((pc + i * 8)/8)%4;
-   switch(col)
-   {
-    case 3: col = COL_E1 + TRANS_RED1; break;
-    case 2: col = COL_E1 + TRANS_RED2; break;
-    case 1: col = COL_E2 + TRANS_RED3; break;
-    case 0: col = COL_E3 + TRANS_RED4; break;
-   }
-   textprintf_centre_ex(display[0], small_font, 400 - 40 - i*3, 230, col, -1, ">");
-   textprintf_centre_ex(display[0], small_font, 400 + 40 + i*3, 230, col, -1, "<");
-  }
-*/
-  draw_arrows(400, 230, 40, 0, pc);
-
-  wship_process_progress();
-
-  blit(display[0], screen, 0, 0, 0, 0, 800, 600);
-
- } while (TRUE);
-
+        draw_arrows(400, 230, 40, 0, pc);
+        wship_process_progress();
+        blit(display[0], screen, 0, 0, 0, 0, 800, 600);
+    } while (TRUE);
 }
 
 void draw_arrows(int x, int y, int w, int basecol, int counter)
