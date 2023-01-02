@@ -791,146 +791,107 @@ void init_mission_briefing(void)
 // this is used both to set ship types and to set variant types when ship type is already set.
 void set_player_ship_type(int p, int type, int variant)
 {
+    PP.type = type;
+    PP.weapon_type[0] = WPN_NONE;
+    PP.weapon_type[1] = WPN_NONE;
+    PP.shield_recharge = eclass[type].shield_recharge;
+    // some other values get set in init_player_spawn in game.c
 
-  PP.type = type;
-  PP.weapon_type [0] = WPN_NONE;
-  PP.weapon_type [1] = WPN_NONE;
-  PP.shield_recharge = eclass[type].shield_recharge;
-// some other values get set in init_player_spawn in game.c
+    int v = 0;
 
-  int v = 0;
+    switch(type) {
+        case SHIP_FIGHTER_FRIEND:
+            if (arena.stage > 2) {
+                PP.weapon_type[0] = WPN_LW_MISSILE;
+            }
+            variant_list[p][v++] = CVAR_NONE;
+            variant_list[p][v] = CVAR_END;
+            break;
+        case SHIP_FSTRIKE:
+            PP.weapon_type[0] = WPN_WROCKET;
+            variant_list[p][v++] = CVAR_NONE;
+            variant_list[p][v++] = CVAR_RAM_HEAVY;
+            variant_list[p][v] = CVAR_END;
+            break;
+        case SHIP_LACEWING:
+            PP.weapon_type[0] = WPN_LW_MISSILE;
+            variant_list[p][v++] = CVAR_NONE;
+            variant_list[p][v++] = CVAR_LW_B;
+            variant_list[p][v++] = CVAR_LW_C;
+            variant_list[p][v] = CVAR_END;
+            break;
+        case SHIP_MONARCH:
+            PP.weapon_type[0] = WPN_LW_MISSILE;
+            variant_list[p][v++] = CVAR_NONE;
+            variant_list[p][v++] = CVAR_MONARCH_B;
+            variant_list[p][v++] = CVAR_MONARCH_C;
+            variant_list[p][v] = CVAR_END;
+            break;
+        case SHIP_IBEX:
+            PP.weapon_type[0] = WPN_AWS_MISSILE;
+            variant_list[p][v++] = CVAR_NONE;
+            variant_list[p][v++] = CVAR_IBEX_B;
+            variant_list[p][v++] = CVAR_IBEX_C;
+            variant_list[p][v] = CVAR_END;
+            break;
+        case SHIP_AUROCHS:
+            PP.weapon_type[0] = WPN_HROCKET;
+            variant_list[p][v++] = CVAR_NONE;
+            variant_list[p][v++] = CVAR_AUROCHS_B;
+            variant_list[p][v++] = CVAR_AUROCHS_C;
+            variant_list[p][v] = CVAR_END;
+            break;
+    }
 
-  switch(type)
-  {
-   case SHIP_FIGHTER_FRIEND:
-    if (arena.stage > 2)
-     PP.weapon_type [0] = WPN_LW_MISSILE;
-    variant_list [p] [v++] = CVAR_NONE;
-    variant_list [p] [v] = CVAR_END;
-    break;
-   case SHIP_FSTRIKE:
-    PP.weapon_type [0] = WPN_WROCKET;
-    variant_list [p] [v++] = CVAR_NONE;
-    variant_list [p] [v++] = CVAR_RAM_HEAVY;
-    variant_list [p] [v] = CVAR_END;
-    break;
-   case SHIP_LACEWING:
-    PP.weapon_type [0] = WPN_LW_MISSILE;
-    variant_list [p] [v++] = CVAR_NONE;
-    variant_list [p] [v++] = CVAR_LW_B;
-    variant_list [p] [v++] = CVAR_LW_C;
-    variant_list [p] [v] = CVAR_END;
-    break;
-   case SHIP_MONARCH:
-    PP.weapon_type [0] = WPN_LW_MISSILE;
-    variant_list [p] [v++] = CVAR_NONE;
-    variant_list [p] [v++] = CVAR_MONARCH_B;
-    variant_list [p] [v++] = CVAR_MONARCH_C;
-    variant_list [p] [v] = CVAR_END;
-    break;
-   case SHIP_IBEX:
-    PP.weapon_type [0] = WPN_AWS_MISSILE;
-    variant_list [p] [v++] = CVAR_NONE;
-    variant_list [p] [v++] = CVAR_IBEX_B;
-    variant_list [p] [v++] = CVAR_IBEX_C;
-    variant_list [p] [v] = CVAR_END;
-    break;
-   case SHIP_AUROCHS:
-    PP.weapon_type [0] = WPN_HROCKET;
-    variant_list [p] [v++] = CVAR_NONE;
-    variant_list [p] [v++] = CVAR_AUROCHS_B;
-    variant_list [p] [v++] = CVAR_AUROCHS_C;
-    variant_list [p] [v] = CVAR_END;
-    break;
-  }
-
-  PP.variant = variant;
-  br_variant_choices = v;
-/*
-  switch(variant)
-  {
-   case CVAR_RAM_HEAVY:
-    PP.weapon_type [0] = WPN_HROCKET;
-    break;
-   case CVAR_LW_B:
-    PP.weapon_type [0] = WPN_ADV_LW_MISSILE;
-    break;
-   case CVAR_LW_C:
-    PP.weapon_type [0] = WPN_HVY_LW_MISSILE;
-    break;
-   case CVAR_MONARCH_B:
-    PP.weapon_type [0] = WPN_ADV_LW_MISSILE;
-    break;
-   case CVAR_MONARCH_C:
-    PP.weapon_type [0] = WPN_RAIN;
-    break;
-   case CVAR_IBEX_B:
-    PP.weapon_type [0] = WPN_RAIN;
-    break;
-   case CVAR_IBEX_C:
-    PP.weapon_type [0] = WPN_RAIN;
-    break;
-   case CVAR_AUROCHS_B:
-    PP.weapon_type [0] = WPN_RAIN;
-    break;
-   case CVAR_AUROCHS_C:
-    PP.weapon_type [0] = WPN_RAIN;
-    break;
-  }
-*/
-
+    PP.variant = variant;
+    br_variant_choices = v;
 }
 
 void finish_wship_process(void)
 {
+    #define FX 400
+    #define FY 300
 
-#define FX 400
-#define FY 300
+    int pl = wship_process_indicator >> 2;
+    int pl2 = wship_process_indicator_max >> 2;
 
- int pl = wship_process_indicator >> 2;
- int pl2 = wship_process_indicator_max >> 2;
+    hline(display[0], 795 - pl2 - 1, 595, 795 - pl2 + pl, COL_BOX3);
 
- hline(display[0], 795 - pl2 - 1, 595, 795 - pl2 + pl, COL_BOX3);
+    if (finished_wship_process == 0) {
+        vsync();
+        clear_to_color(screen, COL_BOX0);
+        textprintf_right_ex(screen, small_font, FX - 5, FY - 9, COL_BOX4, -1, "Loading");
+        vline(screen, FX, FY - 2, FY + 2, COL_BOX3);
+        vline(screen, FX + pl2 + 2, FY - 2, FY + 2, COL_BOX4);
+        hline(screen, FX, FY, FX + pl, COL_BOX4);
+    }
 
- if (finished_wship_process == 0)
- {
-  vsync();
-  clear_to_color(screen, COL_BOX0);
-  textprintf_right_ex(screen, small_font, FX - 5, FY - 9, COL_BOX4, -1, "Loading");
-  vline(screen, FX, FY - 2, FY + 2, COL_BOX3);
-  vline(screen, FX + pl2 + 2, FY - 2, FY + 2, COL_BOX4);
-  hline(screen, FX, FY, FX + pl, COL_BOX4);
- }
+    while (finished_wship_process == 0) {
+        finished_wship_process = wship_process();
+        wship_process_indicator ++;
+        pl = wship_process_indicator >> 2;
+        hline(screen, FX, FY, FX + pl, COL_BOX4);
+    };
 
- while (finished_wship_process == 0)
- {
-      finished_wship_process = wship_process();
-      wship_process_indicator ++;
-      pl = wship_process_indicator >> 2;
-      hline(screen, FX, FY, FX + pl, COL_BOX4);
- };
-
- vsync();
- clear_bitmap(display[0]);
- clear_bitmap(screen);
-
+    vsync();
+    clear_bitmap(display[0]);
+    clear_bitmap(screen);
 }
 
 void wship_process_progress(void)
 {
+    if (finished_wship_process == 1) {
+        return;
+    }
 
- if (finished_wship_process == 1)
-  return;
+    int pl = wship_process_indicator >> 2;
+    int pl2 = wship_process_indicator_max >> 2;
 
- int pl = wship_process_indicator >> 2;
- int pl2 = wship_process_indicator_max >> 2;
+    vline(display[0], 795, 591, 595, COL_BOX3);
+    vline(display[0], 795 - pl2 - 2, 591, 595, COL_BOX3);
+    hline(display[0], 795 - pl2 - 1, 593, 795 - pl2 + pl, COL_BOX3);
 
- vline(display[0], 795, 591, 595, COL_BOX3);
- vline(display[0], 795 - pl2 - 2, 591, 595, COL_BOX3);
- hline(display[0], 795 - pl2 - 1, 593, 795 - pl2 + pl, COL_BOX3);
-
- textprintf_right_ex(display[0], small_font, 795 - pl2 - 5, 586, COL_BOX3, -1, "Loading");
-
+    textprintf_right_ex(display[0], small_font, 795 - pl2 - 5, 586, COL_BOX3, -1, "Loading");
 }
 
 int mission_briefing(void)
@@ -1088,7 +1049,6 @@ int briefing_loop(void)
 #define BOX_Y 10
 #define BOX_H 550
 
-
 void bdisplay(void)
 {
 
@@ -1202,79 +1162,59 @@ void bdisplay(void)
 
 int get_bsprite(int type)
 {
+    switch(type) {
+        case BSHIP_OLD2: return BSF_OLD2;
+        case BSHIP_OLD3: return BSF_OLD3;
+        case BSHIP_FIGHTER_FRIEND: return BSF_FIGHTER;
+        case BSHIP_FIGHTER_FSTRIKE: return BSF_FIGHTER;
+        case BSHIP_MOTH: return BSF_MOTH;
+        case BSHIP_DROM: return BSF_DROM;
+        case BSHIP_LINER: return BSF_DROM;
+        case BSHIP_TRIREME: return BSF_TRIREME;
 
-// if (type == BSHIP_MOTH)
-// return BSF_OLD3;
+        case BSHIP_FIGHTER: return BSE_FIGHTER;
+        case BSHIP_BOMBER: return BSE_FIGHTER;
+        case BSHIP_EINT: return BSE_FIGHTER;
+        case BSHIP_ESCOUT: return BSE_FIGHTER;
+        case BSHIP_SCOUT2: return BSE_SCOUT2;
+        case BSHIP_SCOUT3: return BSE_SCOUT3;
+        case BSHIP_ECARRIER: return BSE_ECARRIER;
+        case BSHIP_FREIGHT: return BSE_FREIGHT;
+        case BSHIP_EBASE: return BSE_EBASE;
+        case BSHIP_UNKNOWN: return BSE_UNKNOWN;
 
- switch(type)
- {
-  case BSHIP_OLD2: return BSF_OLD2;
-  case BSHIP_OLD3: return BSF_OLD3;
-  case BSHIP_FIGHTER_FRIEND: return BSF_FIGHTER;
-  case BSHIP_FIGHTER_FSTRIKE: return BSF_FIGHTER;
-  case BSHIP_MOTH: return BSF_MOTH;
-  case BSHIP_DROM: return BSF_DROM;
-  case BSHIP_LINER: return BSF_DROM;
-  case BSHIP_TRIREME: return BSF_TRIREME;
-//  case BSHIP_: return BSF_;
-
-  case BSHIP_FIGHTER: return BSE_FIGHTER;
-  case BSHIP_BOMBER: return BSE_FIGHTER;
-  case BSHIP_EINT: return BSE_FIGHTER;
-  case BSHIP_ESCOUT: return BSE_FIGHTER;
-  case BSHIP_SCOUT2: return BSE_SCOUT2;
-  case BSHIP_SCOUT3: return BSE_SCOUT3;
-//  case BSHIP_SCOUTCAR: return BSE_SCOUTCAR;
-  case BSHIP_ECARRIER: return BSE_ECARRIER;
-  case BSHIP_FREIGHT: return BSE_FREIGHT;
-  case BSHIP_EBASE: return BSE_EBASE;
-  case BSHIP_UNKNOWN: return BSE_UNKNOWN;
-
-  default: return BSE_EBASE; // this is BSF_MOTH for friendly, I think
-
- }
-
-// return BSF_OLD3;
-
-
+        default: return BSE_EBASE; // this is BSF_MOTH for friendly, I think
+    }
 }
 
 int get_bsprite_from_ship(int type)
 {
+    switch(type) {
+        case SHIP_OLD2: return BSF_OLD2;
+        case SHIP_OLD3: return BSF_OLD3;
+        case SHIP_DROM: return BSF_DROM;
+        case SHIP_LINER: return BSF_LINER;
+        case SHIP_FIGHTER_FRIEND: return BSF_FIGHTER;
+        case SHIP_LACEWING:
+        case SHIP_MONARCH:
+        case SHIP_IBEX:
+        case SHIP_AUROCHS:
+        case SHIP_FSTRIKE: return BSF_FIGHTER;
+        case SHIP_FRIEND3: return BSF_TRIREME;
 
+        case SHIP_FIGHTER: return BSE_FIGHTER;
+        case SHIP_BOMBER: return BSE_FIGHTER;
+        case SHIP_ESCOUT: return BSE_FIGHTER;
+        case SHIP_EINT: return BSE_FIGHTER;
+        case SHIP_SCOUT2: return BSE_SCOUT2;
+        case SHIP_SCOUT3: return BSE_SCOUT3;
+        case SHIP_ECARRIER: return BSE_ECARRIER;
+        case SHIP_FREIGHT: return BSE_ECARRIER;
+        case SHIP_EBASE: return BSE_EBASE;
 
- switch(type)
- {
-  case SHIP_OLD2: return BSF_OLD2;
-  case SHIP_OLD3: return BSF_OLD3;
-  case SHIP_DROM: return BSF_DROM;
-  case SHIP_LINER: return BSF_LINER;
-  case SHIP_FIGHTER_FRIEND: return BSF_FIGHTER;
-  case SHIP_LACEWING:
-  case SHIP_MONARCH:
-  case SHIP_IBEX:
-  case SHIP_AUROCHS:
-  case SHIP_FSTRIKE: return BSF_FIGHTER;
-  case SHIP_FRIEND3: return BSF_TRIREME;
-
-  case SHIP_FIGHTER: return BSE_FIGHTER;
-  case SHIP_BOMBER: return BSE_FIGHTER;
-  case SHIP_ESCOUT: return BSE_FIGHTER;
-  case SHIP_EINT: return BSE_FIGHTER;
-  case SHIP_SCOUT2: return BSE_SCOUT2;
-  case SHIP_SCOUT3: return BSE_SCOUT3;
-//  case SHIP_SCOUTCAR: return BSE_SCOUTCAR;
-  case SHIP_ECARRIER: return BSE_ECARRIER;
-  case SHIP_FREIGHT: return BSE_ECARRIER;
-  case SHIP_EBASE: return BSE_EBASE;
-
-  default: return BSE_EBASE;
-
- }
-
+        default: return BSE_EBASE;
+    }
 }
-
-
 
 void run_bscripts(void)
 {
@@ -1443,21 +1383,17 @@ void run_bscripts(void)
 
 void init_mdata(void)
 {
- int i;
+    int i;
 
- for (i = 0; i < NO_BSHIP_TYPES; i ++)
- {
-     mdata[i].number = 0;
- }
-
+    for (i = 0; i < NO_BSHIP_TYPES; i ++) {
+        mdata[i].number = 0;
+    }
 }
 
 void add_mdata(int btype, int side, int number)
 {
-
- mdata[btype].side = side;
- mdata[btype].number += number;
-
+    mdata[btype].side = side;
+    mdata[btype].number += number;
 }
 
 void create_tbox(int msg, int x, int y, int w, int x2, int y2, int cv)
