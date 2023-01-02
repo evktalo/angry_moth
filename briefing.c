@@ -1497,83 +1497,84 @@ void run_tbox(void)
 
 void run_bconvoys(void)
 {
- int c;
+    int c;
 
- for (c = 0; c < BCONVOYS; c ++)
- {
-  if (bconvoy[c].exists == 0)
-   continue;
-  bconvoy[c].x += bconvoy[c].x_speed;
-  bconvoy[c].y += bconvoy[c].y_speed;
-  if ((bconvoy[c].x>>13) == (bconvoy[c].goal_x>>13)
-   && (bconvoy[c].y>>13) == (bconvoy[c].goal_y>>13))
-  {
-   bconvoy[c].x_speed = 0;
-   bconvoy[c].y_speed = 0;
-  }
- }
-
+    for (c = 0; c < BCONVOYS; c ++) {
+        if (bconvoy[c].exists == 0) {
+            continue;
+        }
+        bconvoy[c].x += bconvoy[c].x_speed;
+        bconvoy[c].y += bconvoy[c].y_speed;
+        if ((bconvoy[c].x>>13) == (bconvoy[c].goal_x>>13)
+            && (bconvoy[c].y>>13) == (bconvoy[c].goal_y>>13)
+        ) {
+            bconvoy[c].x_speed = 0;
+            bconvoy[c].y_speed = 0;
+        }
+    }
 }
 
 void run_bselects(void)
 {
+    int c;
 
- int c;
-
- for (c = 0; c < BSELECT; c ++)
- {
-  if (bselect[c].exists == 0)
-   continue;
-  bselect[c].count --;
-  if (bselect[c].count < 1)
-   bselect[c].exists = 0;
- }
-
+    for (c = 0; c < BSELECT; c ++) {
+        if (bselect[c].exists == 0) {
+            continue;
+        }
+        bselect[c].count--;
+        if (bselect[c].count < 1) {
+            bselect[c].exists = 0;
+        }
+    }
 }
-
 
 int check_settled(void)
 {
- int c;
+    int c;
 
- for (c = 0; c < BCONVOYS; c ++)
- {
-  if (bconvoy[c].exists == 1
-   && bconvoy[c].move_settle == 1
-   && (bconvoy[c].x_speed != 0
-    || bconvoy[c].y_speed != 0))
-    return 0; // not settled yet
- }
+    for (c = 0; c < BCONVOYS; c ++) {
+        if (bconvoy[c].exists == 1
+            && bconvoy[c].move_settle == 1
+            && (
+                bconvoy[c].x_speed != 0
+                || bconvoy[c].y_speed != 0
+            )
+        ) {
+            return 0; // not settled yet
+        }
+    }
 
- for (c = 0; c < BSELECT; c++)
- {
-  if (bselect[c].exists == 1
-   && bselect[c].count > 0)
-    return 0; // still zooming select
- }
+    for (c = 0; c < BSELECT; c++) {
+        if (bselect[c].exists == 1
+            && bselect[c].count > 0
+        ) {
+            return 0; // still zooming select
+        }
+    }
 
- if (tbox_flash_out > 0
-  || tbox_out > 0)
-   return 0;
+    if (tbox_flash_out > 0
+        || tbox_out > 0
+    ) {
+        return 0;
+    }
 
- if (map_mode == MM_STARMAP && starzoom != zoom_target)
-  return 0;
+    if (map_mode == MM_STARMAP && starzoom != zoom_target) {
+        return 0;
+    }
 
-// okay, everything's settled so let's clear speed values for all
-//  bconvoys that have move_settle == 0:
- for (c = 0; c < BCONVOYS; c ++)
- {
-  if (bconvoy[c].exists == 1
-   && bconvoy[c].move_settle == 0)
-   {
-    bconvoy[c].x_speed = 0;
-    bconvoy[c].y_speed = 0;
-   }
- }
-
- return 1;
+    // okay, everything's settled so let's clear speed values for all
+    //  bconvoys that have move_settle == 0:
+    for (c = 0; c < BCONVOYS; c ++) {
+        if (bconvoy[c].exists == 1
+            && bconvoy[c].move_settle == 0
+        ) {
+            bconvoy[c].x_speed = 0;
+            bconvoy[c].y_speed = 0;
+        }
+    }
+    return 1;
 }
-
 
 void check_for_fire(void)
 {
