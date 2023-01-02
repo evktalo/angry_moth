@@ -362,231 +362,148 @@ enum {
 };
 
 
-struct msgstruct bmsg [BMSGS] =
-{
- {" >> double autocannon $P $BPower: $C3.0 (x2) $PA basic fighter weapon. ", {0}},
- {" >> fighter $PStandard OCSF fighter. Has good armour and shielding and a powerful engine, but lacks the agility or firepower of the Angry Moth. Armed with double autocannon. ", {0}},
- {" >> anti-fighter missile $P $BPower: $C40.0 $PHigh-performance seeking missile with a sensor system capable of targetting small craft in a forward arc. Full lock-on maximises tracking capability. Low rate of fire. ", {0}},
- {" >> anti-warship missile $P $BPower: $C50.0 $PSlow missile with limited homing capability. Capable of targetting large ships only. Warhead is ineffective until missile drive fully engaged. ", {0}},
- {" >> multi-rockets $P $BPower: $C32.0 $PRocket launcher capable of loading and unleashing a stream of small rockets. ", {0}},
- {" >> torpedo $P $BPower: $C180.0 $PPowerful, but difficult to aim. Warhead is unstable and must prime both before and after launch - the torpedo will cause little harm if it explodes too early. ", {0}},
- {" >> single rocket $P $BPower: $C32.0 $PFires a single rocket. Lacks the rapid fire of the multiple rocket launcher but does not require pre-loading. ", {0}},
- {" >> tracking cannon $P $BPower: $C3.0 $PModifies the standard autocannons with electromagnets capable of deflecting fire towards targets within a narrow forward arc. ", {0}},
- {" >> heavy cannon $P $BPower: $C10.0 (x2) $PIncreases the power of the standard autocannons, at the cost of speed and rate of fire. ", {0}},
-// {" $BAngry Moth 1 $Cleads a strike squadron to engage with any stragglers. ", {0}},
+struct msgstruct bmsg[BMSGS] = {
+    {" >> double autocannon $P $BPower: $C3.0 (x2) $PA basic fighter weapon. ", {0}},
+    {" >> fighter $PStandard OCSF fighter. Has good armour and shielding and a powerful engine, but lacks the agility or firepower of the Angry Moth. Armed with double autocannon. ", {0}},
+    {" >> anti-fighter missile $P $BPower: $C40.0 $PHigh-performance seeking missile with a sensor system capable of targetting small craft in a forward arc. Full lock-on maximises tracking capability. Low rate of fire. ", {0}},
+    {" >> anti-warship missile $P $BPower: $C50.0 $PSlow missile with limited homing capability. Capable of targetting large ships only. Warhead is ineffective until missile drive fully engaged. ", {0}},
+    {" >> multi-rockets $P $BPower: $C32.0 $PRocket launcher capable of loading and unleashing a stream of small rockets. ", {0}},
+    {" >> torpedo $P $BPower: $C180.0 $PPowerful, but difficult to aim. Warhead is unstable and must prime both before and after launch - the torpedo will cause little harm if it explodes too early. ", {0}},
+    {" >> single rocket $P $BPower: $C32.0 $PFires a single rocket. Lacks the rapid fire of the multiple rocket launcher but does not require pre-loading. ", {0}},
+    {" >> tracking cannon $P $BPower: $C3.0 $PModifies the standard autocannons with electromagnets capable of deflecting fire towards targets within a narrow forward arc. ", {0}},
+    {" >> heavy cannon $P $BPower: $C10.0 (x2) $PIncreases the power of the standard autocannons, at the cost of speed and rate of fire. ", {0}},
 
+    {" In the 4th Millenium, humanity has spread to the stars. ", {0}}, // BMSG_INTRO1
+    {" Trillions of people sprawl across hundreds of worlds. ", {0}}, // BMSG_INTRO2
+    {" At the heart of this expanding sphere sits the ancient Sol Empire. For hundreds of years, its fleets have kept the squabbling provinces at peace. ", {0}}, // BMSG_INTRO3
+    {" Far away in a distant arm of the Empire, the Dalat Commonwealth is a small but prosperous nation. ", {0}}, // BMSG_INTRO4
+    {" Overshadowed in size by its more powerful neighbour, the Outer Colonies Federation, the Commonwealth preserves its independence with diplomacy and a professional, technologically advanced military. Its warships are valued members of any Imperial peacekeeping force. ", {0}}, // BMSG_INTRO5
+    {" The Commonwealth had just celebrated the founding of its thirtieth settlement when the Void Gazers reconnaisance group, on patrol through uninhabited border systems, picked up unexpected activity on a long-range scan. ", {0}}, // BMSG_INTRO6
+    {" The Void Gazers send a small light cruiser detachment, supported by fighters from Angry Moth Squadron, to investigate. ", {0}}, // BMSG_INTRO7
 
- {" In the 4th Millenium, humanity has spread to the stars. ", {0}}, // BMSG_INTRO1
- {" Trillions of people sprawl across hundreds of worlds. ", {0}}, // BMSG_INTRO2
- {" At the heart of this expanding sphere sits the ancient Sol Empire. For hundreds of years, its fleets have kept the squabbling provinces at peace. ", {0}}, // BMSG_INTRO3
- {" Far away in a distant arm of the Empire, the Dalat Commonwealth is a small but prosperous nation. ", {0}}, // BMSG_INTRO4
- {" Overshadowed in size by its more powerful neighbour, the Outer Colonies Federation, the Commonwealth preserves its independence with diplomacy and a professional, technologically advanced military. Its warships are valued members of any Imperial peacekeeping force. ", {0}}, // BMSG_INTRO5
- {" The Commonwealth had just celebrated the founding of its thirtieth settlement when the Void Gazers reconnaisance group, on patrol through uninhabited border systems, picked up unexpected activity on a long-range scan. ", {0}}, // BMSG_INTRO6
- {" The Void Gazers send a small light cruiser detachment, supported by fighters from Angry Moth Squadron, to investigate. ", {0}}, // BMSG_INTRO7
+    {" Listen up, Void Gazers. We are investigating a signal indicating the imminent arrival of several starships in the system SK-02. ", {0}}, // BMSG_M1_1
+    {" The signal is confused, but suggests Imperial warships. No-one has any idea why the Empire would send a fleet our way, and it's your job to find out. ", {0}}, // BMSG_M1_2
+    {" All we have been able to mobilise for this mission is four light cruisers and a small fighter escort. Don't worry, we don't expect you to do any fighting. Just get in, wait for the unidentified ships to show up, then get back out while they recharge their jump drives. ", {0}}, // BMSG_M1_3
+    {" Gazer 1 captain has the discretion to engage if absolutely necessary, but the last thing we want is a war. ", {0}}, // BMSG_M1_4
+    {" Angry Moth, you will support Gazer 1. ", {0}}, // BMSG_M1_5
+    {" Safe flying, everyone! $P $P>> $BBriefing end$C ", {0}}, // BMSG_M1_6
 
+    {" The communications relays linking the Commonwealth to Federation space, and the neighbouring Sunrise League, appear to have been cut. ", {0}}, // BMSG_M2_1
+    {" We can only assume that the Federation is behind this as well. ", {0}}, // BMSG_M2_2
+    {" We need to contact the Sunrise League; since they share borders with the Federation, they may have some idea what is going on. But without our relays, we will need to send starships as messengers. ", {0}}, // BMSG_M2_3
+    {" We have plotted an indirect course to the League outpost at MK-5. ", {0}}, // BMSG_M2_4
+    {" A small team of ships will make several jumps to carry messages to the League. This mission is too dangerous for civilian ships, so we are sending Void Gazers with support from Angry Moth. ", {0}}, // BMSG_M2_5
+    {" The team is set up for speed and range, not combat. If you meet resistance, you have orders to retreat. $P $P>> $BBriefing end$C ", {0}}, // BMSG_M2_6
 
-/*
- {" In the 30th Century CE, most of human space is peacefully ruled by three great empires. ", {0}},
- {" The Earth Federation controls the largest area from its seat of government on old Earth. ", {0}},
- {" The Commonwealth of ... . ", {0}},
- {" The Republic of the Outer Colonies controls ", {0}},
- {" Scattered among the three great powers are a handful of proudly defiant independent systems. ", {0}},
- {" Although humanity has been at peace for over a century, the Outer Colonies, acting on intelligence reports of a military buildup in Federation Space, has begun to modernise and upgrade its space defences. ", {0}},
- {" In early 2911, orbital fortress Anenome receives a surprising report from a relay drone sent by the automated sensor outpost at star KP-6: a large number of unidentified ships have been detected en route from the neutral border system KP-5. ", {0}},
- {" The fleet's composition is unclear, but incoming jump signatures suggest the Commonwealth Territorial Battle Reserve. ", {0}},
- {" While the local division of the Outer Colonies Space Fleet gathers at Anenome to prepare for the terrifying prospect of an invasion, a small recon force of light cruisers supported by the new Angry Moth space fighter is despatched to KP-6 to investigate. ", {0}},
+    {" Our long range tracking station at Uqbar III has picked up large amounts of activity in nearside Federation space. ", {0}}, // BMSG_M3_1
+    {" The Federation embassy at Dalat Prime claims to know nothing, and all attempts to establish direct diplomatic communication have failed. ", {0}}, // BMSG_M3_2
+    {" We can only assume that they are preparing to attack. ", {0}}, // BMSG_M3_3
+    {" So we must strike first. ", {0}}, // BMSG_M3_4
+    {" We have located what appears to be a convoy of military transports carrying supplies to one of the main fleet concentrations. ", {0}}, // BMSG_M3_5
+    {" A small group of Void Gazer warships, supported by Angry Moth squadron, will try to intercept the convoy between jumps. You will likely have only a few minutes, so make them count. ", {0}}, // BMSG_M3_6
+    {" The AUROCHS strike bomber will be available for this mission, and the SANDFLY interceptor's weapon systems have been upgraded. $P $P>> $BBriefing end$C ", {0}}, // BMSG_M3_7
 
-*/
-
- {" Listen up, Void Gazers. We are investigating a signal indicating the imminent arrival of several starships in the system SK-02. ", {0}}, // BMSG_M1_1
- {" The signal is confused, but suggests Imperial warships. No-one has any idea why the Empire would send a fleet our way, and it's your job to find out. ", {0}}, // BMSG_M1_2
- {" All we have been able to mobilise for this mission is four light cruisers and a small fighter escort. Don't worry, we don't expect you to do any fighting. Just get in, wait for the unidentified ships to show up, then get back out while they recharge their jump drives. ", {0}}, // BMSG_M1_3
- {" Gazer 1 captain has the discretion to engage if absolutely necessary, but the last thing we want is a war. ", {0}}, // BMSG_M1_4
- {" Angry Moth, you will support Gazer 1. ", {0}}, // BMSG_M1_5
- {" Safe flying, everyone! $P $P>> $BBriefing end$C ", {0}}, // BMSG_M1_6
-
-
- {" The communications relays linking the Commonwealth to Federation space, and the neighbouring Sunrise League, appear to have been cut. ", {0}}, // BMSG_M2_1
- {" We can only assume that the Federation is behind this as well. ", {0}}, // BMSG_M2_2
- {" We need to contact the Sunrise League; since they share borders with the Federation, they may have some idea what is going on. But without our relays, we will need to send starships as messengers. ", {0}}, // BMSG_M2_3
- {" We have plotted an indirect course to the League outpost at MK-5. ", {0}}, // BMSG_M2_4
- {" A small team of ships will make several jumps to carry messages to the League. This mission is too dangerous for civilian ships, so we are sending Void Gazers with support from Angry Moth. ", {0}}, // BMSG_M2_5
- {" The team is set up for speed and range, not combat. If you meet resistance, you have orders to retreat. $P $P>> $BBriefing end$C ", {0}}, // BMSG_M2_6
-
- {" Our long range tracking station at Uqbar III has picked up large amounts of activity in nearside Federation space. ", {0}}, // BMSG_M3_1
- {" The Federation embassy at Dalat Prime claims to know nothing, and all attempts to establish direct diplomatic communication have failed. ", {0}}, // BMSG_M3_2
- {" We can only assume that they are preparing to attack. ", {0}}, // BMSG_M3_3
- {" So we must strike first. ", {0}}, // BMSG_M3_4
- {" We have located what appears to be a convoy of military transports carrying supplies to one of the main fleet concentrations. ", {0}}, // BMSG_M3_5
- {" A small group of Void Gazer warships, supported by Angry Moth squadron, will try to intercept the convoy between jumps. You will likely have only a few minutes, so make them count. ", {0}}, // BMSG_M3_6
- {" The AUROCHS strike bomber will be available for this mission, and the SANDFLY interceptor's weapon systems have been upgraded. $P $P>> $BBriefing end$C ", {0}}, // BMSG_M3_7
-
-
-/*
- {" The communications relays linking the Outer Colonies to Commonwealth and Federation space appear to have been cut. ", {0}},
- {" It is vital that we re-establish communications with the Commonwealth leadership. But without our relays, we will need to send starships as messengers. ", {0}},
- {" We have plotted an indirect course to the CTBR outpost at ...... ", {0}},
- {" A small team of ships will make several jumps to carry vital messages to the Commonwealth. This mission is too dangerous for civilian ships, so we are sending several light cruisers with fighter escort. ", {0}},
- {" The team is set up for speed and range, not combat. If you meet resistance, you have orders to retreat. ", {0}},
-*/
-/*
- {" During our unsuccessful attempt to re-establish communications with the Commonwealth, small groups of FSF ships started entering our uninhabited border systems and destroying our automated comms relays. ", {0}},
- {" Although we have not received a formal declaration, or in fact any communications at all, it is clear that the Outer Colonies are now at war with the Federation. ", {0}},
- {" We can only assume that the FSF is preparing to attack, although we have no idea where. So the weighty decision has been made to take the initiative and strike first. ", {0}},
- {" Mu recon group has been tracking a convoy of FSF transports carrying supplies, apparently to support the assault on Commonwealth systems. We've calculated a likely jump trajectory for an intercept. ", {0}},
- {" If our calculations are right and Alpha group can jump in close enough, we should have a window of several minutes to fight past their defences and cause enough damage to set them back significantly. ", {0}},
- {" Take out those transports! $P $P>> $BBriefing end$C ", {0}},
-*/
-/*
- {"Our deep tracking array at SK-9 has picked up a small raiding party which seems to have slipped past our outer defences. $P $P Most likely it is on its way to strike at our internal freight networks. ", {0}},
- {"We are scrambling a small interdiction force to catch the raiders while they recharge in low orbit around RL-3. $P  $P $B Alpha group $C consists of four light cruisers with fighter escort. ", {0}},
- {" $BAngry Moth $Cleads a strike squadron to engage with any stragglers. ", {0}},
- {"The precise size and composition of the enemy force is unknown, but we expect only small warships and standard fighters. ", {0}},
- {" $BAlpha group $Ccaptain has command in this engagement. ", {0}},
- {"Get as many of them as you can before they jump out! $P $P>> $BBriefing end$C ", {0}},
-*/
-/*
- {""},
- {""},
- {""},
- {""},
- {""},
- {""},
- {""},
- {""},*/
-/*
- {"Analysis of enemy fleet movements suggests the presence of an enemy outpost in the RO system. $P $P Our interstellar sensors have trouble detecting it directly, but we believe we have located a base in orbit around RO-2. ", {0}},
- {"Destroying this base would severely hamper the enemy's offensive in this sector. ", {0}},
- {" ", {0}},
- {"We can expect the base to be very heavily armed and shielded. It is also likely to be defended by large numbers of smaller ships. ", {0}},
- {" $BAlpha group $Cwill jump in and approach the base in an attempt to draw some of the defenders away. ", {0}},
- {" $BAngry Moth $Cwill join $BAlpha group's $Cdecoy attack. ", {0}},
- {" $BBeta Group $Cwill jump in about five minutes after $BAlpha group$C. $BAngry Moth $Cis to assist in the attack on the base. Hopefully you will have a clear run! ", {0}},
- {"Look out for enemy reinforcements! $P $P>> $BBriefing end$C ", {0}},
-*/
-// remember trailing space!!
+    // remember trailing space!!
 };
 
 #define BSCRIPTS 300
 #define POINT_TO_NOTHING -2
 #define POINT_TO_XY -1
 
-struct briefingscript bscript [BSCRIPTS] =
-{
+struct briefingscript bscript[BSCRIPTS] = {
 
- {BSCRIPT_HEADER, {1}},
-// {BSCRIPT_BMESSAGE, {BMSG_M1_1, }}, // must always have a message - preferably straight after header
-// {BSCRIPT_HIT_FIRE},
-// {BSCRIPT_WAIT, {50}},
+    {BSCRIPT_HEADER, {1}},
 
-/*
+    {BSCRIPT_STARMAP},
+    {BSCRIPT_WAIT, {30}},
+    {BSCRIPT_BMESSAGE, {BMSG_INTRO1, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {" In the 4th Millenium, humanity has spread to the stars. ", {0}}, // BMSG_INTRO1
- {" Trillions of people sprawl across hundreds of worlds. ", {0}}, // BMSG_INTRO2
- {" At the heart of this expanding sphere sits the ancient Sol Empire. For hundreds of years, its fleets have kept the squabbling provinces at peace. ", {0}}, // BMSG_INTRO3
- {" Far away in a distant arm of the Empire, the Dalat Commonwealth is a small but prosperous nation. ", {0}}, // BMSG_INTRO4
- {" Overshadowed in size by its more powerful neighbour, the Outer Colonies Federation, the Commonwealth preserves its independence through diplomacy and a professional, technologically advanced military. Its warships are valued members of any Imperial peacekeeping force. ", {0}}, // BMSG_INTRO5
- {" The Commonwealth had just celebrated the founding of its thirtieth settlement when the Void Gazers reconnaisance group, on patrol through uninhabited border systems, picked up unexpected activity on a long-range scan. ", {0}}, // BMSG_INTRO6
- {" The Void Gazers send a small light cruiser detachment, supported by fighters from Angry Moth Squadron, to investigate. ", {0}}, // BMSG_INTRO7
-*/
+    {BSCRIPT_STARSELECT_SETTLED, {0}},
+    {BSCRIPT_BMESSAGE, {BMSG_INTRO2, 315, 385, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
+    {BSCRIPT_STARSELECT_SIDE, {SSIDE_IMP}},
+    {BSCRIPT_BMESSAGE, {BMSG_INTRO3, 415, 155, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_STARMAP},
- {BSCRIPT_WAIT, {30}},
- {BSCRIPT_BMESSAGE, {BMSG_INTRO1, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_STARSELECT_SETTLED, {0}},
- {BSCRIPT_BMESSAGE, {BMSG_INTRO2, 315, 385, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_STARSELECT_SIDE, {SSIDE_IMP}},
- {BSCRIPT_BMESSAGE, {BMSG_INTRO3, 415, 155, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_STARSELECT_SIDE, {SSIDE_CWLTH}},
- {BSCRIPT_BMESSAGE, {BMSG_INTRO4, 115, 155, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_STARSELECT_SIDE, {SSIDE_FED}},
- {BSCRIPT_BMESSAGE, {BMSG_INTRO5, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
-// {BSCRIPT_STARSELECT_SIDE, {-1}},
- {BSCRIPT_STARSELECT_SIDE, {SSIDE_CWLTH}},
- {BSCRIPT_BMESSAGE, {BMSG_INTRO6, 115, 155, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_STARMAP_ZOOM, {450, 190, 3000}},
-// {BSCRIPT_STARSELECT_SIDE, {-1}},
- {BSCRIPT_BMESSAGE, {BMSG_INTRO7, 115, 115, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
-/*
- {BSCRIPT_BMESSAGE, {BMSG_M1_1, 150, 150, BOX_W + 10, 330, 260, -1}},
- {BSCRIPT_SELECT_SM, {300, 300, 40}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_STARMAP_ZOOM, {370, 375, 3000}},
-// {BSCRIPT_SELECT_SM, {300, 300, 40}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},*/
- {BSCRIPT_TACTICAL},
+    {BSCRIPT_STARSELECT_SIDE, {SSIDE_CWLTH}},
+    {BSCRIPT_BMESSAGE, {BMSG_INTRO4, 115, 155, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
+    {BSCRIPT_STARSELECT_SIDE, {SSIDE_FED}},
+    {BSCRIPT_BMESSAGE, {BMSG_INTRO5, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_BMESSAGE, {BMSG_M1_1, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_BMESSAGE, {BMSG_M1_2, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_STARSELECT_SIDE, {SSIDE_CWLTH}},
+    {BSCRIPT_BMESSAGE, {BMSG_INTRO6, 115, 155, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_NEW_CONVOY, {BCONVOY_0, 50, 250, RIGHT}},
- {BSCRIPT_BMESSAGE, {BMSG_M1_3, 150, 450, BOX_W + 10, 0, 29, BCONVOY_0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, -7}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, 7}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -20, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, -6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, 6}},
- {BSCRIPT_MDATA, {BSHIP_OLD2, TEAM_FRIEND, 4}},
- {BSCRIPT_MDATA, {BSHIP_FIGHTER_FRIEND, TEAM_FRIEND, 2}},
- {BSCRIPT_SELECT, {BCONVOY_0, 0, 0}},
+    {BSCRIPT_STARMAP_ZOOM, {450, 190, 3000}},
+    {BSCRIPT_BMESSAGE, {BMSG_INTRO7, 115, 115, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_NEW_CONVOY, {BCONVOY_2, 350, 250, LEFT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_UNKNOWN, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_UNKNOWN, -35, 20}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_UNKNOWN, -35, -20}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_UNKNOWN, -70, 40}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_UNKNOWN, -70, -40}},
+    {BSCRIPT_TACTICAL},
+    {BSCRIPT_BMESSAGE, {BMSG_M1_1, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_NEW_CONVOY, {BCONVOY_1, 70, 210, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_MOTH, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -5, -5}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -5, 5}},
- {BSCRIPT_MDATA, {BSHIP_MOTH, TEAM_FRIEND, 1}},
- {BSCRIPT_MDATA, {BSHIP_FIGHTER_FRIEND, TEAM_FRIEND, 2}},
- {BSCRIPT_SELECT, {BCONVOY_1, 0, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_BMESSAGE, {BMSG_M1_2, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_SELECT, {BCONVOY_2, -80, 0}},
- {BSCRIPT_BMESSAGE, {BMSG_M1_4, 150, 150, BOX_W + 10, 0, -29, BCONVOY_2}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_NEW_CONVOY, {BCONVOY_0, 50, 250, RIGHT}},
+    {BSCRIPT_BMESSAGE, {BMSG_M1_3, 150, 450, BOX_W + 10, 0, 29, BCONVOY_0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, 0, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, -7}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, 7}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -20, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, -6}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, 6}},
+    {BSCRIPT_MDATA, {BSHIP_OLD2, TEAM_FRIEND, 4}},
+    {BSCRIPT_MDATA, {BSHIP_FIGHTER_FRIEND, TEAM_FRIEND, 2}},
+    {BSCRIPT_SELECT, {BCONVOY_0, 0, 0}},
 
- {BSCRIPT_SELECT, {BCONVOY_1, 0, 0}},
- {BSCRIPT_BMESSAGE, {BMSG_M1_5, 250, 350, BOX_W + 10, 20, 11, BCONVOY_1}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_NEW_CONVOY, {BCONVOY_2, 350, 250, LEFT}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_UNKNOWN, 0, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_UNKNOWN, -35, 20}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_UNKNOWN, -35, -20}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_UNKNOWN, -70, 40}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_UNKNOWN, -70, -40}},
 
- {BSCRIPT_BMESSAGE, {BMSG_M1_6, 315, 355, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_NEW_CONVOY, {BCONVOY_1, 70, 210, RIGHT}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_MOTH, 0, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -5, -5}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -5, 5}},
+    {BSCRIPT_MDATA, {BSHIP_MOTH, TEAM_FRIEND, 1}},
+    {BSCRIPT_MDATA, {BSHIP_FIGHTER_FRIEND, TEAM_FRIEND, 2}},
+    {BSCRIPT_SELECT, {BCONVOY_1, 0, 0}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
-// {BSCRIPT_BMESSAGE, {BMSG_M1_6, 150, 150, BOX_W + 10, 0, 0, -2}},
- {BSCRIPT_WAIT, {50}},
- {BSCRIPT_END},
+    {BSCRIPT_SELECT, {BCONVOY_2, -80, 0}},
+    {BSCRIPT_BMESSAGE, {BMSG_M1_4, 150, 150, BOX_W + 10, 0, -29, BCONVOY_2}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
+
+    {BSCRIPT_SELECT, {BCONVOY_1, 0, 0}},
+    {BSCRIPT_BMESSAGE, {BMSG_M1_5, 250, 350, BOX_W + 10, 20, 11, BCONVOY_1}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
+
+    {BSCRIPT_BMESSAGE, {BMSG_M1_6, 315, 355, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
+
+    {BSCRIPT_WAIT, {50}},
+    {BSCRIPT_END},
 
 /* ********************************************************************************
 
@@ -594,55 +511,53 @@ Stage 2!
 
 ************************************************************************************ */
 
+    {BSCRIPT_HEADER, {2}},
 
- {BSCRIPT_HEADER, {2}},
+    {BSCRIPT_STARMAP},
+    {BSCRIPT_WAIT, {30}},
+    {BSCRIPT_BMESSAGE, {BMSG_M2_1, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_STARMAP},
- {BSCRIPT_WAIT, {30}},
- {BSCRIPT_BMESSAGE, {BMSG_M2_1, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_BMESSAGE, {BMSG_M2_2, 315, 385, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_BMESSAGE, {BMSG_M2_3, 415, 155, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_BMESSAGE, {BMSG_M2_4, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_BMESSAGE, {BMSG_M2_2, 315, 385, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_TACTICAL},
+    {BSCRIPT_BMESSAGE, {BMSG_M2_3, 415, 155, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_BMESSAGE, {BMSG_M2_4, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_NEW_CONVOY, {BCONVOY_0, 315, 285, RIGHT}},
- {BSCRIPT_BMESSAGE, {BMSG_M2_5, 150, 150, BOX_W + 10, -32, 0, BCONVOY_0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, -7}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, 7}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -24, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -17, -12}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -17, 12}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, -6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, 6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -26, -6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -26, 6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, 15, -26}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, 15, -14}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_MOTH, 19, -20}},
+    {BSCRIPT_TACTICAL},
 
- {BSCRIPT_SELECT, {BCONVOY_0, 0, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_NEW_CONVOY, {BCONVOY_0, 315, 285, RIGHT}},
+    {BSCRIPT_BMESSAGE, {BMSG_M2_5, 150, 150, BOX_W + 10, -32, 0, BCONVOY_0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, 0, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, -7}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, 7}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -24, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -17, -12}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -17, 12}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, -6}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, 6}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -26, -6}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -26, 6}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, 15, -26}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, 15, -14}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_MOTH, 19, -20}},
 
-// {BSCRIPT_SELECT, {BCONVOY_2, -80, 0}},
- {BSCRIPT_BMESSAGE, {BMSG_M2_6, 350, 150, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_SELECT, {BCONVOY_0, 0, 0}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_WAIT, {50}},
- {BSCRIPT_END},
+    {BSCRIPT_BMESSAGE, {BMSG_M2_6, 350, 150, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
-
+    {BSCRIPT_WAIT, {50}},
+    {BSCRIPT_END},
 
 /* ********************************************************************************
 
@@ -650,428 +565,110 @@ Stage 3!
 
 ************************************************************************************ */
 
+    {BSCRIPT_HEADER, {3}},
 
+    {BSCRIPT_STARMAP},
+    {BSCRIPT_WAIT, {30}},
+    {BSCRIPT_BMESSAGE, {BMSG_M3_1, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
+    {BSCRIPT_BMESSAGE, {BMSG_M3_2, 315, 385, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_HEADER, {3}},
+    {BSCRIPT_BMESSAGE, {BMSG_M3_3, 415, 155, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_STARMAP},
- {BSCRIPT_WAIT, {30}},
- {BSCRIPT_BMESSAGE, {BMSG_M3_1, 315, 285, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_BMESSAGE, {BMSG_M3_2, 315, 385, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_BMESSAGE, {BMSG_M3_3, 415, 155, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_BMESSAGE, {BMSG_M3_4, 315, 155, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_BMESSAGE, {BMSG_M3_4, 315, 155, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_TACTICAL},
+    {BSCRIPT_TACTICAL},
 
- {BSCRIPT_NEW_CONVOY, {BCONVOY_0, 335, 285, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, 20, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, -20, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, 11, 11}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, -11, 11}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, 11, -11}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, -11, -11}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_SCOUT2, -37, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_SCOUT2, -32, -9}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_SCOUT2, -32, 9}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_SCOUT2, -22, -16}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_SCOUT2, -22, 16}},
+    {BSCRIPT_NEW_CONVOY, {BCONVOY_0, 335, 285, RIGHT}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, 0, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, 20, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, -20, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, 11, 11}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, -11, 11}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, 11, -11}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FREIGHT, -11, -11}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_SCOUT2, -37, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_SCOUT2, -32, -9}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_SCOUT2, -32, 9}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_SCOUT2, -22, -16}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_SCOUT2, -22, 16}},
 
- {BSCRIPT_SELECT, {BCONVOY_0, 0, 0}},
- {BSCRIPT_BMESSAGE, {BMSG_M3_5, 350, 120, BOX_W + 10, 0, -25, BCONVOY_0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_SELECT, {BCONVOY_0, 0, 0}},
+    {BSCRIPT_BMESSAGE, {BMSG_M3_5, 350, 120, BOX_W + 10, 0, -25, BCONVOY_0}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_NEW_CONVOY, {BCONVOY_1, 200, 285, RIGHT}},
- {BSCRIPT_BMESSAGE, {BMSG_M3_6, 130, 150, BOX_W + 10, -12, -20, BCONVOY_1}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -10, -7}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -10, 7}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -24, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -17, -12}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -17, 12}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -2, -6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -2, 6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -26, -6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -26, 6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, 15, -26}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, 15, -14}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_MOTH, 19, -20}},
+    {BSCRIPT_NEW_CONVOY, {BCONVOY_1, 200, 285, RIGHT}},
+    {BSCRIPT_BMESSAGE, {BMSG_M3_6, 130, 150, BOX_W + 10, -12, -20, BCONVOY_1}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, 0, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -10, -7}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -10, 7}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -24, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -17, -12}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -17, 12}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -2, -6}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -2, 6}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -26, -6}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -26, 6}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, 15, -26}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, 15, -14}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_MOTH, 19, -20}},
 
- {BSCRIPT_SELECT, {BCONVOY_1, 0, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_SELECT, {BCONVOY_1, 0, 0}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_MOVE, {BCONVOY_1, 0, 300, 285, 3000, RIGHT, 1}},
- {BSCRIPT_MOVE, {BCONVOY_0, 0, 400, 285, 1200, RIGHT, 0}},
+    {BSCRIPT_MOVE, {BCONVOY_1, 0, 300, 285, 3000, RIGHT, 1}},
+    {BSCRIPT_MOVE, {BCONVOY_0, 0, 400, 285, 1200, RIGHT, 0}},
 
-// {BSCRIPT_BMESSAGE, {BMSG_M3_6, 350, 150, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_BMESSAGE, {BMSG_M3_7, 350, 150, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
- {BSCRIPT_WAIT, {50}},
- {BSCRIPT_END},
+    {BSCRIPT_BMESSAGE, {BMSG_M3_7, 350, 150, BOX_W + 10, 0, 0, POINT_TO_NOTHING}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
 
-/*
- {BSCRIPT_NEW_CONVOY, {BCONVOY_2, 350, 250, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_SCOUT2, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_FIGHTER, -5, -5}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_FIGHTER, -5, 5}},
+    {BSCRIPT_WAIT, {50}},
+    {BSCRIPT_END},
 
- {BSCRIPT_NEW_CONVOY, {BCONVOY_3, 350, 200, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_SCOUT2, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_FIGHTER, -5, -5}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_FIGHTER, -5, 5}},
+// 4th stage I guess?
 
- {BSCRIPT_NEW_CONVOY, {BCONVOY_4, 350, 300, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT2, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_FIGHTER, -5, -5}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_FIGHTER, -5, 5}},
+    {BSCRIPT_HEADER, {2}},
 
- {BSCRIPT_NEW_CONVOY, {BCONVOY_5, 300, 225, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_5, BSHIP_SCOUT2, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_5, BSHIP_FIGHTER, -5, -5}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_5, BSHIP_FIGHTER, -5, 5}},
+    {BSCRIPT_NEW_CONVOY, {BCONVOY_3, 305, 280, RIGHT}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_EBASE, 0, 0}},
+    {BSCRIPT_BMESSAGE, {BMSG_M3_1, 500, 420, BOX_W + 10, 20, 11, BCONVOY_3}},
+    {BSCRIPT_SELECT, {BCONVOY_3, 0, 0}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_CLEAR_MESSAGE},
 
- {BSCRIPT_NEW_CONVOY, {BCONVOY_6, 300, 275, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_6, BSHIP_SCOUT2, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_6, BSHIP_FIGHTER, -5, -5}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_6, BSHIP_FIGHTER, -5, 5}},
+    {BSCRIPT_BMESSAGE, {BMSG_M3_2, 120, 420, BOX_W + 10, 20, 11, -2}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_WAIT, {20}},
+    {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_CLEAR_MESSAGE},
 
- {BSCRIPT_BMESSAGE, {BMSG_M1_1, 150, 150, BOX_W + 10, 330, 260, -1}},
-
- {BSCRIPT_SELECT, {BCONVOY_2, 0, 0}},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_SELECT, {BCONVOY_3, 0, 0}},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_SELECT, {BCONVOY_4, 0, 0}},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_SELECT, {BCONVOY_5, 0, 0}},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_SELECT, {BCONVOY_6, 0, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
-
- {BSCRIPT_NEW_CONVOY, {BCONVOY_0, 50, 250, RIGHT}},
- {BSCRIPT_BMESSAGE, {BMSG_M1_2, 150, 450, BOX_W + 10, 0, 29, BCONVOY_0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, -7}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, 7}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -20, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, -6}},
-// {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -20, -14}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, 6}},
- {BSCRIPT_SELECT, {BCONVOY_0, 0, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
-
- {BSCRIPT_NEW_CONVOY, {BCONVOY_1, 70, 210, RIGHT}},
- {BSCRIPT_BMESSAGE, {BMSG_M1_3, 150, 450, BOX_W + 10, 5, 22, BCONVOY_1}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_MOTH, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -5, -5}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -5, 5}},
- {BSCRIPT_SELECT, {BCONVOY_1, 0, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
-
- {BSCRIPT_BMESSAGE, {BMSG_M1_4, 150, 150, BOX_W + 10, 330, 250, -1}},
- {BSCRIPT_HIT_FIRE},
-
- {BSCRIPT_BMESSAGE, {BMSG_M1_5, 150, 150, BOX_W + 10, 0, 0, -2}},
- {BSCRIPT_MOVE, {BCONVOY_0, 0, 260, 250, 3000, RIGHT, 1}},
- {BSCRIPT_MOVE, {BCONVOY_1, 0, 280, 210, 3000, RIGHT, 0}},
- {BSCRIPT_MOVE, {BCONVOY_2, 0, 550, 250, 1500, RIGHT, 0}},
- {BSCRIPT_MOVE, {BCONVOY_3, 0, 550, 200, 1500, RIGHT, 0}},
- {BSCRIPT_MOVE, {BCONVOY_4, 0, 550, 300, 1500, RIGHT, 0}},
- {BSCRIPT_MOVE, {BCONVOY_5, 0, 550, 225, 1500, RIGHT, 0}},
- {BSCRIPT_MOVE, {BCONVOY_6, 0, 550, 275, 1500, RIGHT, 0}},
-
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
-
-// {BSCRIPT_BMESSAGE, {BMSG_M1_6, 150, 150, BOX_W + 10, 0, 0, -2}},
- {BSCRIPT_WAIT, {100}},
- {BSCRIPT_END},*/
-/*
-
- {BSCRIPT_HEADER, {2}},
-
- {BSCRIPT_NEW_CONVOY, {BCONVOY_3, 305, 280, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_EBASE, 0, 0}},
- {BSCRIPT_BMESSAGE, {BMSG_M2_1, 500, 420, BOX_W + 10, 20, 11, BCONVOY_3}},
- {BSCRIPT_SELECT, {BCONVOY_3, 0, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
-
- {BSCRIPT_BMESSAGE, {BMSG_M2_2, 120, 420, BOX_W + 10, 20, 11, -2}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_HIT_FIRE},
-
- {BSCRIPT_BMESSAGE, {BMSG_M2_3, 500, 420, BOX_W + 10, 20, 11, BCONVOY_3}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_HIT_FIRE},
-
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_SCOUT2, 40, -40}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_SCOUT2, -40, -40}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_SCOUT2, -70, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_SCOUT2, 70, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_SCOUT2, -40, 40}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_SCOUT2, 40, 40}},
- {BSCRIPT_SELECT, {BCONVOY_3, 0, 0}},
- {BSCRIPT_BMESSAGE, {BMSG_M2_4, 120, 420, BOX_W + 10, -80, 11, BCONVOY_3}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
-
- {BSCRIPT_BMESSAGE, {BMSG_M2_5, 500, 420, BOX_W + 10, 20, 11, -2}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_HIT_FIRE},
-
-
- {BSCRIPT_BMESSAGE, {BMSG_M2_6, 120, 220, BOX_W + 10, 20, 11, -2}},
-
- {BSCRIPT_NEW_CONVOY, {BCONVOY_0, 130, 450, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD3, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, 10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, 10, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, 10, 10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -17, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, -6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, 6}},
-
- {BSCRIPT_NEW_CONVOY, {BCONVOY_1, 210, 50, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD3, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -10, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -10, 10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, 10, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, 10, 10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -17, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -2, -6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -2, 6}},
-
- {BSCRIPT_NEW_CONVOY, {BCONVOY_2, 540, 330, LEFT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_OLD3, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_OLD2, -10, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_OLD2, -10, 10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_OLD2, 10, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_OLD2, 10, 10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_OLD2, -17, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_FIGHTER_FRIEND, -2, -6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_FIGHTER_FRIEND, -2, 6}},
-
- {BSCRIPT_SELECT, {BCONVOY_0, 0, 0}},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_SELECT, {BCONVOY_1, 0, 0}},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_SELECT, {BCONVOY_2, 0, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
-
- {BSCRIPT_BMESSAGE, {BMSG_M2_7, 330, 480, BOX_W + 10, 40, -1, BCONVOY_0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_MOTH, 25, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, 20, -15}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, 20, -5}},
- {BSCRIPT_SELECT, {BCONVOY_0, 0, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
-
- {BSCRIPT_BMESSAGE, {BMSG_M2_8, 500, 170, BOX_W + 10, 0, 29, -2}},
- {BSCRIPT_MOVE, {BCONVOY_0, 0, 250, 380, 3000, RIGHT, 1}},
- {BSCRIPT_MOVE, {BCONVOY_1, 0, 310, 190, 3000, RIGHT, 1}},
- {BSCRIPT_MOVE, {BCONVOY_2, 0, 410, 300, 3000, LEFT, 1}},
-
- {BSCRIPT_SETTLE},
- {BSCRIPT_END},
-
-*/
-
-
-
- {BSCRIPT_HEADER, {2}},
-
- {BSCRIPT_NEW_CONVOY, {BCONVOY_3, 305, 280, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_EBASE, 0, 0}},
- {BSCRIPT_BMESSAGE, {BMSG_M3_1, 500, 420, BOX_W + 10, 20, 11, BCONVOY_3}},
- {BSCRIPT_SELECT, {BCONVOY_3, 0, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_CLEAR_MESSAGE},
-
- {BSCRIPT_BMESSAGE, {BMSG_M3_2, 120, 420, BOX_W + 10, 20, 11, -2}},
-// {BSCRIPT_BMESSAGE, {BMSG_M3_2, 500, 420, BOX_W + 10, 20, 11, -2}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_CLEAR_MESSAGE},
-
-/* {BSCRIPT_BMESSAGE, {BMSG_M3_3, 500, 420, BOX_W + 10, 20, 11, -2}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_CLEAR_MESSAGE},*/
-
- {BSCRIPT_NEW_CONVOY, {BCONVOY_4, 305, 280, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT2, 20, -20}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT2, -20, -20}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT3, -30, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT3, 30, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT2, -20, 20}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT2, 20, 20}},
- {BSCRIPT_SELECT, {BCONVOY_4, 0, 0}},
-// {BSCRIPT_BMESSAGE, {BMSG_M3_4, 120, 420, BOX_W + 10, -40, 11, BCONVOY_4}},
- {BSCRIPT_BMESSAGE, {BMSG_M3_4, 500, 420, BOX_W + 10, 50, 11, BCONVOY_4}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_CLEAR_MESSAGE},
-/*
- {BSCRIPT_BMESSAGE, {BMSG_M2_5, 500, 420, BOX_W + 10, 20, 11, -2}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_CLEAR_MESSAGE},
-*/
-// {BSCRIPT_BMESSAGE, {BMSG_M3_5, 120, 220, BOX_W + 10, 20, 11, -2}},
-/*
- {BSCRIPT_NEW_CONVOY, {BCONVOY_0, 300, 100, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, 10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, 10, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, 10, 10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -17, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, -6}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -2, 6}},
- {BSCRIPT_SELECT, {BCONVOY_0, 0, 0}},
- {BSCRIPT_BMESSAGE, {BMSG_M3_5, 120, 120, BOX_W + 10, -15, 9, BCONVOY_0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_NEW_CONVOY, {BCONVOY_2, 330, 100, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_MOTH, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_FIGHTER_FRIEND, -6, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_FIGHTER_FRIEND, 6, 0}},
- {BSCRIPT_SELECT, {BCONVOY_2, 0, 0}},
- {BSCRIPT_BMESSAGE, {BMSG_M3_6, 480, 150, BOX_W + 10, 21, 9, BCONVOY_2}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_CLEAR_MESSAGE},
-
-
- {BSCRIPT_MOVE, {BCONVOY_0, 0, 305, 200, 3000, RIGHT, 1}},
- {BSCRIPT_MOVE, {BCONVOY_2, 0, 335, 200, 3000, RIGHT, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_MOVE, {BCONVOY_0, 0, 35, 220, 3500, LEFT, 1}},
- {BSCRIPT_MOVE, {BCONVOY_2, 0, 65, 220, 3500, LEFT, 0}},
- {BSCRIPT_MOVE, {BCONVOY_4, 0, 105, 270, 2600, LEFT, 0}},
- {BSCRIPT_SETTLE},
-
- {BSCRIPT_NEW_CONVOY, {BCONVOY_1, 330, 480, LEFT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD3, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD3, 10, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD3, -10, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, 0, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, -13, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, 13, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, 0, 10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_OLD2, 0, -17}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, 18, -15}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_FIGHTER_FRIEND, -18, -15}},
- {BSCRIPT_SELECT, {BCONVOY_1, 0, 0}},
- {BSCRIPT_BMESSAGE, {BMSG_M3_7, 140, 380, BOX_W + 10, -20, 7, BCONVOY_1}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_CLEAR_MESSAGE},
- {BSCRIPT_MOVE, {BCONVOY_1, 0, 305, 320, 2500, LEFT, 1}},
- {BSCRIPT_MOVE, {BCONVOY_2, 0, 305, 250, 3000, RIGHT, 1}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_HIT_FIRE},
-
- {BSCRIPT_NEW_CONVOY, {BCONVOY_5, 455, 310, LEFT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_5, BSHIP_SCOUTCAR, -10, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_5, BSHIP_SCOUTCAR, 10, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_5, BSHIP_SCOUT2, -5, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_5, BSHIP_SCOUT2, -5, 10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_5, BSHIP_FIGHTER, -10, -15}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_5, BSHIP_FIGHTER, -15, -20}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_5, BSHIP_FIGHTER, -10, 15}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_5, BSHIP_FIGHTER, -15, 20}},
- {BSCRIPT_SELECT, {BCONVOY_5, 0, 0}},
- {BSCRIPT_BMESSAGE, {BMSG_M3_8, 490, 120, BOX_W + 10, 10, -35, BCONVOY_5}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_WAIT, {20}},
- {BSCRIPT_HIT_FIRE},
-
- {BSCRIPT_END},
-*/
-/*
-
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_SELECT, {BCONVOY_0, -15, 0}},
- {BSCRIPT_SELECT, {BCONVOY_1, -10, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_MOVE, {BCONVOY_0, 0, 200, 250, 3000, RIGHT}},
- {BSCRIPT_MOVE, {BCONVOY_1, 0, 200, 150, 2000, LEFT}},
- {BSCRIPT_SETTLE},
-// {BSCRIPT_HIT_FIRE},
- {BSCRIPT_MOVE, {BCONVOY_0, 0, 100, 250, 3000, LEFT}},
- {BSCRIPT_MOVE, {BCONVOY_1, 20, 300, 210, 3500, LEFT}},
- {BSCRIPT_SETTLE},
-// {BSCRIPT_HIT_FIRE},
- {BSCRIPT_END},
-*/
-/*
- {BSCRIPT_HEADER, {0}},
- {BSCRIPT_BMESSAGE, {BMSG_HELLO}}, // must always have a message - preferably straight after header
- {BSCRIPT_NEW_CONVOY, {BCONVOY_0, 100, 200, RIGHT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD3, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, -5}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_OLD2, -10, 5}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_MOTH, -15, 10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -20, 15}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -15, -10}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_0, BSHIP_FIGHTER_FRIEND, -20, -15}},
- {BSCRIPT_NEW_CONVOY, {BCONVOY_1, 300, 200, LEFT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_SCOUT3_HEAVY, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_SCOUT2_HEAVY, 13, -4}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_1, BSHIP_SCOUT2_HEAVY, 13, 4}},
- {BSCRIPT_NEW_CONVOY, {BCONVOY_2, 300, 300, LEFT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_SCOUTBASE, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_SCOUTCAR, 18, -8}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_2, BSHIP_SCOUT2_HEAVY, 18, 8}},
- {BSCRIPT_NEW_CONVOY, {BCONVOY_3, 100, 50, LEFT}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_SCOUTBASE, 0, 0}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_SCOUTCAR, 18, -8}},
- {BSCRIPT_NEW_SHIP, {BCONVOY_3, BSHIP_SCOUT2_HEAVY, 18, 8}},
- {BSCRIPT_HIT_FIRE},
- {BSCRIPT_SELECT, {BCONVOY_0, -15, 0}},
- {BSCRIPT_SELECT, {BCONVOY_1, -10, 0}},
- {BSCRIPT_SETTLE},
- {BSCRIPT_MOVE, {BCONVOY_0, 0, 200, 250, 3000, RIGHT}},
- {BSCRIPT_MOVE, {BCONVOY_1, 0, 200, 150, 2000, LEFT}},
- {BSCRIPT_SETTLE},
-// {BSCRIPT_HIT_FIRE},
- {BSCRIPT_MOVE, {BCONVOY_0, 0, 100, 250, 3000, LEFT}},
- {BSCRIPT_MOVE, {BCONVOY_1, 20, 300, 210, 3500, LEFT}},
- {BSCRIPT_SETTLE},
-// {BSCRIPT_HIT_FIRE},*/
-// {BSCRIPT_END}
-
+    {BSCRIPT_NEW_CONVOY, {BCONVOY_4, 305, 280, RIGHT}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT2, 20, -20}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT2, -20, -20}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT3, -30, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT3, 30, 0}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT2, -20, 20}},
+    {BSCRIPT_NEW_SHIP, {BCONVOY_4, BSHIP_SCOUT2, 20, 20}},
+    {BSCRIPT_SELECT, {BCONVOY_4, 0, 0}},
+    {BSCRIPT_BMESSAGE, {BMSG_M3_4, 500, 420, BOX_W + 10, 50, 11, BCONVOY_4}},
+    {BSCRIPT_SETTLE},
+    {BSCRIPT_HIT_FIRE},
+    {BSCRIPT_CLEAR_MESSAGE},
 };
 
 int waiting;
