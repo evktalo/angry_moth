@@ -1398,38 +1398,35 @@ void add_mdata(int btype, int side, int number)
 
 void create_tbox(int msg, int x, int y, int w, int x2, int y2, int cv)
 {
+    tbox_exists = 1;
+    tbox_out = 0;
+    tbox_w = w + 12;
 
- tbox_exists = 1;
- tbox_out = 0;
- tbox_w = w + 12;
+    int lines = generate_message(bmsg[msg], w, 15, BCOL_TEXT, bline);
+    tbox_h = (lines * 15) + 12;
 
- int lines = generate_message(bmsg[msg], w, 15, BCOL_TEXT, bline);
- tbox_h = (lines * 15) + 12;
+    tbox_w >>= 1;
+    tbox_h >>= 1;
 
- tbox_w >>= 1;
- tbox_h >>= 1;
+    tbox_in = tbox_h;
+    if (tbox_w > tbox_h) {
+        tbox_in = tbox_w;
+    }
 
- tbox_in = tbox_h;
- if (tbox_w > tbox_h)
-  tbox_in = tbox_w;
+    tbox_x = x;
+    tbox_y = y;
+    tbox_x2 = x2;
+    tbox_y2 = y2;
 
- tbox_x = x;
- tbox_y = y;
- tbox_x2 = x2;
- tbox_y2 = y2;
+    if (cv == -2) {
+        tbox_x2 = x;
+        tbox_y2 = y;
+    }
 
- if (cv == -2)
- {
-  tbox_x2 = x;
-  tbox_y2 = y;
- }
-
- if (cv >= 0)
- {
-  tbox_x2 += (bconvoy[cv].x>>10) + MAP_X;
-  tbox_y2 += (bconvoy[cv].y>>10) + MAP_Y;
- }
-
+    if (cv >= 0) {
+        tbox_x2 += (bconvoy[cv].x>>10) + MAP_X;
+        tbox_y2 += (bconvoy[cv].y>>10) + MAP_Y;
+    }
 }
 
 
