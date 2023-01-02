@@ -1529,41 +1529,35 @@ void draw_tbox(void)
 void run_tbox(void)
 {
 
- if (tbox_in > 0)
- {
-  tbox_in -= 10;
-  if (tbox_in <= 0)
-  {
-   tbox_flash_in = 20;
-//   waiting_for_fire = 2;
-  }
-  return;
- }
+    if (tbox_in > 0) {
+        tbox_in -= 10;
+        if (tbox_in <= 0) {
+            tbox_flash_in = 20;
+        }
+        return;
+    }
 
- if (tbox_flash_in > 0)
-  tbox_flash_in -= 2;
+    if (tbox_flash_in > 0) {
+        tbox_flash_in -= 2;
+    }
 
- if (tbox_flash_out > 0)
- {
-  tbox_flash_out --;
-  if (tbox_flash_out <= 0)
-  {
-   tbox_out = tbox_w;
-   if (tbox_h > tbox_out)
-    tbox_out = tbox_h;
-  }
- }
+    if (tbox_flash_out > 0) {
+        tbox_flash_out--;
+        if (tbox_flash_out <= 0) {
+            tbox_out = tbox_w;
+        }
+        if (tbox_h > tbox_out) {
+            tbox_out = tbox_h;
+        }
+    }
 
- if (tbox_out > 0)
- {
-  tbox_out -= 3;
-  if (tbox_out <= 0)
-   tbox_exists = 0;
-  return;
- }
-
-
-
+    if (tbox_out > 0) {
+        tbox_out -= 3;
+        if (tbox_out <= 0) {
+            tbox_exists = 0;
+        }
+        return;
+    }
 }
 
 
