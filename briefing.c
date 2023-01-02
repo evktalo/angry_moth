@@ -729,80 +729,63 @@ int fighter_ship[NO_FF][2] = {
 
 void init_mission_briefing(void)
 {
-// note: this function is called every time the briefing is restarted as well as the first time it starts.
+    // note: this function is called every time the briefing is restarted as well as the first time it starts.
+    prepare_sstars_for_briefing();
 
- prepare_sstars_for_briefing();
+    int c, s, i;
 
-/*
- do
- {
-  ssdisplay();
- } while (key [KEY_S] == 0);*/
+    for (c = 0; c < BCONVOYS; c ++) {
+        bconvoy[c].exists = 0;
+    }
+    for (s = 0; s < BSHIPS; s ++) {
+        bship[s].type = BSHIP_NONE;
+    }
+    for (s = 0; s < BSELECT; s ++) {
+        bselect[s].exists = 0;
+    }
 
+    briefing_pos = 0;
 
- int c, s, i;
+    for (i = 0; i < BSCRIPTS; i ++) {
+        if (bscript [i].type == BSCRIPT_HEADER
+            && bscript [i].var [0] == arena.stage
+        ) {
+            briefing_pos = i;
+            break;
+        }
+    }
 
- for (c = 0; c < BCONVOYS; c ++)
- {
-  bconvoy[c].exists = 0;
- }
- for (s = 0; s < BSHIPS; s ++)
- {
-  bship[s].type = BSHIP_NONE;
- }
- for (s = 0; s < BSELECT; s ++)
- {
-  bselect[s].exists = 0;
- }
+    bline[0].text [0] = END_MESSAGE;
+    tbox_exists = 0;
 
- briefing_pos = 0;
+    init_mdata();
 
- for (i = 0; i < BSCRIPTS; i ++)
- {
-  if (bscript [i].type == BSCRIPT_HEADER
-   && bscript [i].var [0] == arena.stage)
-  {
-   briefing_pos = i;
-   break;
-  }
- }
+    waiting = 0;
+    waiting_for_fire = 0;
 
- bline[0].text [0] = END_MESSAGE;
- tbox_exists = 0;
+    int p;
 
- init_mdata();
+    player[0].escort_type[0] = SHIP_FIGHTER_FRIEND; // escort_type only valid for player 0
+    player[0].escort_type[1] = SHIP_FIGHTER_FRIEND;
 
- waiting = 0;
- waiting_for_fire = 0;
+    for (p = 0; p < 2; p++) {
+        PP.wings = 1;
+        PP.wing_type[0] = 0;
+        PP.wing_type[1] = -1;
+        set_player_ship_type(p, SHIP_FIGHTER_FRIEND, CVAR_NONE);
+    }
 
- int p;
+    int count = 0;
 
- player[0].escort_type [0] = SHIP_FIGHTER_FRIEND; // escort_type only valid for player 0
- player[0].escort_type [1] = SHIP_FIGHTER_FRIEND;
+    for (i = 0; i < NO_FF; i ++) {
+        if (game.fighter_available[i] == 1) {
+            ship_list[count] = fighter_ship[i][1];
+            count ++;
+        }
+    }
 
- for (p = 0; p < 2; p++)
- {
-  PP.wings = 1;
-  PP.wing_type [0] = 0;
-  PP.wing_type [1] = -1;
-  set_player_ship_type(p, SHIP_FIGHTER_FRIEND, CVAR_NONE);
- }
-
- int count = 0;
-
- for (i = 0; i < NO_FF; i ++)
- {
-  if (game.fighter_available [i] == 1)
-  {
-      ship_list [count] = fighter_ship [i] [1];
-      count ++;
-  }
- }
- ship_list [count] = SHIP_NONE;
-
- br_ship_choices = count;
-
-
+    ship_list[count] = SHIP_NONE;
+    br_ship_choices = count;
 }
 
 // this is used both to set ship types and to set variant types when ship type is already set.
