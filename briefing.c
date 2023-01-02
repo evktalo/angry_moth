@@ -2164,160 +2164,149 @@ void print_ship_name(int x, int y, int col, int type);
 void display_ship_choices(int p, int x, int y);
 void print_variant_name(int x, int y, int col, int type, int variant);
 
-
-enum
-{
-BOX_NONE,
-BOX_SHIP,
-BOX_VARIANT,
-BOX_WING
+enum {
+    BOX_NONE,
+    BOX_SHIP,
+    BOX_VARIANT,
+    BOX_WING
 };
-
 
 void choose_display(int finished1, int finished2)
 {
+    clear_to_color(display[0], BCOL_DARK);
 
- clear_to_color(display[0], BCOL_DARK);
+    int p;
 
- int p;
+    int x, y, i;
+    int sprite;
 
- int x, y, i;
-// int w;
-// int w2;
- int sprite;
+    int box_display;
+    int box_y;
 
- int box_display;
- int box_y;
+    clear_to_color(display[0], COL_BOX0);
 
+    for (p = 0; p < arena.players; p ++) {
+        box_display = BOX_NONE;
+        y = 130;
 
- clear_to_color(display[0], COL_BOX0);
+        if (arena.players == 1) {
+            x = 300;
+        } else {
+            x = 40 + p * 400;
+        }
 
+        sprite = get_ship_sprite(PP.type);
+        draw_sprite(display[0], fighter_sprite [sprite] [0].sprite, x + 100 - (fighter_sprite [sprite] [0].sprite->w / 2), 50);
+        sprite = get_ship_sprite(player[0].escort_type [PP.wing_type [0]]);
+        draw_sprite(display[0], fighter_sprite [sprite] [0].sprite, x + 100 - 40 - (fighter_sprite [sprite] [0].sprite->w / 2), 80);
+        draw_sprite(display[0], fighter_sprite [sprite] [0].sprite, x + 100 + 40 - (fighter_sprite [sprite] [0].sprite->w / 2), 80);
+        
+        // draw second wing if relevant:
+        if ((p == 0 && finished1)
+            || (p == 1 && finished2)
+        ) {
+            rectfill(display[0], x, y, x + 200, y + 420, BCOL_SCREEN);
+            rect(display[0], x, y, x + 200, y + 420, BCOL_EDGE);
+            textprintf_centre_ex(display[0], small_font, x + 100, y + 100, BCOL_TEXT, -1, "waiting...");
+            continue;
+        }
 
- for (p = 0; p < arena.players; p ++)
- {
+        textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Angry Moth %i", p+1);
 
-  box_display = BOX_NONE;
+        y += LSPACE2;
+        if (bover_menu_select [p] == CHOOSE_SHIP) {
+            display_ship_choices(p, x, y);
+        }
+        print_ship_name(x + X_INDENT, y, COL_BOX3, PP.type);
 
-  y = 130;
+        y += LSPACE1;
+        textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Variant");
+        y += LSPACE2;
+        if (bover_menu_select [p] == CHOOSE_VARIANT) {
+            bover_box(x, y);
+            print_variant_name(x + X_INDENT, y, COL_BOX3, PP.type, PP.variant);
+            display_variant_choices(p, x, y);
+        } else {
+            print_variant_name(x + X_INDENT, y, COL_BOX3, PP.type, PP.variant);
+        }
 
-  if (arena.players == 1)
-   x = 300;
-    else
-     x = 40 + p * 400;
+        y += LSPACE1;
+        textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Weapons");
+        y += LSPACE2;
+        if (bover_menu_select [p] == CHOOSE_WEAPON1) {
+            bover_box(x, y);
+        }
+        textprintf_ex(display[0], small_font, x + X_INDENT, y, COL_BOX3, -1, "1 - Autocannon");
 
- sprite = get_ship_sprite(PP.type);
- draw_sprite(display[0], fighter_sprite [sprite] [0].sprite, x + 100 - (fighter_sprite [sprite] [0].sprite->w / 2), 50);
- sprite = get_ship_sprite(player[0].escort_type [PP.wing_type [0]]);
- draw_sprite(display[0], fighter_sprite [sprite] [0].sprite, x + 100 - 40 - (fighter_sprite [sprite] [0].sprite->w / 2), 80);
- draw_sprite(display[0], fighter_sprite [sprite] [0].sprite, x + 100 + 40 - (fighter_sprite [sprite] [0].sprite->w / 2), 80);
-// draw second wing if relevant:
+        for (i = 0; i < 2; i ++) {
+            y += LSPACE2;
+            if (choose_valid(p, CHOOSE_WEAPON2 + i) < 1) {
+                textprintf_ex(display[0], small_font, x + X_INDENT, y, COL_BOX1, -1, "%i - None", i + 2);
+                continue;
+            }
+            if (bover_menu_select[p] == CHOOSE_WEAPON2 + i) {
+                bover_box(x, y);
+            }
+            if (PP.weapon_type [i] == WPN_NONE) {
+                textprintf_ex(display[0], small_font, x + X_INDENT, y, COL_BOX1, -1, "%i - None", i + 2);
+            } else {
+                print_weapon_name(x + X_INDENT, y, COL_BOX3, PP.weapon_type [i], i + 2);
+            }
+        }
 
-   if ((p == 0 && finished1)
-    || (p == 1 && finished2))
-   {
-    rectfill(display[0], x, y, x + 200, y + 420, BCOL_SCREEN);
-    rect(display[0], x, y, x + 200, y + 420, BCOL_EDGE);
-    textprintf_centre_ex(display[0], small_font, x + 100, y + 100, BCOL_TEXT, -1, "waiting...");
-    continue;
-   }
+        if (p == 0) {
+            y += LSPACE1;
+            textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Fleet fighter escort");
+            for (i = 0; i < 2; i ++) {
+                y += LSPACE2;
+                if (choose_valid(p, CHOOSE_ESCORT1 + i) == 0) {
+                    continue;
+                }
+                if (bover_menu_select [p] == CHOOSE_ESCORT1 + i) {
+                    bover_box(x, y);
+                    display_ship_choices(p, x, y);
+                }
+                print_ship_name(x + X_INDENT, y, COL_BOX3, player[0].escort_type[i]);
+            }
+        } else {
+            y += LSPACE1 + LSPACE2 + LSPACE2;
+        }
 
-  textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Angry Moth %i", p+1);
+        y += LSPACE1;
+        textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Command wing");
+        for (i = 0; i < 2; i ++) {
+            y += LSPACE2;
+            if (choose_valid(p, CHOOSE_WING1 + i) == 0) {
+                continue;
+            }
+            if (bover_menu_select[p] == CHOOSE_WING1 + i) {
+                bover_box(x, y);
+                display_wing_choices(p, x, y);
+            }
+            print_ship_name(x + X_INDENT, y, COL_BOX3, player[0].escort_type[PP.wing_type[i]]);
+        }
 
-   y += LSPACE2;
-   if (bover_menu_select [p] == CHOOSE_SHIP)
-   {
-    display_ship_choices(p, x, y);
-   }
-   print_ship_name(x + X_INDENT, y, COL_BOX3, PP.type);
+        y += LSPACE1;
+        y += LSPACE1;
+        if (bover_menu_select[p] == CHOOSE_LAUNCH) {
+            bover_box(x, y);
+        }
+        textprintf_ex(display[0], small_font, x + X_INDENT, y, COL_BOX4, -1, "launch >>");
 
-  y += LSPACE1;
-  textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Variant");
-  y += LSPACE2;
-  if (bover_menu_select [p] == CHOOSE_VARIANT)
-  {
-   bover_box(x, y);
-   print_variant_name(x + X_INDENT, y, COL_BOX3, PP.type, PP.variant);
-   display_variant_choices(p, x, y);
-  }
-   else
-    print_variant_name(x + X_INDENT, y, COL_BOX3, PP.type, PP.variant);
-
-  y += LSPACE1;
-  textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Weapons");
-  y += LSPACE2;
-  if (bover_menu_select [p] == CHOOSE_WEAPON1)
-  {
-   bover_box(x, y);
-  }
-  textprintf_ex(display[0], small_font, x + X_INDENT, y, COL_BOX3, -1, "1 - Autocannon");
-
-
-  for (i = 0; i < 2; i ++)
-  {
-   y += LSPACE2;
-   if (choose_valid(p, CHOOSE_WEAPON2 + i) < 1)
-   {
-    textprintf_ex(display[0], small_font, x + X_INDENT, y, COL_BOX1, -1, "%i - None", i + 2);
-    continue;
-   }
-   if (bover_menu_select [p] == CHOOSE_WEAPON2 + i)
-   {
-     bover_box(x, y);
-   }
-   if (PP.weapon_type [i] == WPN_NONE)
-    textprintf_ex(display[0], small_font, x + X_INDENT, y, COL_BOX1, -1, "%i - None", i + 2);
-     else
-      print_weapon_name(x + X_INDENT, y, COL_BOX3, PP.weapon_type [i], i + 2);
-
-  }
-
-  if (p == 0)
-  {
-   y += LSPACE1;
-   textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Fleet fighter escort");
-   for (i = 0; i < 2; i ++)
-   {
-    y += LSPACE2;
-    if (choose_valid(p, CHOOSE_ESCORT1 + i) == 0)
-     continue;
-    if (bover_menu_select [p] == CHOOSE_ESCORT1 + i)
-    {
-     bover_box(x, y);
-     display_ship_choices(p, x, y);
+        y += LSPACE1;
+        if (bover_menu_select [p] == CHOOSE_REPLAY) {
+            bover_box(x, y);
+        }
+        textprintf_ex(
+            display[0],
+            small_font,
+            x + X_INDENT - text_length(small_font, "<< "),
+            y,
+            COL_BOX4,
+            -1,
+            "<< replay briefing"
+        );
     }
-    print_ship_name(x + X_INDENT, y, COL_BOX3, player[0].escort_type [i]);
-   }
-  }
-   else
-    y += LSPACE1 + LSPACE2 + LSPACE2;
-
-  y += LSPACE1;
-  textprintf_ex(display[0], small_font, x, y, BCOL_TEXT, -1, "Command wing");
-  for (i = 0; i < 2; i ++)
-  {
-   y += LSPACE2;
-   if (choose_valid(p, CHOOSE_WING1 + i) == 0)
-    continue;
-   if (bover_menu_select [p] == CHOOSE_WING1 + i)
-   {
-     bover_box(x, y);
-     display_wing_choices(p, x, y);
-   }
-    print_ship_name(x + X_INDENT, y, COL_BOX3, player[0].escort_type [PP.wing_type [i]]);
-  }
-
-  y += LSPACE1;
-  y += LSPACE1;
-  if (bover_menu_select [p] == CHOOSE_LAUNCH)
-   bover_box(x, y);
-  textprintf_ex(display[0], small_font, x + X_INDENT, y, COL_BOX4, -1, "launch >>");
-
-  y += LSPACE1;
-  if (bover_menu_select [p] == CHOOSE_REPLAY)
-   bover_box(x, y);
-  textprintf_ex(display[0], small_font, x + X_INDENT - text_length(small_font, "<< "), y, COL_BOX4, -1, "<< replay briefing");
-
- }
 }
 
 // returns: 0 = not valid at all, 1 = can be seen but not selected, 2 = can be seen and selected
